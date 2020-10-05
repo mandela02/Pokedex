@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct PokedexCardView: View {
-    var pokemon: Pokemon
+    @ObservedObject var updater: PokemonUpdater
     var size: (width: CGFloat, height: CGFloat)
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                pokemon.mainType.color.background.ignoresSafeArea()
+                updater.pokemon.mainType.color.background.ignoresSafeArea()
                 Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
                     .resizable()
                     .scaledToFit()
@@ -27,7 +27,7 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     ZStack {
-                        DownloadedImageView(withURL: pokemon.imageUrl)
+                        DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
                             .frame(width: size.width/2,
                                    height: size.height,
                                    alignment: .bottomTrailing)
@@ -38,21 +38,22 @@ struct PokedexCardView: View {
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 VStack(alignment: .leading, spacing: 0, content: {
-                    Text(pokemon.name)
+                    Text(updater.pokemon.name)
                         .font(.system(size: 25))
                         .fontWeight(.bold)
-                        .foregroundColor(pokemon.mainType.color.text)
+                        .foregroundColor(updater.pokemon.mainType.color.text)
                         .frame(alignment: .topLeading)
                         .lineLimit(1)
                         .padding(.bottom, 10)
-                    ForEach(pokemon.types) { type in
+                    ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
                         Text(type.name)
                             .frame(alignment: .leading)
-                            .foregroundColor(pokemon.mainType.color.text)
+                            .foregroundColor(updater.pokemon.mainType.color.text)
                             .background(Rectangle()
-                                            .fill(pokemon.mainType.color.type)
+                                            .fill(updater.pokemon.mainType.color.type)
                                             .cornerRadius(5).padding(.all, -2))
                             .padding(.bottom, 8)
+                            .saturation(-3)
                     }
                     Spacer()
                 }).frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -79,10 +80,10 @@ struct DownloadedImageView: View {
     }
 }
 
-struct PokedexCardView_Previews: PreviewProvider {
-    static let updater = Updater()
-    
-    static var previews: some View {
-        PokedexCardView(pokemon: updater.pokemons[0], size: (200, 150))
-    }
-}
+//struct PokedexCardView_Previews: PreviewProvider {
+//    static let updater = Updater()
+//    
+//    static var previews: some View {
+//        PokedexCardView(pokemon: updater.pokemons[0], size: (200, 150))
+//    }
+//}

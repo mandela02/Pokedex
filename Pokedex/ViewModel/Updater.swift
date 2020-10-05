@@ -6,82 +6,28 @@
 //
 
 import Foundation
+import Combine
 
 class Updater: ObservableObject {
-    @Published var pokemons: [Pokemon] = [Pokemon(name: "Bulbasaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Ivysaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/9.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/11.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/12.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/13.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/14.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/15.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/16.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/17.png",
-                                                  mainType: .grass),
-                                          Pokemon(name: "Venusaur",
-                                                  types: [Type(name: "Grass"), Type(name: "Poison")],
-                                                  imageUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/18.png",
-                                                  mainType: .grass)]
+    @Published var pokemons: [PokemonUrl] = []
+    private var cancellable: AnyCancellable?
+    private var pokemonResult: PokemonResult = PokemonResult() {
+        didSet {
+            pokemons = pokemonResult.results.map({PokemonUrl(name: $0.name, url: $0.url)})
+        }
+    }
+    
+    deinit {
+        cancellable?.cancel()
+    }
+    
+    init() {
+        self.cancellable = Session
+            .share
+            .pokemons(from: UrlType.pokemons.urlString)?
+            .replaceError(with: PokemonResult())
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.pokemonResult, on: self)
+    }
 }
