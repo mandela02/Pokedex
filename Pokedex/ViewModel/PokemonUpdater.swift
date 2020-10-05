@@ -13,12 +13,6 @@ class PokemonUpdater: ObservableObject {
     var pokemonUrl: String?
     private var cancellable: AnyCancellable?
 
-    private var downloadedPokemon: Pokemon = Pokemon() {
-        didSet {
-            self.pokemon = downloadedPokemon
-        }
-    }
-    
     deinit {
         cancellable?.cancel()
     }
@@ -30,7 +24,7 @@ class PokemonUpdater: ObservableObject {
             .replaceError(with: Pokemon())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .assign(to: \.downloadedPokemon, on: self)
+            .assign(to: \.pokemon, on: self)
 
     }
 }

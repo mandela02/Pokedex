@@ -21,8 +21,15 @@ struct PokemonListView: View {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(updater.pokemons, id: \.self.id) { pokemon in
                         PokedexCardView(updater: PokemonUpdater(url: pokemon.url), size: (width, height))
+                            .onAppear(perform: {
+                                updater.loadMorePokemonIfNeeded(current: pokemon)
+                            })
                     }
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
+                
+                if updater.isLoadingPage {
+                    ProgressView()
+                }
             }).frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
         })
     }

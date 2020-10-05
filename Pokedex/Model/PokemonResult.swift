@@ -9,7 +9,7 @@ import Foundation
 
 class PokemonResult: Codable {
     var count: Int = 0
-    var next: String = ""
+    var next: String?
     var results: [PokemonUrl] = []
 }
 
