@@ -31,11 +31,9 @@ class ImageLoader: ObservableObject {
     }
     
     func imageFromRemoteUrl() {
-        guard let url = imageUrl else {
+        guard let url = imageUrl, let imageURL = URL(string: url) else {
             return
         }
-        
-        let imageURL = URL(string: url)!
         
         URLSession.shared.dataTask(with: imageURL, completionHandler: { (data, response, error) in
             if let data = data {
