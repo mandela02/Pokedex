@@ -36,31 +36,39 @@ struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
 
     var size: (width: CGFloat, height: CGFloat)
-        
+    @State var image: UIImage?
+
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(3.0)
+                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
                 Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.white)
-                    .frame(width: size.width, height: size.height, alignment: .bottomTrailing)
-                    .offset(x: size.width * 1/6, y: size.height * 1/4 )
+                    .foregroundColor(updater.pokemon.mainType.color.background.opacity(0.5))
+                    .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
+                    .offset(x: size.width * 1/4, y: size.height * 1/3 )
 
                 VStack {
                     Spacer()
                     ZStack {
-                        DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
-                            .frame(width: size.width/2,
-                                   height: size.height,
-                                   alignment: .bottomTrailing)
-                            .padding(EdgeInsets(top: 5,
-                                                leading: 5,
-                                                bottom: 5,
-                                                trailing: 5))
+                        if let image = image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: size.width/2,
+                                       height: size.height,
+                                       alignment: .bottomTrailing)
+                                .padding(.all, 5)
+                        } else {
+                            DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
+                                .frame(width: size.width/2,
+                                       height: size.height,
+                                       alignment: .bottomTrailing)
+                                .padding(.all, 5)
+                        }                        
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 VStack(alignment: .leading, spacing: 0, content: {
@@ -74,16 +82,19 @@ struct PokedexCardView: View {
                     ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
                         Text(type.name)
                             .frame(alignment: .leading)
+                            .font(.system(size: 10))
                             .foregroundColor(updater.pokemon.mainType.color.text)
                             .background(Rectangle()
-                                            .fill(updater.pokemon.mainType.color.type)
-                                            .cornerRadius(5).padding(.all, -2))
-                            .padding(.bottom, 8)
+                                            .fill(updater.pokemon.mainType.color.background.opacity(0.5))
+                                            .cornerRadius(10)
+                                            .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
+                            .padding(.bottom, 15)
+                            .padding(.leading, 15)
                     }
                     Spacer()
                 }).frame(width: size.width, height: size.height, alignment: .topLeading)
                 .padding(.leading, 25)
-                .padding(.top, 25)
+                .padding(.top, 35)
                })
             .frame(width: size.width, height: size.height)
             .background(Color.clear)

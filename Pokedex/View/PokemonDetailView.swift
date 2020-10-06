@@ -13,38 +13,67 @@ struct PokemonDetailView: View {
     @Binding var loadView: Bool
     
     @State var currentTab: Int = 0
-
+    @State var isExpanded = true
+    @State private var offset = CGSize.zero
+    
+    @State var image: UIImage?
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let size = geometry.size
-            let detailViewHeight = size.height * 0.625
+            let detailViewHeight = size.height * 0.6 + offset.height
             ZStack {
-                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(3.0)
+                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
 
                 if loadView {
-                    RotatingPokeballView()
+                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                         .ignoresSafeArea()
                 }
                 
 
                 VStack {
                     Spacer()
-                    Rectangle().fill(Color.gray).frame(height: 100, alignment: .center).cornerRadius(25).offset(y: 50)
+                    Rectangle().fill(Color.white).frame(height: 100, alignment: .center).cornerRadius(25).offset(y: 50)
                     DetailView(selected: $currentTab)
                         .frame(width: size.width, height: detailViewHeight, alignment: .bottom)
-                        .background(Color.gray)
+                        .background(Color.white)
                 }
+                .offset(x: 0, y: offset.height * 5)
+                .gesture(DragGesture()
+                            .onChanged({ gesture in
+                                self.offset = gesture.translation
+                            }).onEnded({ _ in
+                                if offset.height < 0 && offset.height > -geometry.size.height/4 {
+                                    isExpanded = false
+                                } else {
+                                    isExpanded = true
+                                    withAnimation(.spring()) {
+                                        offset = CGSize.zero
+                                    }
+                                }
+                            })
+                )
 
                 if loadView {
                     VStack {
                         ButtonView(isShowing: $isShowing, loadView: $loadView)
+                        NameView(pokemon: updater.pokemon)
+                        TypeView(pokemon: updater.pokemon)
                         Spacer()
                     }
                 }
 
-                DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
-                    .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                    .offset(y: -size.width/2)
+                if let image = image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                        .offset(y: -size.width/2 + 30)
+                } else {
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
+                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                        .offset(y: -size.width/2 + 30)
+                }
             }.ignoresSafeArea()
         })
     }
@@ -78,13 +107,67 @@ struct ButtonView: View {
                     .clipShape(Circle())
             }
         }
-        .padding(.top,35)
+        .padding(.top, 25)
         .padding(.horizontal)
+    }
+}
+
+struct NameView: View {
+    var pokemon: Pokemon
+
+    var body: some View {
+        HStack(alignment: .lastTextBaseline){
+            Text(pokemon.name.capitalizingFirstLetter())
+                .font(.system(size: 35))
+                .fontWeight(.bold)
+                .foregroundColor(pokemon.mainType.color.text)
+                .background(Color.clear)
+                .frame(alignment: .topLeading)
+                .lineLimit(1)
+            Spacer()
+            Text(String(format: "#%03d", pokemon.order))
+                .font(.system(size: 20))
+                .fontWeight(.bold)
+                .foregroundColor(pokemon.mainType.color.text)
+                .background(Color.clear)
+                .frame(alignment: .topLeading)
+                .lineLimit(1)
+        }
+        .background(Color.clear)
+        .padding(.leading, 10)
+        .padding(.trailing, 10)
+        .padding(.horizontal)
+    }
+}
+
+struct TypeView: View {
+    let pokemon: Pokemon
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 30, content: {
+            ForEach(pokemon.types.map({$0.type})) { type in
+                Text(type.name)
+                    .frame(alignment: .leading)
+                    .font(.system(size: 15))
+                    .foregroundColor(pokemon.mainType.color.text)
+                    .background(Rectangle()
+                                    .fill(pokemon.mainType.color.background.opacity(0.5))
+                                    .cornerRadius(10)
+                                    .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
+            }
+            Spacer()
+        })
+        .padding(.leading, 40)
+        .padding(.top, 5)
+        .background(Color.clear)
     }
 }
 
 struct RotatingPokeballView: View {
     @State private var isAnimating = false
+    
+    var color: Color
+    
     var foreverAnimation: Animation {
         Animation.linear(duration: 2.0)
             .repeatForever(autoreverses: false)
@@ -100,14 +183,14 @@ struct RotatingPokeballView: View {
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.white)
+                    .foregroundColor(color)
                     .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
                     .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
                     .animation(self.isAnimating ? foreverAnimation : .default)
                     .onAppear { self.isAnimating = true }
                     .onDisappear { self.isAnimating = false }
                 Rectangle().fill(Color.clear)
-                    .frame(height: size.height/2 - 25, alignment: .center)
+                    .frame(height: size.height/2 - 45, alignment: .center)
             })
         })
     }
@@ -134,7 +217,8 @@ struct TabItem: View {
             Text("\(tag)")
             Rectangle().fill(tag == selected ? Color.blue : Color.clear)
                 .frame(height: 3, alignment: .center)
-        }).frame(minWidth: 10, idealWidth: .infinity, alignment: .center)
+        })
+        .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
         .frame(height: 50, alignment: .center)
     }
 }
