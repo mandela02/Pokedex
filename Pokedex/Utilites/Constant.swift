@@ -9,4 +9,5 @@ import Foundation
 
 struct Constants {
     static let baseUrl = "https://pokeapi.co/api/v2/"
+    static let heroId = "heroId"
 }

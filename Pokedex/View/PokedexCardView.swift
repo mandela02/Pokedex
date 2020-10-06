@@ -7,8 +7,37 @@
 
 import SwiftUI
 
+struct TabableCardView: View {
+    @ObservedObject var updater: PokemonUpdater
+    var size: (width: CGFloat, height: CGFloat)
+    @State var show: Bool = false
+    @State var loadView: Bool = false
+    @Namespace var namespace
+
+    var body: some View {
+        PokedexCardView(updater: updater, namespace: namespace, size: size)
+            .sheet(isPresented: $show, content: {
+                PokemonDetailView(updater: updater,
+                                  isShowing: $show,
+                                  loadView: $loadView,
+                                  namespace: namespace)
+            })
+            .onTapGesture(count: 1, perform: {
+                withAnimation(.spring()){
+                    show.toggle()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        loadView.toggle()
+                    }
+                }
+            })
+
+    }
+}
+
 struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
+    let namespace: Namespace.ID
+
     var size: (width: CGFloat, height: CGFloat)
         
     var body: some View {
@@ -35,6 +64,7 @@ struct PokedexCardView: View {
                                                 leading: 5,
                                                 bottom: 5,
                                                 trailing: 5))
+                            //.matchedGeometryEffect(id: Constants.heroId, in: namespace)
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 VStack(alignment: .leading, spacing: 0, content: {
@@ -76,14 +106,5 @@ struct DownloadedImageView: View {
         Image(uiImage: imageLoader.displayImage ?? UIImage())
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width:100, height:100)
-    }
-}
-
-struct PokedexCardView_Previews: PreviewProvider {
-    static let updater = PokemonUpdater(url: "https://pokeapi.co/api/v2/pokemon/3/")
-    
-    static var previews: some View {
-        PokedexCardView(updater: updater, size: (200, 150))
     }
 }
