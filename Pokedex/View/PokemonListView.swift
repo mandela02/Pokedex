@@ -9,28 +9,59 @@ import SwiftUI
 
 struct PokemonListView: View {
     @ObservedObject var updater: Updater
-
+    
+    init(updater: Updater) {
+        self.updater = updater
+        UITableView.appearance().showsVerticalScrollIndicator = false
+        UITableView.appearance().backgroundColor = .clear
+        UITableViewCell.appearance().backgroundColor = .clear
+        UITableView.appearance().separatorStyle = .singleLine
+        UITableView.appearance().separatorColor = .red
+    }
+    
     var body: some View {
         GeometryReader(content: { geometry in
-            let width = (geometry.size.width - 10) / 2
             let height: CGFloat = geometry.size.height / 6
-            let gridItem = GridItem(.fixed(width), spacing: 10)
-            let columns = Array(repeating: gridItem, count: 2)
-            
-            ScrollView(.vertical, showsIndicators: false, content: {
-                LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(updater.pokemons, id: \.self.id) { pokemon in
-                        PokedexCardView(updater: PokemonUpdater(url: pokemon.url), size: (width, height))
+            VStack {
+                List {
+                    ForEach(updater.pokemonsCells) { cell in
+                        let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
+                        
+                        PokemonListCellView(firstPokemon: cell.firstPokemon,
+                                            secondPokemon: cell.secondPokemon)
+                            .listRowInsets(EdgeInsets())
+                            .frame(width: geometry.size.width, height: cellHeight)
+                            .padding(.bottom, 10)
+                            .listRowBackground(Color.clear)
                             .onAppear(perform: {
-                                updater.loadMorePokemonIfNeeded(current: pokemon)
+                                updater.loadMorePokemonIfNeeded(current: cell)
                             })
                     }
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
+                }
+                .frame(minWidth: 0,
+                       maxWidth: .infinity,
+                       minHeight: 0,
+                       maxHeight: .infinity,
+                       alignment: .top)
+                .animation(.linear)
+                .listStyle(SidebarListStyle())
                 
                 if updater.isLoadingPage {
                     ProgressView()
                 }
-            }).frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
+            }
+            .frame(minWidth: 0,
+                   maxWidth: .infinity,
+                   minHeight: 0,
+                   maxHeight: .infinity,
+                   alignment: .top)
+            
         })
+    }
+}
+
+struct PokemonListView_Previews: PreviewProvider {
+    static var previews: some View {
+        PokemonListView(updater: Updater())
     }
 }

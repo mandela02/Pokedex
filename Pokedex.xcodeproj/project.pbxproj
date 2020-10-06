@@ -25,6 +25,10 @@
 		907D5F5F252B1A3D00E30748 /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907D5F5E252B1A3D00E30748 /* Pokemon.swift */; };
 		907D5F65252B1AD700E30748 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907D5F64252B1AD700E30748 /* Updater.swift */; };
 		907D5F74252B272600E30748 /* PokemonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907D5F73252B272600E30748 /* PokemonListView.swift */; };
+		90AD3BDD252BFD0E009EECEE /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BDC252BFD0E009EECEE /* String+Extension.swift */; };
+		90AD3BE2252C1016009EECEE /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BE1252C1016009EECEE /* Collection+Extensions.swift */; };
+		90AD3BE7252C10F0009EECEE /* PokemonListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BE6252C10F0009EECEE /* PokemonListCellView.swift */; };
+		90AD3BEF252C2AB5009EECEE /* CacheImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BEE252C2AB5009EECEE /* CacheImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +73,10 @@
 		907D5F5E252B1A3D00E30748 /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
 		907D5F64252B1AD700E30748 /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
 		907D5F73252B272600E30748 /* PokemonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListView.swift; sourceTree = "<group>"; };
+		90AD3BDC252BFD0E009EECEE /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		90AD3BE1252C1016009EECEE /* Collection+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
+		90AD3BE6252C10F0009EECEE /* PokemonListCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListCellView.swift; sourceTree = "<group>"; };
+		90AD3BEE252C2AB5009EECEE /* CacheImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +115,9 @@
 		84D9AFF3252B801E00E4C9D5 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				90AD3BE1252C1016009EECEE /* Collection+Extensions.swift */,
 				84D9AFF4252B802F00E4C9D5 /* Color+Extension.swift */,
+				90AD3BDC252BFD0E009EECEE /* String+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -180,6 +190,7 @@
 			children = (
 				907D5F47252B12E200E30748 /* PokedexCardView.swift */,
 				907D5F73252B272600E30748 /* PokemonListView.swift */,
+				90AD3BE6252C10F0009EECEE /* PokemonListCellView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -191,6 +202,7 @@
 				907D5F51252B130100E30748 /* ImageLoader.swift */,
 				907D5F59252B186E00E30748 /* Color.swift */,
 				84D9AFEE252B776800E4C9D5 /* Constant.swift */,
+				90AD3BEE252C2AB5009EECEE /* CacheImage.swift */,
 			);
 			path = Utilites;
 			sourceTree = "<group>";
@@ -355,8 +367,12 @@
 				907D5F5A252B186E00E30748 /* Color.swift in Sources */,
 				84D9AFEF252B776800E4C9D5 /* Constant.swift in Sources */,
 				84D9B002252B895500E4C9D5 /* PokemonUpdater.swift in Sources */,
+				90AD3BEF252C2AB5009EECEE /* CacheImage.swift in Sources */,
 				907D5F19252B12C500E30748 /* PokedexApp.swift in Sources */,
+				90AD3BE2252C1016009EECEE /* Collection+Extensions.swift in Sources */,
+				90AD3BDD252BFD0E009EECEE /* String+Extension.swift in Sources */,
 				907D5F5F252B1A3D00E30748 /* Pokemon.swift in Sources */,
+				90AD3BE7252C10F0009EECEE /* PokemonListCellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

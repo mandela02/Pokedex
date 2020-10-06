@@ -14,7 +14,7 @@ enum UrlType: String, CaseIterable {
     var urlString: String {
         switch self {
         case .pokemons:
-            return Constants.baseUrl + "pokemon"
+            return Constants.baseUrl + "pokemon?limit=50"
         default:
             return ""
         }
