@@ -12,16 +12,9 @@ struct TabableCardView: View {
     var size: (width: CGFloat, height: CGFloat)
     @State var show: Bool = false
     @State var loadView: Bool = false
-    @Namespace var namespace
 
     var body: some View {
-        PokedexCardView(updater: updater, namespace: namespace, size: size)
-            .sheet(isPresented: $show, content: {
-                PokemonDetailView(updater: updater,
-                                  isShowing: $show,
-                                  loadView: $loadView,
-                                  namespace: namespace)
-            })
+        PokedexCardView(updater: updater, size: size)
             .onTapGesture(count: 1, perform: {
                 withAnimation(.spring()){
                     show.toggle()
@@ -30,13 +23,17 @@ struct TabableCardView: View {
                     }
                 }
             })
-
+            .fullScreenCover(isPresented: $show,
+                             content: {
+                                PokemonDetailView(updater: updater,
+                                                  isShowing: $show,
+                                                  loadView: $loadView)
+                             })
     }
 }
 
 struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
-    let namespace: Namespace.ID
 
     var size: (width: CGFloat, height: CGFloat)
         
@@ -64,7 +61,6 @@ struct PokedexCardView: View {
                                                 leading: 5,
                                                 bottom: 5,
                                                 trailing: 5))
-                            //.matchedGeometryEffect(id: Constants.heroId, in: namespace)
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 VStack(alignment: .leading, spacing: 0, content: {
@@ -92,19 +88,5 @@ struct PokedexCardView: View {
             .frame(width: size.width, height: size.height)
             .background(Color.clear)
             .cornerRadius(25)
-    }
-}
-
-struct DownloadedImageView: View {
-    @ObservedObject var imageLoader: ImageLoader
-    
-    init(withURL url: String) {
-        imageLoader = ImageLoader(url: url)
-    }
-    
-    var body: some View {
-        Image(uiImage: imageLoader.displayImage ?? UIImage())
-            .resizable()
-            .aspectRatio(contentMode: .fit)
     }
 }

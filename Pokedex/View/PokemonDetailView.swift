@@ -11,8 +11,8 @@ struct PokemonDetailView: View {
     @ObservedObject var updater: PokemonUpdater
     @Binding var isShowing: Bool
     @Binding var loadView: Bool
-
-    let namespace: Namespace.ID
+    
+    @State var currentTab: Int = 0
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -30,7 +30,7 @@ struct PokemonDetailView: View {
                 VStack {
                     Spacer()
                     Rectangle().fill(Color.gray).frame(height: 100, alignment: .center).cornerRadius(25).offset(y: 50)
-                    Text("pokemon")
+                    DetailView(selected: $currentTab)
                         .frame(width: size.width, height: detailViewHeight, alignment: .bottom)
                         .background(Color.gray)
                 }
@@ -44,8 +44,7 @@ struct PokemonDetailView: View {
 
                 DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
                     .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                    .offset(y: -size.width/2 - 10)
-                    .matchedGeometryEffect(id: Constants.heroId, in: namespace)
+                    .offset(y: -size.width/2)
             }.ignoresSafeArea()
         })
     }
@@ -108,8 +107,50 @@ struct RotatingPokeballView: View {
                     .onAppear { self.isAnimating = true }
                     .onDisappear { self.isAnimating = false }
                 Rectangle().fill(Color.clear)
-                    .frame(height: size.height/2, alignment: .center)
+                    .frame(height: size.height/2 - 25, alignment: .center)
             })
+        })
+    }
+}
+
+struct TabControlView: View {
+    @Binding var selected: Int
+    @Namespace var namespace
+    var body: some View {
+        HStack(alignment: .center, spacing: 1, content: {
+            ForEach(0...3, id: \.self) { index in
+                TabItem(selected: $selected, tag: index)
+            }
+        })
+    }
+}
+
+struct TabItem: View {
+    @Binding var selected: Int
+    var tag: Int
+    
+    var body: some View {
+        VStack(alignment: .center, spacing: 5, content: {
+            Text("\(tag)")
+            Rectangle().fill(tag == selected ? Color.blue : Color.clear)
+                .frame(height: 3, alignment: .center)
+        }).frame(minWidth: 10, idealWidth: .infinity, alignment: .center)
+        .frame(height: 50, alignment: .center)
+    }
+}
+
+struct DetailView: View {
+    @Binding var selected: Int
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 0, content: {
+            TabControlView(selected: $selected)
+            TabView(selection: $selected) {
+                ForEach(0...3, id: \.self) { index in
+                    Text("\(index)")
+                }
+            }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         })
     }
 }
