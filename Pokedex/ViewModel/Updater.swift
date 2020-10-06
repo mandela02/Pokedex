@@ -8,8 +8,21 @@
 import Foundation
 import Combine
 
+struct PokemonCell: Identifiable, Equatable {
+    static func == (lhs: PokemonCell, rhs: PokemonCell) -> Bool {
+        lhs.firstPokemon?.url == rhs.firstPokemon?.url
+    }
+    
+    var id = UUID().uuidString
+    var firstPokemon: PokemonUrl?
+    var secondPokemon: PokemonUrl?
+}
+
 class Updater: ObservableObject {
     @Published var pokemons: [PokemonUrl] = []
+    
+    @Published var pokemonsCells: [PokemonCell] = [PokemonCell()]
+
     
     private var canLoadMore = true
     @Published var isLoadingPage = false
@@ -20,11 +33,18 @@ class Updater: ObservableObject {
     
     private var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
-            if let nextURL = pokemonResult.next {
-                url = nextURL
-                pokemons = pokemons + pokemonResult.results.map({PokemonUrl(name: $0.name, url: $0.url)})
-            } else {
+            guard let nextURL = pokemonResult.next else {
                 canLoadMore = false
+                return
+            }
+            let result = pokemonResult.results.map({PokemonUrl(name: $0.name, url: $0.url)})
+            pokemons = pokemons + result
+            url = nextURL
+            result.enumerated().forEach { item in
+                if item.offset % 2 == 0 {
+                    let newPokemons = PokemonCell(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
+                    pokemonsCells.append(newPokemons)
+                }
             }
         }
     }
@@ -37,9 +57,9 @@ class Updater: ObservableObject {
         loadPokemonData()
     }
     
-    func loadMorePokemonIfNeeded(current pokemon: PokemonUrl) {
-        let thresholdIndex = pokemons.index(pokemons.endIndex, offsetBy: -5)
-        if pokemons.firstIndex(where: { $0.url == pokemon.url }) == thresholdIndex {
+    func loadMorePokemonIfNeeded(current pokemonCell: PokemonCell) {
+        let thresholdIndex = pokemonsCells.index(pokemonsCells.endIndex, offsetBy: -5)
+        if pokemonsCells.firstIndex(where: { $0 == pokemonCell }) == thresholdIndex {
             loadPokemonData()
         }
     }

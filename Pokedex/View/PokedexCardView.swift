@@ -10,12 +10,12 @@ import SwiftUI
 struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
     var size: (width: CGFloat, height: CGFloat)
-    
+        
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                updater.pokemon.mainType.color.background.ignoresSafeArea()
+                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(3.0)
                 Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
                     .resizable()
                     .scaledToFit()
@@ -38,7 +38,7 @@ struct PokedexCardView: View {
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 VStack(alignment: .leading, spacing: 0, content: {
-                    Text(updater.pokemon.name)
+                    Text(updater.pokemon.name.capitalizingFirstLetter())
                         .font(.system(size: 25))
                         .fontWeight(.bold)
                         .foregroundColor(updater.pokemon.mainType.color.text)
@@ -53,7 +53,6 @@ struct PokedexCardView: View {
                                             .fill(updater.pokemon.mainType.color.type)
                                             .cornerRadius(5).padding(.all, -2))
                             .padding(.bottom, 8)
-                            .saturation(-3)
                     }
                     Spacer()
                 }).frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -61,7 +60,8 @@ struct PokedexCardView: View {
                 .padding(.top, 25)
                })
             .frame(width: size.width, height: size.height)
-            .cornerRadius(20)
+            .background(Color.clear)
+            .cornerRadius(25)
     }
 }
 
@@ -80,10 +80,10 @@ struct DownloadedImageView: View {
     }
 }
 
-//struct PokedexCardView_Previews: PreviewProvider {
-//    static let updater = Updater()
-//    
-//    static var previews: some View {
-//        PokedexCardView(pokemon: updater.pokemons[0], size: (200, 150))
-//    }
-//}
+struct PokedexCardView_Previews: PreviewProvider {
+    static let updater = PokemonUpdater(url: "https://pokeapi.co/api/v2/pokemon/3/")
+    
+    static var previews: some View {
+        PokedexCardView(updater: updater, size: (200, 150))
+    }
+}

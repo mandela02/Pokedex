@@ -11,60 +11,32 @@ import UIKit
 
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
-    var imageUrl: String?
-    var cachedImage = CachedImage.getCachedImage()
+    private let cache = ImageCache()
+    private var cancellable: AnyCancellable?
+
+    deinit {
+        cancellable?.cancel()
+    }
     
     init(url: String) {
-        self.imageUrl = url
-        if imageFromCache() {
+        guard let url = URL(string: url) else {
             return
         }
-        imageFromRemoteUrl()
+        cancellable = loadImage(from: url).assign(to: \.displayImage, on: self)
     }
     
-    func imageFromCache() -> Bool {
-        guard let url = imageUrl, let cacheImage = cachedImage.get(key: url) else {
-            return false
+    func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never> {
+        if let image = cache[url] {
+            return Just(image).eraseToAnyPublisher()
         }
-        displayImage = cacheImage
-        return true
-    }
-    
-    func imageFromRemoteUrl() {
-        guard let url = imageUrl, let imageURL = URL(string: url) else {
-            return
-        }
-        
-        URLSession.shared.dataTask(with: imageURL, completionHandler: { (data, response, error) in
-            if let data = data {
-                DispatchQueue.main.async {
-                    guard let remoteImage = UIImage(data: data) else {
-                        return
-                    }
-                    self.cachedImage.set(key: self.imageUrl!, image: remoteImage)
-                    self.displayImage = remoteImage
-                }
-            }
-        }).resume()
-    }
-}
-
-
-class CachedImage {
-    var cache = NSCache<NSString, UIImage>()
-    
-    func get(key: String) -> UIImage? {
-        return cache.object(forKey: NSString(string: key))
-    }
-    
-    func set(key: String, image: UIImage) {
-        cache.setObject(image, forKey: NSString(string: key))
-    }
-}
-
-extension CachedImage {
-    private static var cachedImage = CachedImage()
-    static func getCachedImage() -> CachedImage {
-        return cachedImage
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .map { (data, response) -> UIImage? in return UIImage(data: data) }
+            .catch { error in return Just(nil) }
+            .handleEvents(receiveOutput: {[weak self] image in
+                guard let image = image else { return }
+                self?.cache[url] = image
+            })
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 }
