@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokemonListView: View {
     @ObservedObject var updater: Updater
-    
+
     init(updater: Updater) {
         self.updater = updater
         UITableView.appearance().showsVerticalScrollIndicator = false
@@ -38,11 +38,6 @@ struct PokemonListView: View {
                             })
                     }
                 }
-                .frame(minWidth: 0,
-                       maxWidth: .infinity,
-                       minHeight: 0,
-                       maxHeight: .infinity,
-                       alignment: .top)
                 .animation(.linear)
                 .listStyle(SidebarListStyle())
                 
@@ -50,18 +45,6 @@ struct PokemonListView: View {
                     ProgressView()
                 }
             }
-            .frame(minWidth: 0,
-                   maxWidth: .infinity,
-                   minHeight: 0,
-                   maxHeight: .infinity,
-                   alignment: .top)
-            
         })
-    }
-}
-
-struct PokemonListView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonListView(updater: Updater())
     }
 }

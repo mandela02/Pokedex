@@ -25,6 +25,5 @@ class PokemonUpdater: ObservableObject {
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
-
     }
 }

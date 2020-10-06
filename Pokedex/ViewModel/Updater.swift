@@ -20,7 +20,6 @@ struct PokemonCell: Identifiable, Equatable {
 
 class Updater: ObservableObject {
     @Published var pokemons: [PokemonUrl] = []
-    
     @Published var pokemonsCells: [PokemonCell] = [PokemonCell()]
 
     
