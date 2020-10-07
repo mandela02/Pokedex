@@ -17,7 +17,7 @@ struct PokemonDetailView: View {
     @State var isShowingImage = true
     @State private var offset = CGSize.zero
     
-    @State var imageOpacity: Double = 1
+    @State var opacity: Double = 1
     @State var image: UIImage?
     
     @Namespace var namespace
@@ -37,6 +37,12 @@ struct PokemonDetailView: View {
                         RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                             .ignoresSafeArea()
                             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
+                        
+                    } else {
+                        RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                            .ignoresSafeArea()
+                            .frame(width: geometry.size.width * 4/5, height: geometry.size.height * 4/5, alignment: .center)
+                            .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
                     }
                 }
                 
@@ -55,7 +61,7 @@ struct PokemonDetailView: View {
                                 self.offset = gesture.translation
                                 let hideImageRequiment = offset.height < 0 && abs(offset.height) > collapseValue
                                 withAnimation(.spring()) {
-                                    imageOpacity = 1 + Double(offset.height/collapseValue)
+                                    opacity = 1 + Double(offset.height/collapseValue)
                                     isShowingImage = !hideImageRequiment
                                 }
                             }).onEnded({ _ in
@@ -68,7 +74,7 @@ struct PokemonDetailView: View {
                                     withAnimation(.spring()) {
                                         isExpanded = true
                                         offset = CGSize.zero
-                                        imageOpacity = 1
+                                        opacity = 1
                                     }
                                 }
                             })
@@ -83,8 +89,10 @@ struct PokemonDetailView: View {
                                    namespace: namespace)
                         if isExpanded {
                             NameView(pokemon: updater.pokemon,
-                                     namespace: namespace)
+                                     namespace: namespace,
+                                     opacity: $opacity)
                             TypeView(pokemon: updater.pokemon)
+                                .opacity(opacity)
                         }
                         Spacer()
                     }
@@ -98,15 +106,14 @@ struct PokemonDetailView: View {
                             .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
                             .offset(y: -size.width/2 + 30)
                             .matchedGeometryEffect(id: "image", in: namespace)
-                            .opacity(imageOpacity)
+                            .opacity(opacity)
 
                     } else {
                         DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
                             .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
                             .offset(y: -size.width/2 + 30)
                             .matchedGeometryEffect(id: "image", in: namespace)
-                            .opacity(imageOpacity)
-
+                            .opacity(opacity)
                     }
                 } else {
                     EmptyView().matchedGeometryEffect(id: "image", in: namespace)
@@ -122,6 +129,8 @@ struct ButtonView: View {
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
     var namespace: Namespace.ID
+    
+    var isFavorite = false
 
     var body: some View {
             HStack{
@@ -134,7 +143,7 @@ struct ButtonView: View {
                     Image(systemName: "xmark")
                         .foregroundColor(.white)
                         .padding()
-                        .background(Color.black.opacity(0.5))
+                        .background(Color.clear)
                         .clipShape(Circle())
                 }
                 Spacer()
@@ -151,10 +160,10 @@ struct ButtonView: View {
                 }
                 Button {
                 } label: {
-                    Image(systemName: "suit.heart.fill")
-                        .foregroundColor(.red)
+                    Image(systemName:  isFavorite ? "suit.heart.fill" : "suit.heart")
+                        .foregroundColor(.white)
                         .padding()
-                        .background(Color.white)
+                        .background(Color.clear)
                         .clipShape(Circle())
                 }
             }
@@ -167,6 +176,8 @@ struct NameView: View {
     var pokemon: Pokemon
     var namespace: Namespace.ID
 
+    @Binding var opacity: Double
+    
     var body: some View {
         HStack(alignment: .lastTextBaseline){
             Text(pokemon.name.capitalizingFirstLetter())
@@ -185,6 +196,7 @@ struct NameView: View {
                 .background(Color.clear)
                 .frame(alignment: .topLeading)
                 .lineLimit(1)
+                .opacity(opacity)
         }
         .background(Color.clear)
         .padding(.leading, 10)
@@ -213,39 +225,6 @@ struct TypeView: View {
         .padding(.leading, 40)
         .padding(.top, 5)
         .background(Color.clear)
-    }
-}
-
-struct RotatingPokeballView: View {
-    @State private var isAnimating = false
-    
-    var color: Color
-    
-    var foreverAnimation: Animation {
-        Animation.linear(duration: 2.0)
-            .repeatForever(autoreverses: false)
-    }
-
-    var body: some View {
-        GeometryReader (content: { geometry in
-            let size = geometry.size
-            
-            VStack(content: {
-                Spacer()
-                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
-                    .resizable()
-                    .scaledToFit()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(color)
-                    .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                    .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
-                    .animation(self.isAnimating ? foreverAnimation : .default)
-                    .onAppear { self.isAnimating = true }
-                    .onDisappear { self.isAnimating = false }
-                Rectangle().fill(Color.clear)
-                    .frame(height: size.height/2 - 55, alignment: .center)
-            })
-        })
     }
 }
 
