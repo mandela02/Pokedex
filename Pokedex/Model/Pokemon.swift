@@ -14,6 +14,12 @@ class Pokemon: Codable, Identifiable {
     var types: [TypeResult] = []
     var sprites: PokemonImage = PokemonImage()
     var order: Int = 0
+    var species: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var baseExp: Int = 0
+    var height: Int = 0
+    var weight: Int = 0
+    var abilities: [AbilitiesResult] = []
+    
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
     }
@@ -23,6 +29,11 @@ class Pokemon: Codable, Identifiable {
         case types = "types"
         case sprites = "sprites"
         case order = "order"
+        case species = "species"
+        case baseExp = "base_experience"
+        case height = "height"
+        case weight = "weight"
+        case abilities = "abilities"
     }
 }
 

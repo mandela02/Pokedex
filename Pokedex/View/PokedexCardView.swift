@@ -11,24 +11,24 @@ struct TabableCardView: View {
     @ObservedObject var updater: PokemonUpdater
     var size: (width: CGFloat, height: CGFloat)
     @State var show: Bool = false
-    @State var loadView: Bool = false
+    @State var isTapable: Bool = false
 
     var body: some View {
         PokedexCardView(updater: updater, size: size)
             .onTapGesture(count: 1, perform: {
                 withAnimation(.spring()){
                     show.toggle()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        loadView.toggle()
-                    }
                 }
             })
             .fullScreenCover(isPresented: $show,
                              content: {
                                 PokemonDetailView(updater: updater,
-                                                  isShowing: $show,
-                                                  loadView: $loadView)
+                                                  isShowing: $show)
                              })
+            .onReceive(updater.$isFinishLoading) { _ in
+                self.isTapable = updater.isFinishLoading
+            }
+            .disabled(isTapable)
     }
 }
 
@@ -36,7 +36,8 @@ struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
 
     var size: (width: CGFloat, height: CGFloat)
-    @State var image: UIImage?
+    
+    @State var loaded: Bool = false
 
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
@@ -53,24 +54,13 @@ struct PokedexCardView: View {
 
                 VStack {
                     Spacer()
-                    ZStack {
-                        if let image = image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: size.width/2,
-                                       height: size.height,
-                                       alignment: .bottomTrailing)
-                                .padding(.all, 5)
-                        } else {
-                            DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
-                                .frame(width: size.width/2,
-                                       height: size.height,
-                                       alignment: .bottomTrailing)
-                                .padding(.all, 5)
-                        }                        
-                    }
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
+                        .frame(width: size.width/2,
+                               height: size.height,
+                               alignment: .bottomTrailing)
+                        .padding(.all, 5)
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
+                
                 VStack(alignment: .leading, spacing: 0, content: {
                     Text(updater.pokemon.name.capitalizingFirstLetter())
                         .font(.system(size: 25))

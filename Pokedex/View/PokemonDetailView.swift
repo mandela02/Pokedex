@@ -10,14 +10,12 @@ import SwiftUI
 struct PokemonDetailView: View {
     @ObservedObject var updater: PokemonUpdater
     @Binding var isShowing: Bool
-    @Binding var loadView: Bool
     
     @State var isExpanded = true
     @State var isShowingImage = true
     @State private var offset = CGSize.zero
     
     @State var opacity: Double = 1
-    @State var image: UIImage?
     
     @Namespace var namespace
     
@@ -31,7 +29,6 @@ struct PokemonDetailView: View {
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
 
-                if loadView {
                     if isExpanded {
                         RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                             .ignoresSafeArea()
@@ -43,7 +40,6 @@ struct PokemonDetailView: View {
                             .frame(width: geometry.size.width * 4/5, height: geometry.size.height * 4/5, alignment: .center)
                             .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
                     }
-                }
                 
                 VStack {
                     Spacer()
@@ -79,10 +75,8 @@ struct PokemonDetailView: View {
                             })
                 )
 
-                if loadView {
                     VStack {
                         ButtonView(isShowing: $isShowing,
-                                   loadView: $loadView,
                                    isInExpandeMode: $isExpanded,
                                    pokemon: updater.pokemon,
                                    namespace: namespace)
@@ -95,25 +89,13 @@ struct PokemonDetailView: View {
                         }
                         Spacer()
                     }
-                }
                 
                 if isShowingImage {
-                    if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                            .offset(y: -size.width/2 + 30)
-                            .matchedGeometryEffect(id: "image", in: namespace)
-                            .opacity(opacity)
-
-                    } else {
-                        DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
-                            .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                            .offset(y: -size.width/2 + 30)
-                            .matchedGeometryEffect(id: "image", in: namespace)
-                            .opacity(opacity)
-                    }
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
+                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                        .offset(y: -size.width/2 + 30)
+                        .matchedGeometryEffect(id: "image", in: namespace)
+                        .opacity(opacity)
                 } else {
                     EmptyView().matchedGeometryEffect(id: "image", in: namespace)
                 }
@@ -124,7 +106,6 @@ struct PokemonDetailView: View {
 
 struct ButtonView: View {
     @Binding var isShowing: Bool
-    @Binding var loadView: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
     var namespace: Namespace.ID
@@ -134,7 +115,6 @@ struct ButtonView: View {
     var body: some View {
             HStack{
                 Button {
-                    loadView.toggle()
                     withAnimation(.spring()){
                         isShowing.toggle()
                     }

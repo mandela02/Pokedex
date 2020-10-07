@@ -11,7 +11,9 @@ import Combine
 class PokemonUpdater: ObservableObject {
     @Published var pokemon: Pokemon = Pokemon()
     var pokemonUrl: String?
+    
     private var cancellable: AnyCancellable?
+    @Published var isFinishLoading = false
 
     deinit {
         cancellable?.cancel()
@@ -23,6 +25,9 @@ class PokemonUpdater: ObservableObject {
             .pokemon(from: url)?
             .replaceError(with: Pokemon())
             .receive(on: RunLoop.main)
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.isFinishLoading = true
+            })
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
     }
