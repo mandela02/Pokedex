@@ -13,7 +13,7 @@ class Pokemon: Codable, Identifiable {
     var name: String = ""
     var types: [TypeResult] = []
     var sprites: PokemonImage = PokemonImage()
-
+    var order: Int = 0
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
     }
@@ -22,6 +22,7 @@ class Pokemon: Codable, Identifiable {
         case name = "name"
         case types = "types"
         case sprites = "sprites"
+        case order = "order"
     }
 }
 
