@@ -20,9 +20,6 @@ struct PokedexApp: App {
 struct PokedexView: View {
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [.red, .yellow, .blue]), startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
-                .blur(radius: 3)
             PokemonListView(updater: Updater())
                 .ignoresSafeArea(.container, edges: .bottom)
                 .ignoresSafeArea(.container, edges: .top)

@@ -22,27 +22,35 @@ struct PokemonListView: View {
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
-            VStack {
-                List {
-                    ForEach(updater.pokemonsCells) { cell in
-                        let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
-                        
-                        PokemonListCellView(firstPokemon: cell.firstPokemon,
-                                            secondPokemon: cell.secondPokemon)
-                            .listRowInsets(EdgeInsets())
-                            .frame(width: geometry.size.width, height: cellHeight)
-                            .padding(.bottom, 10)
-                            .listRowBackground(Color.clear)
-                            .onAppear(perform: {
-                                updater.loadMorePokemonIfNeeded(current: cell)
-                            })
+            ZStack {
+                VStack {
+                    List {
+                        ForEach(updater.pokemonsCells) { cell in
+                            let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
+                            
+                            PokemonListCellView(firstPokemon: cell.firstPokemon,
+                                                secondPokemon: cell.secondPokemon)
+                                .listRowInsets(EdgeInsets())
+                                .frame(width: geometry.size.width, height: cellHeight)
+                                .padding(.bottom, 10)
+                                .listRowBackground(Color.clear)
+                                .onAppear(perform: {
+                                    updater.loadMorePokemonIfNeeded(current: cell)
+                                })
+                        }
+                    }
+                    .animation(.linear)
+                    .listStyle(SidebarListStyle())
+                    
+                    if updater.isLoadingPage {
+                        ProgressView()
                     }
                 }
-                .animation(.linear)
-                .listStyle(SidebarListStyle())
-                
-                if updater.isLoadingPage {
-                    ProgressView()
+                VStack {
+                    Spacer()
+                    LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0), Color.white.opacity(1)]), startPoint: .top, endPoint: .bottom)
+                        .frame(height: 100, alignment: .center)
+                        .blur(radius: 3.0)
                 }
             }
         })

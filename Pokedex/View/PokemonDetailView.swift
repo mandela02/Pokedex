@@ -14,41 +14,61 @@ struct PokemonDetailView: View {
     
     @State var currentTab: Int = 0
     @State var isExpanded = true
+    @State var isShowingImage = true
     @State private var offset = CGSize.zero
     
+    @State var imageOpacity: Double = 1
     @State var image: UIImage?
+    
+    @Namespace var namespace
     
     var body: some View {
         GeometryReader(content: { geometry in
             let size = geometry.size
-            let detailViewHeight = size.height * 0.6 + offset.height
+            let detailViewHeight = size.height * 0.6 - offset.height
+            
+            let collapseValue = geometry.size.height / 4 - 100
+            
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
 
                 if loadView {
-                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
-                        .ignoresSafeArea()
+                    if isExpanded {
+                        RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                            .ignoresSafeArea()
+                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
+                    }
                 }
                 
-
                 VStack {
                     Spacer()
-                    Rectangle().fill(Color.white).frame(height: 100, alignment: .center).cornerRadius(25).offset(y: 50)
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(height: 100, alignment: .center)
+                        .cornerRadius(25).offset(y: 50)
                     DetailView(selected: $currentTab)
                         .frame(width: size.width, height: detailViewHeight, alignment: .bottom)
                         .background(Color.white)
                 }
-                .offset(x: 0, y: offset.height * 5)
                 .gesture(DragGesture()
                             .onChanged({ gesture in
                                 self.offset = gesture.translation
+                                let hideImageRequiment = offset.height < 0 && abs(offset.height) > collapseValue
+                                withAnimation(.spring()) {
+                                    imageOpacity = 1 + Double(offset.height/collapseValue)
+                                    isShowingImage = !hideImageRequiment
+                                }
                             }).onEnded({ _ in
-                                if offset.height < 0 && offset.height > -geometry.size.height/4 {
-                                    isExpanded = false
-                                } else {
-                                    isExpanded = true
+                                if offset.height < 0 && abs(offset.height) > collapseValue {
                                     withAnimation(.spring()) {
+                                        isExpanded = false
+                                        offset = CGSize(width: .infinity, height: -size.height * 0.4 )
+                                    }
+                                } else {
+                                    withAnimation(.spring()) {
+                                        isExpanded = true
                                         offset = CGSize.zero
+                                        imageOpacity = 1
                                     }
                                 }
                             })
@@ -56,23 +76,40 @@ struct PokemonDetailView: View {
 
                 if loadView {
                     VStack {
-                        ButtonView(isShowing: $isShowing, loadView: $loadView)
-                        NameView(pokemon: updater.pokemon)
-                        TypeView(pokemon: updater.pokemon)
+                        ButtonView(isShowing: $isShowing,
+                                   loadView: $loadView,
+                                   isInExpandeMode: $isExpanded,
+                                   pokemon: updater.pokemon,
+                                   namespace: namespace)
+                        if isExpanded {
+                            NameView(pokemon: updater.pokemon,
+                                     namespace: namespace)
+                            TypeView(pokemon: updater.pokemon)
+                        }
                         Spacer()
                     }
                 }
+                
+                if isShowingImage {
+                    if let image = image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                            .offset(y: -size.width/2 + 30)
+                            .matchedGeometryEffect(id: "image", in: namespace)
+                            .opacity(imageOpacity)
 
-                if let image = image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                        .offset(y: -size.width/2 + 30)
+                    } else {
+                        DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
+                            .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                            .offset(y: -size.width/2 + 30)
+                            .matchedGeometryEffect(id: "image", in: namespace)
+                            .opacity(imageOpacity)
+
+                    }
                 } else {
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front, image: $image)
-                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                        .offset(y: -size.width/2 + 30)
+                    EmptyView().matchedGeometryEffect(id: "image", in: namespace)
                 }
             }.ignoresSafeArea()
         })
@@ -82,38 +119,53 @@ struct PokemonDetailView: View {
 struct ButtonView: View {
     @Binding var isShowing: Bool
     @Binding var loadView: Bool
+    @Binding var isInExpandeMode: Bool
+    var pokemon: Pokemon
+    var namespace: Namespace.ID
 
     var body: some View {
-        HStack{
-            Button {
-                loadView.toggle()
-                withAnimation(.spring()){
-                    isShowing.toggle()
+            HStack{
+                Button {
+                    loadView.toggle()
+                    withAnimation(.spring()){
+                        isShowing.toggle()
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
                 }
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.5))
-                    .clipShape(Circle())
+                Spacer()
+                if !isInExpandeMode {
+                    Text(pokemon.name.capitalizingFirstLetter())
+                        .font(.system(size: 25))
+                        .fontWeight(.bold)
+                        .foregroundColor(pokemon.mainType.color.text)
+                        .background(Color.clear)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                        .lineLimit(1)
+                        .matchedGeometryEffect(id: "nameText", in: namespace)
+                    Spacer()
+                }
+                Button {
+                } label: {
+                    Image(systemName: "suit.heart.fill")
+                        .foregroundColor(.red)
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(Circle())
+                }
             }
-            Spacer()
-            Button {
-            } label: {
-                Image(systemName: "suit.heart.fill")
-                    .foregroundColor(.red)
-                    .padding()
-                    .background(Color.white)
-                    .clipShape(Circle())
-            }
-        }
-        .padding(.top, 25)
-        .padding(.horizontal)
+            .padding(.top, 25)
+            .padding(.horizontal)
     }
 }
 
 struct NameView: View {
     var pokemon: Pokemon
+    var namespace: Namespace.ID
 
     var body: some View {
         HStack(alignment: .lastTextBaseline){
@@ -122,8 +174,9 @@ struct NameView: View {
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)
                 .background(Color.clear)
-                .frame(alignment: .topLeading)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .lineLimit(1)
+                .matchedGeometryEffect(id: "nameText", in: namespace)
             Spacer()
             Text(String(format: "#%03d", pokemon.order))
                 .font(.system(size: 20))
@@ -190,7 +243,7 @@ struct RotatingPokeballView: View {
                     .onAppear { self.isAnimating = true }
                     .onDisappear { self.isAnimating = false }
                 Rectangle().fill(Color.clear)
-                    .frame(height: size.height/2 - 45, alignment: .center)
+                    .frame(height: size.height/2 - 55, alignment: .center)
             })
         })
     }
@@ -232,8 +285,10 @@ struct DetailView: View {
             TabView(selection: $selected) {
                 ForEach(0...3, id: \.self) { index in
                     Text("\(index)")
+                        .background(Color.red)
                 }
             }
+            .background(Color.green)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         })
     }
