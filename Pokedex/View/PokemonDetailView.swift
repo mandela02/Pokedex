@@ -12,7 +12,6 @@ struct PokemonDetailView: View {
     @Binding var isShowing: Bool
     @Binding var loadView: Bool
     
-    @State var currentTab: Int = 0
     @State var isExpanded = true
     @State var isShowingImage = true
     @State private var offset = CGSize.zero
@@ -52,7 +51,7 @@ struct PokemonDetailView: View {
                         .fill(Color.white)
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25).offset(y: 50)
-                    DetailView(selected: $currentTab)
+                    DetailView()
                         .frame(width: size.width, height: detailViewHeight, alignment: .bottom)
                         .background(Color.white)
                 }
@@ -230,13 +229,19 @@ struct TypeView: View {
 
 struct TabControlView: View {
     @Binding var selected: Int
+    @Binding var offset: CGFloat
+
     @Namespace var namespace
     var body: some View {
-        HStack(alignment: .center, spacing: 1, content: {
-            ForEach(0...3, id: \.self) { index in
-                TabItem(selected: $selected, tag: index)
-            }
-        })
+        VStack(alignment: .center, spacing: 5) {
+            HStack(alignment: .center, spacing: 1, content: {
+                ForEach(0...3, id: \.self) { index in
+                    TabItem(selected: $selected, tag: index)
+                }
+            })
+            SelectedSegmentScrollView(numberOfSegment: 4, offset: $offset)
+                .frame(height: 3, alignment: .center)
+        }
     }
 }
 
@@ -245,30 +250,29 @@ struct TabItem: View {
     var tag: Int
     
     var body: some View {
-        VStack(alignment: .center, spacing: 5, content: {
-            Text("\(tag)")
-            Rectangle().fill(tag == selected ? Color.blue : Color.clear)
-                .frame(height: 3, alignment: .center)
-        })
-        .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
-        .frame(height: 50, alignment: .center)
+        Text("\(tag)")
+            .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
+            .frame(height: 50, alignment: .center)
+            .onTapGesture(count: 1, perform: {
+                self.selected = tag
+            })
     }
 }
 
 struct DetailView: View {
-    @Binding var selected: Int
+    @State var selected: Int = 0
+    @State var offset: CGFloat = 0.0
 
     var body: some View {
-        VStack(alignment: .center, spacing: 0, content: {
-            TabControlView(selected: $selected)
-            TabView(selection: $selected) {
-                ForEach(0...3, id: \.self) { index in
-                    Text("\(index)")
-                        .background(Color.red)
-                }
-            }
-            .background(Color.green)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        GeometryReader(content: { geometry in
+            VStack(alignment: .center, spacing: 0, content: {
+                TabControlView(selected: $selected, offset: $offset)
+                PagerView(index: $selected,
+                          offset: $offset,
+                          pages: (0..<4)
+                            .map { index in TextView(text: "\(index)")
+                            })
+            })
         })
     }
 }

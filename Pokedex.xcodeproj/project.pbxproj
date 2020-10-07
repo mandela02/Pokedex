@@ -33,6 +33,7 @@
 		90AD3BE7252C10F0009EECEE /* PokemonListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BE6252C10F0009EECEE /* PokemonListCellView.swift */; };
 		90AD3BEF252C2AB5009EECEE /* CacheImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AD3BEE252C2AB5009EECEE /* CacheImage.swift */; };
 		90C1E48F252DC358009FD50D /* RotatingPokeballView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C1E48E252DC358009FD50D /* RotatingPokeballView.swift */; };
+		90C1E497252DC5E0009FD50D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C1E496252DC5E0009FD50D /* PagerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		90AD3BE6252C10F0009EECEE /* PokemonListCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListCellView.swift; sourceTree = "<group>"; };
 		90AD3BEE252C2AB5009EECEE /* CacheImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheImage.swift; sourceTree = "<group>"; };
 		90C1E48E252DC358009FD50D /* RotatingPokeballView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotatingPokeballView.swift; sourceTree = "<group>"; };
+		90C1E496252DC5E0009FD50D /* PagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 			children = (
 				8407B853252CB88300341270 /* DownloadedImageView.swift */,
 				90C1E48E252DC358009FD50D /* RotatingPokeballView.swift */,
+				90C1E496252DC5E0009FD50D /* PagerView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				90AD3BDD252BFD0E009EECEE /* String+Extension.swift in Sources */,
 				907D5F5F252B1A3D00E30748 /* Pokemon.swift in Sources */,
 				90AD3BE7252C10F0009EECEE /* PokemonListCellView.swift in Sources */,
+				90C1E497252DC5E0009FD50D /* PagerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
