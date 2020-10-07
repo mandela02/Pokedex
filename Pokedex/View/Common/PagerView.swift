@@ -53,7 +53,7 @@ struct PagerView<Content: View & Identifiable>: View {
                 withAnimation {
                     self.offset = -geometry.size.width * CGFloat(self.index)
                 }
-                DispatchQueue.main.async { self.isGestureActive = false }
+                self.isGestureActive = false
             }))
             .onChange(of: index, perform: { value in
                 withAnimation(.linear) {
