@@ -88,13 +88,13 @@ struct PokemonView: View {
                 VStack(spacing: 0) {
                     Spacer()
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(HexColor.white)
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
                     DetailPageView()
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
-                        .background(Color.white)
+                        .background(HexColor.white)
                 }.simultaneousGesture(drag(in: size))
                 
                 VStack {

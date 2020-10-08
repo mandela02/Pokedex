@@ -14,7 +14,6 @@ enum Gender: String {
 
 struct AboutView: View, Identifiable {
     var id = UUID()
-    let pokemon: Pokemon
     
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
@@ -22,7 +21,7 @@ struct AboutView: View, Identifiable {
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
             
             SizeView(height: 500, weight: 500)
-                .background(Color.white)
+                .background(HexColor.white)
                 .cornerRadius(8)
                 .shadow(color: .gray, radius: 8, x: -10, y: 10)
                 .padding()
@@ -112,6 +111,6 @@ struct CustomText: View {
 
 struct PagerView_Previews: PreviewProvider {
     static var previews: some View {
-        AboutView(pokemon: Pokemon())
+        AboutView()
     }
 }
