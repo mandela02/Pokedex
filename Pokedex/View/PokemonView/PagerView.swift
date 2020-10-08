@@ -64,22 +64,3 @@ struct PagerView<Content: View & Identifiable>: View {
         }
     }
 }
-
-struct SelectedSegmentScrollView: View {
-    var numberOfSegment: Int
-    
-    @Binding var offset: CGFloat
-    
-    var body: some View {
-        GeometryReader(content: { geometry in
-            let width = geometry.size.width / CGFloat(numberOfSegment)
-            
-            ScrollView(.horizontal,
-                       showsIndicators: false) {
-                Rectangle().fill(Color.blue)
-                    .frame(width: width, height: 3, alignment: .center)
-            }
-            .offset(x: -offset / CGFloat(numberOfSegment))
-        })
-    }
-}

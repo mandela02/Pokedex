@@ -19,6 +19,10 @@ struct PokemonView: View {
     
     @Namespace private var namespace
     
+    private var safeAreaOffset: CGFloat {
+        return UIDevice().hasNotch ? 0 : 120
+    }
+    
     private func drag(in size: CGSize) -> some Gesture {
         let collapseValue = size.height / 4 - 100
         
@@ -50,7 +54,7 @@ struct PokemonView: View {
         if offset.height < 0 && abs(offset.height) > collapseValue {
             withAnimation(.spring()) {
                 isExpanded = false
-                offset = CGSize(width: .infinity, height: -size.height * 0.4 )
+                offset = CGSize(width: .infinity, height: -size.height * 0.4 + safeAreaOffset)
             }
         } else {
             withAnimation(.spring()) {
@@ -81,17 +85,17 @@ struct PokemonView: View {
                             .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
                     }
                 
-                VStack {
+                VStack(spacing: 0) {
                     Spacer()
                     Rectangle()
                         .fill(Color.white)
                         .frame(height: 100, alignment: .center)
-                        .cornerRadius(25).offset(y: 50)
+                        .cornerRadius(25)
+                        .offset(y: 50)
                     DetailPageView()
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(Color.white)
-                }
-                .gesture(drag(in: size))
+                }.simultaneousGesture(drag(in: size))
                 
                 VStack {
                     ButtonView(isShowing: $isShowing,
@@ -112,10 +116,8 @@ struct PokemonView: View {
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
                         .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
                         .offset(y: -size.width/2 + 30)
-                        .matchedGeometryEffect(id: "image", in: namespace)
+                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                         .opacity(opacity)
-                } else {
-                    EmptyView().matchedGeometryEffect(id: "image", in: namespace)
                 }
             }
             .ignoresSafeArea()
@@ -143,7 +145,7 @@ struct ButtonView: View {
                         .padding()
                         .background(Color.clear)
                         .clipShape(Circle())
-                }.disabled(!isInExpandeMode)
+                }
                 Spacer()
                 if !isInExpandeMode {
                     Text(pokemon.name.capitalizingFirstLetter())
@@ -163,9 +165,9 @@ struct ButtonView: View {
                         .padding()
                         .background(Color.clear)
                         .clipShape(Circle())
-                }.disabled(!isInExpandeMode)
+                }
             }
-            .padding(.top, 25)
+            .padding(.top, UIDevice().hasNotch ? 50 : 8)
             .padding(.horizontal)
     }
 }

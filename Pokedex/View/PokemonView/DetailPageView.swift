@@ -39,7 +39,7 @@ struct TabControlView: View {
                     TabItem(selected: $selected, tab: tab)
                 }
             })
-            SelectedSegmentScrollView(numberOfSegment: 4, offset: $offset)
+            SelectedSegmentScrollView(numberOfSegment: Tab.allCases.count, offset: $offset)
                 .frame(height: 3, alignment: .center)
         }
     }
@@ -75,6 +75,25 @@ struct DetailPageView: View {
                             .map { index in TextView(text: "\(index)")
                             })
             })
+        })
+    }
+}
+
+struct SelectedSegmentScrollView: View {
+    var numberOfSegment: Int
+    
+    @Binding var offset: CGFloat
+    
+    var body: some View {
+        GeometryReader(content: { geometry in
+            let width = geometry.size.width / CGFloat(numberOfSegment)
+            
+            ScrollView(.horizontal,
+                       showsIndicators: false) {
+                Rectangle().fill(Color.blue)
+                    .frame(width: width, height: 3, alignment: .center)
+            }
+            .offset(x: -offset / CGFloat(numberOfSegment))
         })
     }
 }
