@@ -12,16 +12,17 @@ struct TextView: View, Identifiable {
     var text: String
     
     var body: some View {
-        Text(text)
-            .foregroundColor(Color.black)
-            .padding()
-            .background(Color.white)
+        GeometryReader(content: { geometry in
+            Rectangle().fill(Color.white)
+                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+        })
     }
 }
 
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @Binding var offset: CGFloat
+    
     @State private var isGestureActive: Bool = false
 
     var pages: [Content]
@@ -33,7 +34,7 @@ struct PagerView<Content: View & Identifiable>: View {
                     ForEach(self.pages) { page in
                         page
                             .frame(width: geometry.size.width, height: geometry.size.height)
-                            .background(Color.white)
+                            .background(Color.clear)
                     }
                 }
             }
@@ -54,7 +55,7 @@ struct PagerView<Content: View & Identifiable>: View {
                     self.offset = -geometry.size.width * CGFloat(self.index)
                 }
                 self.isGestureActive = false
-            }))
+            }), including: .all)
             .onChange(of: index, perform: { value in
                 withAnimation(.linear) {
                     self.offset = -geometry.size.width * CGFloat(self.index)

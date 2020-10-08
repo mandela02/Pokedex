@@ -7,25 +7,65 @@
 
 import SwiftUI
 
-struct PokemonDetailView: View {
+struct PokemonView: View {
     @ObservedObject var updater: PokemonUpdater
     @Binding var isShowing: Bool
     
-    @State var isExpanded = true
-    @State var isShowingImage = true
+    @State private var isExpanded = true
+    @State private var isShowingImage = true
     @State private var offset = CGSize.zero
+
+    @State private var opacity: Double = 1
     
-    @State var opacity: Double = 1
+    @Namespace private var namespace
     
-    @Namespace var namespace
+    private func drag(in size: CGSize) -> some Gesture {
+        let collapseValue = size.height / 4 - 100
+        
+        return DragGesture()
+            .onChanged({ gesture in
+                if abs(gesture.translation.height) > 50 {
+                    withAnimation(.spring()) {
+                        self.offset = gesture.translation
+                        opacity = 1 + Double(offset.height/collapseValue)
+                        hideImage(in: size)
+                    }
+                }
+            }).onEnded({ _ in
+                withAnimation(.spring()) {
+                    updateView(with: size)
+                }
+            })
+        }
+    
+    private func hideImage(in size: CGSize) {
+        let collapseValue = size.height / 4 - 100
+        let hideImageRequiment = offset.height < 0 && abs(offset.height) > collapseValue
+        isShowingImage = !hideImageRequiment
+    }
+    
+    private func updateView(with size: CGSize) {
+        let collapseValue = size.height / 4 - 100
+
+        if offset.height < 0 && abs(offset.height) > collapseValue {
+            withAnimation(.spring()) {
+                isExpanded = false
+                offset = CGSize(width: .infinity, height: -size.height * 0.4 )
+            }
+        } else {
+            withAnimation(.spring()) {
+                isExpanded = true
+                offset = CGSize.zero
+                opacity = 1
+            }
+        }
+    }
     
     var body: some View {
         GeometryReader(content: { geometry in
             let size = geometry.size
             let detailViewHeight = size.height * 0.6 - offset.height
-            
-            let collapseValue = geometry.size.height / 4 - 100
-            
+                        
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
 
@@ -47,59 +87,38 @@ struct PokemonDetailView: View {
                         .fill(Color.white)
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25).offset(y: 50)
-                    DetailView()
-                        .frame(width: size.width, height: detailViewHeight, alignment: .bottom)
+                    DetailPageView()
+                        .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(Color.white)
                 }
-                .gesture(DragGesture()
-                            .onChanged({ gesture in
-                                self.offset = gesture.translation
-                                let hideImageRequiment = offset.height < 0 && abs(offset.height) > collapseValue
-                                withAnimation(.spring()) {
-                                    opacity = 1 + Double(offset.height/collapseValue)
-                                    isShowingImage = !hideImageRequiment
-                                }
-                            }).onEnded({ _ in
-                                if offset.height < 0 && abs(offset.height) > collapseValue {
-                                    withAnimation(.spring()) {
-                                        isExpanded = false
-                                        offset = CGSize(width: .infinity, height: -size.height * 0.4 )
-                                    }
-                                } else {
-                                    withAnimation(.spring()) {
-                                        isExpanded = true
-                                        offset = CGSize.zero
-                                        opacity = 1
-                                    }
-                                }
-                            })
-                )
-
-                    VStack {
-                        ButtonView(isShowing: $isShowing,
-                                   isInExpandeMode: $isExpanded,
-                                   pokemon: updater.pokemon,
-                                   namespace: namespace)
-                        if isExpanded {
-                            NameView(pokemon: updater.pokemon,
-                                     namespace: namespace,
-                                     opacity: $opacity)
-                            TypeView(pokemon: updater.pokemon)
-                                .opacity(opacity)
-                        }
-                        Spacer()
+                .gesture(drag(in: size))
+                
+                VStack {
+                    ButtonView(isShowing: $isShowing,
+                               isInExpandeMode: $isExpanded,
+                               pokemon: updater.pokemon,
+                               namespace: namespace)
+                    if isExpanded {
+                        NameView(pokemon: updater.pokemon,
+                                 namespace: namespace,
+                                 opacity: $opacity)
+                        TypeView(pokemon: updater.pokemon)
+                            .opacity(opacity)
                     }
+                    Spacer()
+                }
                 
                 if isShowingImage {
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
-                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                        .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
                         .offset(y: -size.width/2 + 30)
                         .matchedGeometryEffect(id: "image", in: namespace)
                         .opacity(opacity)
                 } else {
                     EmptyView().matchedGeometryEffect(id: "image", in: namespace)
                 }
-            }.ignoresSafeArea()
+            }
+            .ignoresSafeArea()
         })
     }
 }
@@ -124,7 +143,7 @@ struct ButtonView: View {
                         .padding()
                         .background(Color.clear)
                         .clipShape(Circle())
-                }
+                }.disabled(!isInExpandeMode)
                 Spacer()
                 if !isInExpandeMode {
                     Text(pokemon.name.capitalizingFirstLetter())
@@ -144,7 +163,7 @@ struct ButtonView: View {
                         .padding()
                         .background(Color.clear)
                         .clipShape(Circle())
-                }
+                }.disabled(!isInExpandeMode)
             }
             .padding(.top, 25)
             .padding(.horizontal)
@@ -204,55 +223,5 @@ struct TypeView: View {
         .padding(.leading, 40)
         .padding(.top, 5)
         .background(Color.clear)
-    }
-}
-
-struct TabControlView: View {
-    @Binding var selected: Int
-    @Binding var offset: CGFloat
-
-    @Namespace var namespace
-    var body: some View {
-        VStack(alignment: .center, spacing: 5) {
-            HStack(alignment: .center, spacing: 1, content: {
-                ForEach(0...3, id: \.self) { index in
-                    TabItem(selected: $selected, tag: index)
-                }
-            })
-            SelectedSegmentScrollView(numberOfSegment: 4, offset: $offset)
-                .frame(height: 3, alignment: .center)
-        }
-    }
-}
-
-struct TabItem: View {
-    @Binding var selected: Int
-    var tag: Int
-    
-    var body: some View {
-        Text("\(tag)")
-            .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
-            .frame(height: 50, alignment: .center)
-            .onTapGesture(count: 1, perform: {
-                self.selected = tag
-            })
-    }
-}
-
-struct DetailView: View {
-    @State var selected: Int = 0
-    @State var offset: CGFloat = 0.0
-
-    var body: some View {
-        GeometryReader(content: { geometry in
-            VStack(alignment: .center, spacing: 0, content: {
-                TabControlView(selected: $selected, offset: $offset)
-                PagerView(index: $selected,
-                          offset: $offset,
-                          pages: (0..<4)
-                            .map { index in TextView(text: "\(index)")
-                            })
-            })
-        })
     }
 }
