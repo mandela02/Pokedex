@@ -57,7 +57,9 @@ struct TabItem: View {
             .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
             .frame(height: 50, alignment: .center)
             .onTapGesture(count: 1, perform: {
-                self.selected = tab.rawValue
+                withAnimation(.spring()) {
+                    self.selected = tab.rawValue
+                }
             })
     }
 }
@@ -84,7 +86,7 @@ struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
     
-    let views = [AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon())]
+    let views = Tab.allCases.map({PageContentView(tab: $0)})
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -95,5 +97,27 @@ struct DetailPageView: View {
                           pages: views)
             })
         })
+    }
+}
+
+struct PageContentView: View, Identifiable {
+    var id = UUID()
+    var tab: Tab
+    
+    var body: some View {
+        containedView()
+    }
+    
+    func containedView() -> AnyView {
+        switch tab {
+        case .about:
+            return AnyView(AboutView())
+        case .stats:
+            return AnyView(StatsView())
+        case .evolution:
+            return AnyView(StatsView())
+        case .moves:
+            return AnyView(StatsView())
+        }
     }
 }

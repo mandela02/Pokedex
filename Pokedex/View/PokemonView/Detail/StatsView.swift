@@ -73,7 +73,9 @@ struct StatsView: View, Identifiable {
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
-        }
+            
+            Spacer()
+        }.padding(.top, 20)
     }
 }
 

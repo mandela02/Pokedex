@@ -40,7 +40,7 @@ struct PagerView<Content: View & Identifiable>: View {
                     ForEach(self.pages) { page in
                         page
                             .frame(width: geometry.size.width, height: geometry.size.height)
-                            .background(Color.clear)
+                            .background(HexColor.white)
                     }
                 }
             }
@@ -63,7 +63,7 @@ struct TextView: View, Identifiable {
     
     var body: some View {
         GeometryReader(content: { geometry in
-            Rectangle().fill(Color.white)
+            Rectangle().fill(HexColor.white)
                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
         })
     }
