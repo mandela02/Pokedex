@@ -22,7 +22,7 @@ struct TabableCardView: View {
             })
             .fullScreenCover(isPresented: $show,
                              content: {
-                                PokemonDetailView(updater: updater,
+                                PokemonView(updater: updater,
                                                   isShowing: $show)
                              })
             .onReceive(updater.$isFinishLoading) { _ in
