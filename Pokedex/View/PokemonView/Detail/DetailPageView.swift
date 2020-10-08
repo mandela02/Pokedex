@@ -27,21 +27,22 @@ enum Tab: Int, CaseIterable {
     }
 }
 
-struct TabControlView: View {
-    @Binding var selected: Int
+struct SelectedSegmentScrollView: View {
+    var numberOfSegment: Int
+    
     @Binding var offset: CGFloat
-
-    @Namespace var namespace
+    
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            HStack(alignment: .center, spacing: 1, content: {
-                ForEach(Tab.allCases, id: \.self) { tab in
-                    TabItem(selected: $selected, tab: tab)
-                }
-            })
-            SelectedSegmentScrollView(numberOfSegment: Tab.allCases.count, offset: $offset)
-                .frame(height: 3, alignment: .center)
-        }
+        GeometryReader(content: { geometry in
+            let width = geometry.size.width / CGFloat(numberOfSegment)
+            
+            ScrollView(.horizontal,
+                       showsIndicators: false) {
+                Rectangle().fill(Color.blue)
+                    .frame(width: width, height: 3, alignment: .center)
+            }
+            .offset(x: -offset / CGFloat(numberOfSegment))
+        })
     }
 }
 
@@ -61,9 +62,29 @@ struct TabItem: View {
     }
 }
 
+struct TabControlView: View {
+    @Binding var selected: Int
+    @Binding var offset: CGFloat
+
+    @Namespace var namespace
+    var body: some View {
+        VStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .center, spacing: 1, content: {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    TabItem(selected: $selected, tab: tab)
+                }
+            })
+            SelectedSegmentScrollView(numberOfSegment: Tab.allCases.count, offset: $offset)
+                .frame(height: 3, alignment: .center)
+        }
+    }
+}
+
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
+    
+    let views = [AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon()), AboutView(pokemon: Pokemon())]
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -71,29 +92,8 @@ struct DetailPageView: View {
                 TabControlView(selected: $selected, offset: $offset)
                 PagerView(index: $selected,
                           offset: $offset,
-                          pages: (0..<4)
-                            .map { index in TextView(text: "\(index)")
-                            })
+                          pages: views)
             })
-        })
-    }
-}
-
-struct SelectedSegmentScrollView: View {
-    var numberOfSegment: Int
-    
-    @Binding var offset: CGFloat
-    
-    var body: some View {
-        GeometryReader(content: { geometry in
-            let width = geometry.size.width / CGFloat(numberOfSegment)
-            
-            ScrollView(.horizontal,
-                       showsIndicators: false) {
-                Rectangle().fill(Color.blue)
-                    .frame(width: width, height: 3, alignment: .center)
-            }
-            .offset(x: -offset / CGFloat(numberOfSegment))
         })
     }
 }
