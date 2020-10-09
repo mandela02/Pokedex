@@ -11,11 +11,17 @@ class Species: Codable {
     var name: String = ""
     var baseHappiness: Int = 0
     var flavorTextEntries: [FlavorTextEntry] = []
+    var genderRate: Int = 1
+    var eggGroup: [BasePokemonUrlResult] = []
+    var habitat: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
     
     enum CodingKeys: String, CodingKey {
         case name
         case baseHappiness = "base_happiness"
         case flavorTextEntries = "flavor_text_entries"
+        case genderRate = "gender_rate"
+        case eggGroup = "egg_groups"
+        case habitat
     }
 }
 

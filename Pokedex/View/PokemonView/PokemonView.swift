@@ -101,7 +101,7 @@ struct PokemonView: View {
                     DetailPageView(of: updater.pokemon, isAllowPaging: $isAllowPaging)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
-                }.simultaneousGesture(drag(in: size))
+                }.gesture(drag(in: size))
                 
                 VStack {
                     ButtonView(isShowing: $isShowing,

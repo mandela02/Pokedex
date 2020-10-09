@@ -10,6 +10,15 @@ import SwiftUI
 enum Gender: String {
     case male
     case female
+    case non
+    
+    var color: Color {
+        switch self {
+        case .female: return .pink
+        case .male: return .blue
+        case .non: return .purple
+        }
+    }
 }
 
 struct AboutView: View, Identifiable {
@@ -20,47 +29,59 @@ struct AboutView: View, Identifiable {
     @State var description: String = ""
     
     var body: some View {
-        VStack(alignment: .center, spacing: 5) {
-            CustomText(text: description, size: 15, weight: .medium, textColor: .black)
-                .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
-                .onReceive(updater.$description) { text in
-                    description = text
-                }
-            
-            SizeView(height: pokemon.height, weight: pokemon.weight)
-                .background(HexColor.white)
-                .cornerRadius(8)
-                .shadow(color: .gray, radius: 8, x: -10, y: 10)
-                .padding()
-                .padding(.bottom, 20)
-            
-            CustomText(text: "Breeding", size: 20)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 20)
-            
-            BreedingView()
-                .padding(.leading, 20)
-                .padding(.top, 10)
-            Spacer()
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .center, spacing: 5) {
+                CustomText(text: description, size: 15, weight: .medium, textColor: .black)
+                    .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+                    .onReceive(updater.$description) { text in
+                        description = text
+                    }
+                
+                SizeView(height: pokemon.height, weight: pokemon.weight)
+                    .background(HexColor.white)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 8, x: -10, y: 10)
+                    .padding()
+                    .padding(.bottom, 20)
+                
+                CustomText(text: "Breeding", size: 20)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 20)
+                
+                BreedingView(rate: updater.species.genderRate,
+                             group: updater.species.eggGroup.first?.name ?? "",
+                             habitat: updater.species.habitat.name)
+                    .padding(.leading, 20)
+                    .padding(.top, 10)
+                Spacer()
+            }.background(Color.clear)
         }.background(Color.clear)
     }
 }
 
 struct BreedingView: View {
+    var rate: Int
+    var group: String
+    var habitat: String
+    
     var body: some View {
         HStack(alignment: .center, spacing: 30) {
             VStack(alignment: .leading, spacing: 10) {
                 CustomText(text: "Gender", size: 12, weight: .bold, textColor: .gray)
                 CustomText(text: "Egg Groups", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "Egg Cycle", size: 12, weight: .bold, textColor: .gray)
+                CustomText(text: "Habitat", size: 12, weight: .bold, textColor: .gray)
             }
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .center, spacing: 20) {
-                    GenderView(gender: .male)
-                    GenderView(gender: .female)
+                    if rate > 0 {
+                        GenderView(gender: .male, rate: rate)
+                        GenderView(gender: .female, rate: rate)
+                    } else {
+                        GenderView(gender: .non, rate: rate)
+                    }
                 }
-                CustomText(text: "Monster", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "Grass", size: 12, weight: .bold, textColor: .gray)
+                CustomText(text: group.capitalizingFirstLetter(), size: 12, weight: .bold, textColor: .gray)
+                CustomText(text: habitat.capitalizingFirstLetter(), size: 12, weight: .bold, textColor: .gray)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
@@ -69,6 +90,7 @@ struct BreedingView: View {
 
 struct GenderView: View {
     var gender: Gender
+    var rate: Int
     
     var body: some View {
         HStack(spacing: 10) {
@@ -76,8 +98,8 @@ struct GenderView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 14, alignment: .center)
-                .foregroundColor(gender == .male ? .blue : .pink)
-            CustomText(text: "20%", size: 12)
+                .foregroundColor(gender.color)
+            CustomText(text: StringHelper.getGenderRateString(gender: gender, rate: rate), size: 12)
         }
     }
 }

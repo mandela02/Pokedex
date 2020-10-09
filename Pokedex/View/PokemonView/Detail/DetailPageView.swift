@@ -129,7 +129,7 @@ struct PageContentView: View, Identifiable {
     func containedView() -> AnyView {
         switch tab {
         case .about:
-            return AnyView(AboutView(pokemon: pokemon, updater: updater).animation(nil))
+            return AnyView(AboutView(pokemon: pokemon, updater: updater))
         case .stats:
             return AnyView(StatsView())
         case .evolution:
