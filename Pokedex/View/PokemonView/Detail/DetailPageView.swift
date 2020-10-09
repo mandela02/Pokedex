@@ -85,13 +85,15 @@ struct TabControlView: View {
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
+    @Binding var isAllowPaging: Bool
     var pokemon: Pokemon
 
     var views: [PageContentView] = []
     
-    init(of pokemon: Pokemon) {
+    init(of pokemon: Pokemon, isAllowPaging: Binding<Bool>) {
         self.pokemon = pokemon
         views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon)})
+        self._isAllowPaging = isAllowPaging
     }
 
     var body: some View {
@@ -100,6 +102,7 @@ struct DetailPageView: View {
                 TabControlView(selected: $selected, offset: $offset)
                 PagerView(index: $selected,
                           offset: $offset,
+                          isAllowPaging: $isAllowPaging,
                           pages: views)
             })
         })
@@ -111,6 +114,13 @@ struct PageContentView: View, Identifiable {
     
     var tab: Tab
     var pokemon: Pokemon
+    var updater: SpeciesUpdater
+    
+    init(tab: Tab, pokemon: Pokemon) {
+        self.tab = tab
+        self.pokemon = pokemon
+        self.updater = SpeciesUpdater(url: pokemon.species.url)
+    }
     
     var body: some View {
         containedView()
@@ -119,7 +129,7 @@ struct PageContentView: View, Identifiable {
     func containedView() -> AnyView {
         switch tab {
         case .about:
-            return AnyView(AboutView(of: pokemon))
+            return AnyView(AboutView(pokemon: pokemon, updater: updater).animation(nil))
         case .stats:
             return AnyView(StatsView())
         case .evolution:

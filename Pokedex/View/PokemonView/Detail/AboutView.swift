@@ -14,20 +14,18 @@ enum Gender: String {
 
 struct AboutView: View, Identifiable {
     var id = UUID()
-    
     var pokemon: Pokemon
+    var updater: SpeciesUpdater
     
-    @ObservedObject var updater: SpeciesUpdater = SpeciesUpdater(url: "")
-
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-        updater = SpeciesUpdater(url: self.pokemon.species.url)
-    }
+    @State var description: String = ""
     
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
-            CustomText(text: updater.description, size: 15, weight: .medium, textColor: .black)
+            CustomText(text: description, size: 15, weight: .medium, textColor: .black)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+                .onReceive(updater.$description) { text in
+                    description = text
+                }
             
             SizeView(height: pokemon.height, weight: pokemon.weight)
                 .background(HexColor.white)

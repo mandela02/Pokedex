@@ -35,6 +35,7 @@ enum Direction {
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @Binding var offset: CGFloat
+    @Binding var isAllowPaging: Bool
     var pages: [Content]
 
     @State private var isGestureActive: Bool = false
@@ -43,9 +44,11 @@ struct PagerView<Content: View & Identifiable>: View {
         return DragGesture().onChanged({ value in
             withAnimation(.spring()) {
                 let dirction = Direction.getDirection(value: value)
-                if dirction == .left || dirction == .right {
-                    self.isGestureActive = true
-                    self.offset = value.translation.width + -size.width * CGFloat(self.index)
+                if isAllowPaging {
+                    if dirction == .left || dirction == .right {
+                        self.isGestureActive = true
+                        self.offset = value.translation.width + -size.width * CGFloat(self.index)
+                    }
                 }
             }
         }).onEnded({ value in
@@ -79,7 +82,7 @@ struct PagerView<Content: View & Identifiable>: View {
             .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))
             .frame(width: geometry.size.width, height: nil, alignment: .leading)
             .gesture(drag(in: geometry.size))
-            .onChange(of: index, perform: { value in
+            .onChange(of: index, perform: { _ in
                 withAnimation(.linear) {
                     self.offset = -geometry.size.width * CGFloat(self.index)
                 }

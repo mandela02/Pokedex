@@ -78,18 +78,18 @@ struct PokemonView: View {
                         
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
-
-                    if isExpanded {
-                        RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
-                            .ignoresSafeArea()
-                            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
-                        
-                    } else {
-                        RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
-                            .ignoresSafeArea()
-                            .frame(width: geometry.size.width * 4/5, height: geometry.size.height * 4/5, alignment: .center)
-                            .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
-                    }
+                
+                if isExpanded {
+                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                        .ignoresSafeArea()
+                        .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
+                    
+                } else {
+                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                        .ignoresSafeArea()
+                        .frame(width: geometry.size.width * 4/5, height: geometry.size.height * 4/5, alignment: .center)
+                        .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
+                }
                 
                 VStack(spacing: 0) {
                     Spacer()
@@ -98,7 +98,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(of: updater.pokemon)
+                    DetailPageView(of: updater.pokemon, isAllowPaging: $isAllowPaging)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.simultaneousGesture(drag(in: size))
