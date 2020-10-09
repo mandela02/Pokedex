@@ -20,6 +20,12 @@ class PokemonUpdater: ObservableObject {
     }
     
     init(url: String) {
+        self.pokemonUrl = url
+        initPokemon()
+    }
+    
+    private func initPokemon() {
+        guard let url = pokemonUrl else { return }
         self.cancellable = Session
             .share
             .pokemon(from: url)?

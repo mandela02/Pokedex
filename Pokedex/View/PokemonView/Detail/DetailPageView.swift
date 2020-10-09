@@ -85,8 +85,14 @@ struct TabControlView: View {
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
+    var pokemon: Pokemon
+
+    var views: [PageContentView] = []
     
-    let views = Tab.allCases.map({PageContentView(tab: $0)})
+    init(of pokemon: Pokemon) {
+        self.pokemon = pokemon
+        views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon)})
+    }
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -102,7 +108,9 @@ struct DetailPageView: View {
 
 struct PageContentView: View, Identifiable {
     var id = UUID()
+    
     var tab: Tab
+    var pokemon: Pokemon
     
     var body: some View {
         containedView()
@@ -111,7 +119,7 @@ struct PageContentView: View, Identifiable {
     func containedView() -> AnyView {
         switch tab {
         case .about:
-            return AnyView(AboutView())
+            return AnyView(AboutView(of: pokemon))
         case .stats:
             return AnyView(StatsView())
         case .evolution:

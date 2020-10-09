@@ -7,29 +7,60 @@
 
 import SwiftUI
 
+enum Direction {
+    case up
+    case down
+    case left
+    case right
+    case non
+    
+    static func getDirection(value: DragGesture.Value) -> Direction {
+        if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
+            return .left
+        }
+        else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
+            return .right
+        }
+        else if value.translation.height < 0 && value.translation.width < 100 && value.translation.width > -100 {
+            return .up
+        }
+        else if value.translation.height > 0 && value.translation.width < 100 && value.translation.width > -100 {
+            return.down
+        } else {
+            return .non
+        }
+    }
+}
+
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @Binding var offset: CGFloat
-    
-    @State private var isGestureActive: Bool = false
-
     var pages: [Content]
 
+    @State private var isGestureActive: Bool = false
+    
     private func drag(in size: CGSize) -> some Gesture{
         return DragGesture().onChanged({ value in
-            self.isGestureActive = true
-            self.offset = value.translation.width + -size.width * CGFloat(self.index)
+            withAnimation(.spring()) {
+                let dirction = Direction.getDirection(value: value)
+                if dirction == .left || dirction == .right {
+                    self.isGestureActive = true
+                    self.offset = value.translation.width + -size.width * CGFloat(self.index)
+                }
+            }
         }).onEnded({ value in
-            if -value.predictedEndTranslation.width > size.width / 2, self.index < self.pages.endIndex - 1 {
-                self.index += 1
+            withAnimation(.spring()) {
+                if -value.predictedEndTranslation.width > size.width / 2, self.index < self.pages.endIndex - 1 {
+                    self.index += 1
+                }
+                if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
+                    self.index -= 1
+                }
+                withAnimation {
+                    self.offset = -size.width * CGFloat(self.index)
+                }
+                self.isGestureActive = false
             }
-            if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
-                self.index -= 1
-            }
-            withAnimation {
-                self.offset = -size.width * CGFloat(self.index)
-            }
-            self.isGestureActive = false
         })
     }
     

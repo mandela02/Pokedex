@@ -15,12 +15,21 @@ enum Gender: String {
 struct AboutView: View, Identifiable {
     var id = UUID()
     
+    var pokemon: Pokemon
+    
+    @ObservedObject var updater: SpeciesUpdater = SpeciesUpdater(url: "")
+
+    init(of pokemon: Pokemon) {
+        self.pokemon = pokemon
+        updater = SpeciesUpdater(url: self.pokemon.species.url)
+    }
+    
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
-            CustomText(text: "\tLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.", size: 20, weight: .medium, textColor: .black)
+            CustomText(text: updater.description, size: 15, weight: .medium, textColor: .black)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
             
-            SizeView(height: 500, weight: 500)
+            SizeView(height: pokemon.height, weight: pokemon.weight)
                 .background(HexColor.white)
                 .cornerRadius(8)
                 .shadow(color: .gray, radius: 8, x: -10, y: 10)
@@ -81,13 +90,13 @@ struct SizeView: View {
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 CustomText(text: "Height", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "\(height)", size: 10, weight: .semibold)
+                CustomText(text: StringHelper.heightString(from: height), size: 10, weight: .semibold)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 CustomText(text: "Weight", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "\(weight)", size: 10, weight: .semibold)
+                CustomText(text: StringHelper.weightString(from: weight), size: 10, weight: .semibold)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }.padding()
     }
@@ -106,11 +115,5 @@ struct CustomText: View {
             .fontWeight(weight)
             .foregroundColor(textColor)
             .background(background)
-    }
-}
-
-struct PagerView_Previews: PreviewProvider {
-    static var previews: some View {
-        AboutView()
     }
 }

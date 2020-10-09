@@ -16,7 +16,8 @@ struct PokemonView: View {
     @State private var offset = CGSize.zero
 
     @State private var opacity: Double = 1
-    
+    @State private var isAllowPaging: Bool = true
+
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
@@ -29,7 +30,11 @@ struct PokemonView: View {
         return DragGesture()
             .onChanged({ gesture in
                 if abs(gesture.translation.height) > 50 {
+                    let direction = Direction.getDirection(value: gesture)
                     withAnimation(.spring()) {
+                        if direction == .up || direction == .down {
+                            isAllowPaging = false
+                        }
                         self.offset = gesture.translation
                         opacity = 1 + Double(offset.height/collapseValue)
                         hideImage(in: size)
@@ -37,6 +42,7 @@ struct PokemonView: View {
                 }
             }).onEnded({ _ in
                 withAnimation(.spring()) {
+                    isAllowPaging = true
                     updateView(with: size)
                 }
             })
@@ -92,7 +98,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView()
+                    DetailPageView(of: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.simultaneousGesture(drag(in: size))
