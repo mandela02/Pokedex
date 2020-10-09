@@ -19,6 +19,7 @@ class Pokemon: Codable, Identifiable {
     var height: Int = 0
     var weight: Int = 0
     var abilities: [AbilitiesResult] = []
+    var stats: [PokeStat] = []
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -34,6 +35,7 @@ class Pokemon: Codable, Identifiable {
         case height = "height"
         case weight = "weight"
         case abilities = "abilities"
+        case stats
     }
 }
 
@@ -78,5 +80,41 @@ class OtherImageResult: Codable {
     enum CodingKeys: String, CodingKey {
         case dreamWorld = "dream_world"
         case artwork = "official-artwork"
+    }
+}
+
+class PokeStat: Codable, Identifiable {
+    var id = UUID().uuidString
+    var baseStat: Int = 0
+    var effort: Int = 0
+    var statUrl: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var stat: Stat? {
+        switch statUrl.name {
+        case "hp":
+            return .hp
+        case "attack":
+            return .attack
+        case "defense":
+            return .defense
+        case "special-defense":
+            return .spDef
+        case "special-attack":
+            return .spAtk
+        case "speed":
+            return .speed
+        default:
+            return .total
+        }
+    }
+    
+    init(statUrl: BasePokemonUrlResult, baseStat: Int) {
+        self.statUrl = statUrl
+        self.baseStat = baseStat
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case baseStat = "base_stat"
+        case effort
+        case statUrl = "stat"
     }
 }
