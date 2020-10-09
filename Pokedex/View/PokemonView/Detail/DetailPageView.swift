@@ -131,11 +131,11 @@ struct PageContentView: View, Identifiable {
         case .about:
             return AnyView(AboutView(pokemon: pokemon, updater: updater))
         case .stats:
-            return AnyView(StatsView())
+            return AnyView(StatsView(pokemon: pokemon))
         case .evolution:
-            return AnyView(StatsView())
+            return AnyView(StatsView(pokemon: pokemon))
         case .moves:
-            return AnyView(StatsView())
+            return AnyView(StatsView(pokemon: pokemon))
         }
     }
 }

@@ -38,7 +38,7 @@ enum Stat: Int, CaseIterable {
     var maxValue: Int {
         switch self {
         case .total:
-            return Stat.allCases.count * 100
+            return (Stat.allCases.count - 1) * 100
         default:
             return 100
         }
@@ -47,20 +47,30 @@ enum Stat: Int, CaseIterable {
 
 struct StatsView: View, Identifiable {
     var id = UUID()
-    let numbers: [Int] = Stat.allCases.map{$0.rawValue*10}
+    let pokemon = Pokemon()
+    
+    var numbers: [PokeStat] = []
+    
+    init(pokemon: Pokemon) {
+        numbers = pokemon.stats
+        let allStat = pokemon.stats.map({$0.baseStat}).reduce(0, +)
+        numbers.append(PokeStat(statUrl: BasePokemonUrlResult(name: "Total", url: ""), baseStat: allStat))
+    }
     
     var body: some View {
         VStack(spacing: 15) {
             VStack(spacing: 10) {
-                ForEach(Stat.allCases, id: \.self) { stat in
-                    LevelInformationView(stat: stat,
-                                         amount: numbers[stat.rawValue])
+                ForEach(numbers) { pokeStat in
+                    if let stat = pokeStat.stat {
+                        LevelInformationView(stat: stat,
+                                             amount: pokeStat.baseStat)
+                    }
                 }
             }
             .padding(.leading, 20)
             .padding(.trailing, 20)
 
-            
+
             CustomText(text: "Type defenses", size: 15, weight: .bold, textColor: .black)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
@@ -88,7 +98,7 @@ struct LevelInformationView: View {
             CustomText(text: stat.title, size: 12, weight: .bold, textColor: .gray)
                 .frame(width: 80, alignment: .leading)
             CustomText(text: "\(amount)", size: 12, weight: .bold, textColor: .black)
-                .frame(width: 20, alignment: .leading)
+                .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)
             LevelBar(level: amount,
                      maxLevel: stat.maxValue)
@@ -103,13 +113,16 @@ struct LevelBar: View {
     
     var body: some View {
         GeometryReader(content: { geometry in
-            let redWidth = geometry.size.width * CGFloat(level)/CGFloat(maxLevel)
+            let ratio = level >= maxLevel ? 1 : CGFloat(level)/CGFloat(maxLevel)
+            let redWidth = geometry.size.width * ratio
             
             HStack(alignment: .center, spacing: 0) {
                 Rectangle().fill(Color.red)
                     .frame(width: redWidth, alignment: .center)
+                    .clipped()
                 Rectangle().fill(Color.gray.opacity(0.5))
                     .frame(width: geometry.size.width - redWidth, alignment: .center)
+                    .clipped()
             }
         })
     }
@@ -117,6 +130,6 @@ struct LevelBar: View {
 
 struct StatsView_Previews: PreviewProvider {
     static var previews: some View {
-        StatsView()
+        StatsView(pokemon: Pokemon())
     }
 }
