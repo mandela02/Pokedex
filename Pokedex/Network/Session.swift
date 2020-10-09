@@ -41,4 +41,13 @@ class Session {
             .decode(type: Pokemon.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
+    
+    func species(from url: String) -> AnyPublisher<Species, Error>? {
+        guard let url = URL(string: url) else { return nil }
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .mapError { $0 as Error }
+            .map { $0.data }
+            .decode(type: Species.self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
 }

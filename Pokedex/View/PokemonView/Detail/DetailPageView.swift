@@ -85,8 +85,16 @@ struct TabControlView: View {
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
+    @Binding var isAllowPaging: Bool
+    var pokemon: Pokemon
+
+    var views: [PageContentView] = []
     
-    let views = Tab.allCases.map({PageContentView(tab: $0)})
+    init(of pokemon: Pokemon, isAllowPaging: Binding<Bool>) {
+        self.pokemon = pokemon
+        views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon)})
+        self._isAllowPaging = isAllowPaging
+    }
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -94,6 +102,7 @@ struct DetailPageView: View {
                 TabControlView(selected: $selected, offset: $offset)
                 PagerView(index: $selected,
                           offset: $offset,
+                          isAllowPaging: $isAllowPaging,
                           pages: views)
             })
         })
@@ -102,7 +111,16 @@ struct DetailPageView: View {
 
 struct PageContentView: View, Identifiable {
     var id = UUID()
+    
     var tab: Tab
+    var pokemon: Pokemon
+    var updater: SpeciesUpdater
+    
+    init(tab: Tab, pokemon: Pokemon) {
+        self.tab = tab
+        self.pokemon = pokemon
+        self.updater = SpeciesUpdater(url: pokemon.species.url)
+    }
     
     var body: some View {
         containedView()
@@ -111,7 +129,7 @@ struct PageContentView: View, Identifiable {
     func containedView() -> AnyView {
         switch tab {
         case .about:
-            return AnyView(AboutView())
+            return AnyView(AboutView(pokemon: pokemon, updater: updater))
         case .stats:
             return AnyView(StatsView())
         case .evolution:

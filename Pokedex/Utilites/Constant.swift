@@ -11,8 +11,5 @@ import SwiftUI
 struct Constants {
     static let baseUrl = "https://pokeapi.co/api/v2/"
     static let heroId = "heroId"
-}
-
-struct HexColor {
-    static var white: Color = Color(hex: "faffff")
+    static let genderRateMaxChance = 8
 }
