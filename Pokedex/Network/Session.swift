@@ -50,4 +50,13 @@ class Session {
             .decode(type: Species.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
+    
+    func evolution(from url: String) -> AnyPublisher<Evolution, Error>? {
+        guard let url = URL(string: url) else { return nil }
+        return URLSession.shared.dataTaskPublisher(for: url)
+            .mapError { $0 as Error }
+            .map { $0.data }
+            .decode(type: Evolution.self, decoder: JSONDecoder())
+            .eraseToAnyPublisher()
+    }
 }

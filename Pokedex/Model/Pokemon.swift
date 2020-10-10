@@ -14,7 +14,7 @@ class Pokemon: Codable, Identifiable {
     var types: [TypeResult] = []
     var sprites: PokemonImage = PokemonImage()
     var order: Int = 0
-    var species: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var species: NamedAPIResource = NamedAPIResource(name: "", url: "")
     var baseExp: Int = 0
     var height: Int = 0
     var weight: Int = 0
@@ -87,7 +87,7 @@ class PokeStat: Codable, Identifiable {
     var id = UUID().uuidString
     var baseStat: Int = 0
     var effort: Int = 0
-    var statUrl: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var statUrl: NamedAPIResource = NamedAPIResource(name: "", url: "")
     var stat: Stat? {
         switch statUrl.name {
         case "hp":
@@ -107,7 +107,7 @@ class PokeStat: Codable, Identifiable {
         }
     }
     
-    init(statUrl: BasePokemonUrlResult, baseStat: Int) {
+    init(statUrl: NamedAPIResource, baseStat: Int) {
         self.statUrl = statUrl
         self.baseStat = baseStat
     }

@@ -11,5 +11,5 @@ class PokemonResult: Codable {
     var count: Int = 0
     var next: String?
     var previous: String?
-    var results: [BasePokemonUrlResult] = []
+    var results: [NamedAPIResource] = []
 }

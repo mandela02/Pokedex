@@ -12,10 +12,11 @@ class SpeciesUpdater: ObservableObject {
     @Published var species: Species = Species() {
         didSet {
             description = createText()
+            let more = EvolutionUpdater(of: species)
         }
     }
     @Published var description: String = ""
-    
+
     private var cancellable: AnyCancellable?
 
     deinit {

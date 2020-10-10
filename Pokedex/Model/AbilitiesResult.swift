@@ -8,7 +8,7 @@
 import Foundation
 
 class AbilitiesResult: Codable {
-    var ability: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var ability: NamedAPIResource = NamedAPIResource(name: "", url: "")
     var isHidden: Bool = false
     var slot: Int = 1
     
