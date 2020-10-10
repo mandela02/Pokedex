@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct PokemonListCellView: View {
-    var firstPokemon: BasePokemonUrlResult?
-    var secondPokemon: BasePokemonUrlResult?
+    var firstPokemon: NamedAPIResource?
+    var secondPokemon: NamedAPIResource?
 
     var body: some View {
         GeometryReader(content: { geometry in

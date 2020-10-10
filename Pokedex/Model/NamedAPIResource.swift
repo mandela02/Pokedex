@@ -7,7 +7,7 @@
 
 import Foundation
 
-class BasePokemonUrlResult: Codable, Identifiable {
+class NamedAPIResource: Codable, Identifiable {
     var id = UUID().uuidString
     var name: String = ""
     var url: String = ""

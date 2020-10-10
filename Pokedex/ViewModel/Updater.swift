@@ -14,12 +14,12 @@ struct PokemonCell: Identifiable, Equatable {
     }
     
     var id = UUID().uuidString
-    var firstPokemon: BasePokemonUrlResult?
-    var secondPokemon: BasePokemonUrlResult?
+    var firstPokemon: NamedAPIResource?
+    var secondPokemon: NamedAPIResource?
 }
 
 class Updater: ObservableObject {
-    @Published var pokemons: [BasePokemonUrlResult] = []
+    @Published var pokemons: [NamedAPIResource] = []
     @Published var pokemonsCells: [PokemonCell] = [PokemonCell()]
 
     
@@ -36,7 +36,7 @@ class Updater: ObservableObject {
                 canLoadMore = false
                 return
             }
-            let result = pokemonResult.results.map({BasePokemonUrlResult(name: $0.name, url: $0.url)})
+            let result = pokemonResult.results.map({NamedAPIResource(name: $0.name, url: $0.url)})
             pokemons = pokemons + result
             url = nextURL
             result.enumerated().forEach { item in

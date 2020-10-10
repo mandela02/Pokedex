@@ -9,5 +9,5 @@ import Foundation
 
 class TypeResult: Codable {
     var slot: Int = 0
-    var type: BasePokemonUrlResult = BasePokemonUrlResult(name: "", url: "")
+    var type: NamedAPIResource = NamedAPIResource(name: "", url: "")
 }

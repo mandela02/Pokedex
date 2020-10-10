@@ -54,7 +54,7 @@ struct StatsView: View, Identifiable {
     init(pokemon: Pokemon) {
         numbers = pokemon.stats
         let allStat = pokemon.stats.map({$0.baseStat}).reduce(0, +)
-        numbers.append(PokeStat(statUrl: BasePokemonUrlResult(name: "Total", url: ""), baseStat: allStat))
+        numbers.append(PokeStat(statUrl: NamedAPIResource(name: "Total", url: ""), baseStat: allStat))
     }
     
     var body: some View {
