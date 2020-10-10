@@ -70,3 +70,23 @@ struct PastMoveStatValue: Codable {
         case versionGroup = "version_group"
     }
 }
+
+
+struct ContestCombos: Codable {
+    var normal, contestCombosSuper: ContestComboDetail
+
+    enum CodingKeys: String, CodingKey {
+        case normal
+        case contestCombosSuper = "super"
+    }
+}
+
+struct ContestComboDetail: Codable {
+    var useAfter:  [NamedAPIResource]
+    var useBefore: [NamedAPIResource]?
+
+    enum CodingKeys: String, CodingKey {
+        case useAfter = "use_after"
+        case useBefore = "use_before"
+    }
+}
