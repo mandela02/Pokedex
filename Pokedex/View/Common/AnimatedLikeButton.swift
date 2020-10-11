@@ -20,7 +20,6 @@ struct HeartView: View {
     @Binding private var showSplash: Bool
     @Binding private var showSplashTilted: Bool
     @Binding var showHeart: Bool
-    @State private var opacity = 1
     
     init(isFavorite: Binding<Bool>) {
         _showHeart = isFavorite
@@ -69,10 +68,8 @@ struct HeartView: View {
                 .scaleEffect(showHeart ? 1.1 : 0)
                 .animation(Animation.interactiveSpring().delay(0.2))
             
-        }.scaleEffect(2).onTapGesture() {
+        }.onTapGesture() {
             self.showHeart.toggle()
-            self.showSplashTilted.toggle()
-            self.showSplash.toggle()
         }
     }
 }

@@ -119,7 +119,8 @@ struct PokemonView: View {
                 }
                 
                 if isShowingImage {
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
+                                        needAnimated: true)
                         .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
                         .offset(y: -size.width/2 + 30)
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
@@ -152,6 +153,7 @@ struct ButtonView: View {
                         .background(Color.clear)
                         .clipShape(Circle())
                 }
+                .frame(width: 50, height: 50, alignment: .center)
                 Spacer()
                 if !isInExpandeMode {
                     Text(pokemon.name.capitalizingFirstLetter())
@@ -168,6 +170,7 @@ struct ButtonView: View {
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())
+                    .frame(width: 50, height: 50, alignment: .center)
             }
             .padding(.top, UIDevice().hasNotch ? 50 : 8)
             .padding(.horizontal)
