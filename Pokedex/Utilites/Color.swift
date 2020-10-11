@@ -185,4 +185,5 @@ enum PokemonType: String, CaseIterable {
 
 struct HexColor {
     static var white: Color = Color(hex: "faffff")
+    static var lightGrey: Color = Color(hex: "D3D3D3")
 }

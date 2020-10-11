@@ -24,7 +24,7 @@ class EvolutionUpdater {
     
     private var cancellable: AnyCancellable?
     private var species: Species?
-
+    
     deinit {
         cancellable?.cancel()
     }
@@ -35,7 +35,7 @@ class EvolutionUpdater {
     }
     
     private func initEvolutionChain(of url: String) {
-        self.cancellable = Session.share.evolution(from: url)?
+        self.cancellable = Session.share.evolution(from: url)
             .replaceError(with: Evolution())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()

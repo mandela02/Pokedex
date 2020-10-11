@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Species: Codable {
+struct Species: Codable {
     var name: String = ""
     var baseHappiness: Int = 0
     var flavorTextEntries: [FlavorTextEntry] = []

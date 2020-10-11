@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PokemonResult: Codable {
+struct PokemonResult: Codable {
     var count: Int = 0
     var next: String?
     var previous: String?

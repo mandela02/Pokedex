@@ -7,7 +7,7 @@
 
 import Foundation
 
-class AbilitiesResult: Codable {
+struct AbilitiesResult: Codable {
     var ability: NamedAPIResource = NamedAPIResource(name: "", url: "")
     var isHidden: Bool = false
     var slot: Int = 1
