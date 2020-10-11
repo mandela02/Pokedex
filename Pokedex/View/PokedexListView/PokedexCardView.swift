@@ -22,8 +22,12 @@ struct TabableCardView: View {
             })
             .fullScreenCover(isPresented: $show,
                              content: {
-                                PokemonView(updater: updater,
-                                                  isShowing: $show)
+                                NavigationView {
+                                    PokemonView(updater: updater,
+                                                      isShowing: $show)
+                                        .navigationBarTitle("")
+                                        .navigationBarHidden(true)
+                                }
                              })
             .onReceive(updater.$isFinishLoading) { _ in
                 self.isTapable = updater.isFinishLoading

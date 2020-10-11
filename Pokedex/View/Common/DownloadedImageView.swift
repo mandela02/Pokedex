@@ -79,46 +79,50 @@ struct AnimatedImageView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                 if displayImage != nil {
                                     self.image = displayImage
-                                    self.showStrokeBorder.toggle()
-                                    self.showSplash.toggle()
-                                    self.showSplashTilted.toggle()
+                                    self.showStrokeBorder = true
+                                    self.showSplash = true
+                                    self.showSplashTilted = true
                                 }
                             })
                         })
+                        .transition(.opacity)
                         .rotationEffect(.degrees(isStartWigle ? 0 : 2.5))
-                        .animation(Animation.easeInOut(duration: 0.15).repeatForever(autoreverses: true))
                         .onAppear() {
-                            isStartWigle.toggle()
+                            withAnimation(Animation.easeInOut(duration: 0.15).repeatForever(autoreverses: true)) {
+                                isStartWigle.toggle()
+                            }
                         }
                 }
-                Circle()
-                    .strokeBorder(lineWidth: showStrokeBorder ? 1 : 35/2,
-                                  antialiased: false)
-                    .opacity(showStrokeBorder ? 0 : 1)
-                    .frame(width: 35, height: 35)
-                    .foregroundColor(.purple)
-                    .scaleEffect(showStrokeBorder ? 1 : 0)
-                    .animation(Animation.easeInOut(duration: 0.5))
-                    .scaleEffect(7)
+                ZStack {
+                    Circle()
+                        .strokeBorder(lineWidth: showStrokeBorder ? 1 : 35/2,
+                                      antialiased: false)
+                        .opacity(showStrokeBorder ? 0 : 1)
+                        .frame(width: 35, height: 35)
+                        .foregroundColor(.purple)
+                        .scaleEffect(showStrokeBorder ? 1 : 0)
+                        .animation(Animation.easeInOut(duration: 0.5))
+                        .scaleEffect(7)
 
-                Image("splash")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .opacity(showSplash ? 0 : 1)
-                    .frame(width: 48, height: 48)
-                    .scaleEffect(showSplash ? 1 : 0)
-                    .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
-                    .scaleEffect(7)
+                    Image("splash")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .opacity(showSplash ? 0 : 1)
+                        .frame(width: 48, height: 48)
+                        .scaleEffect(showSplash ? 1 : 0)
+                        .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
+                        .scaleEffect(7)
 
-                Image("splash_tilted")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .opacity(showSplashTilted ? 0 : 1)
-                    .frame(width: 50, height: 50)
-                    .scaleEffect(showSplashTilted ? 1.1 : 0)
-                    .scaleEffect(1.1)
-                    .animation(Animation.easeOut(duration: 0.5).delay(0.1))
-                    .scaleEffect(7)
+                    Image("splash_tilted")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .opacity(showSplashTilted ? 0 : 1)
+                        .frame(width: 50, height: 50)
+                        .scaleEffect(showSplashTilted ? 1.1 : 0)
+                        .scaleEffect(1.1)
+                        .animation(Animation.easeOut(duration: 0.5).delay(0.1))
+                        .scaleEffect(7)
+                }
             }
         }
     }

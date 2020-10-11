@@ -31,10 +31,20 @@ struct RotatingPokeballView: View {
                     .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
                     .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
                     .animation(self.isAnimating ? foreverAnimation : .default)
-                    .onAppear { self.isAnimating = true }
-                    .onDisappear { self.isAnimating = false }
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            withAnimation(foreverAnimation) {
+                                self.isAnimating = true
+                            }
+                        })
+                     }
+                    .onDisappear {
+                        withAnimation(.default) {
+                            self.isAnimating = false
+                        }
+                    }
                 Rectangle().fill(Color.clear)
-                    .frame(height: size.height/2 - 55, alignment: .center)
+                    .frame(height: abs(size.height/2 - 55), alignment: .center)
             })
         })
     }
