@@ -10,8 +10,6 @@ import SwiftUI
 struct DownloadedImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
     @State private var image: UIImage?
-    @State private var isComplete: Bool = false
-    @State private var isStartWigle: Bool = false
         
     var needAnimated: Bool
     
@@ -85,12 +83,14 @@ struct AnimatedImageView: View {
                                 }
                             })
                         })
-                        .transition(.opacity)
-                        .rotationEffect(.degrees(isStartWigle ? 0 : 2.5))
+                        .rotationEffect(.degrees(isStartWigle ? 0 : 2.5), anchor: .bottom)
                         .onAppear() {
-                            withAnimation(Animation.easeInOut(duration: 0.15).repeatForever(autoreverses: true)) {
-                                isStartWigle.toggle()
-                            }
+                            // fix bug animation on iphone SE
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                                withAnimation(Animation.easeInOut(duration: 0.15).repeatForever(autoreverses: true)) {
+                                    isStartWigle.toggle()
+                                }
+                            })
                         }
                 }
                 ZStack {
