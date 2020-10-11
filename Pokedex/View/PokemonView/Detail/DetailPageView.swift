@@ -86,16 +86,14 @@ struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
     var pokemon: Pokemon
-
-    var views: [PageContentView] = []
     
     init(of pokemon: Pokemon) {
         self.pokemon = pokemon
-        views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon)})
     }
 
     var body: some View {
         GeometryReader(content: { geometry in
+            let views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon, selectedIndex: $selected)})
             VStack(alignment: .center, spacing: 0, content: {
                 TabControlView(selected: $selected, offset: $offset)
                 PagerView(index: $selected,
@@ -113,26 +111,25 @@ struct PageContentView: View, Identifiable {
     var pokemon: Pokemon
     var updater: SpeciesUpdater
     
-    init(tab: Tab, pokemon: Pokemon) {
+    @Binding var selectedIndex: Int
+
+    init(tab: Tab, pokemon: Pokemon, selectedIndex: Binding<Int>) {
         self.tab = tab
         self.pokemon = pokemon
         self.updater = SpeciesUpdater(url: pokemon.species.url)
+        self._selectedIndex = selectedIndex
     }
     
     var body: some View {
-        containedView()
-    }
-    
-    func containedView() -> AnyView {
         switch tab {
         case .about:
-            return AnyView(AboutView(pokemon: pokemon, updater: updater))
+            AboutView(pokemon: pokemon, updater: updater)
         case .stats:
-            return AnyView(StatsView(pokemon: pokemon))
+            StatsView(pokemon: pokemon, selectedIndex: $selectedIndex)
         case .evolution:
-            return AnyView(EmptyView())
+            EmptyView()
         case .moves:
-            return AnyView(EmptyView())
+            EmptyView()
         }
     }
 }
