@@ -133,9 +133,9 @@ struct PageContentView: View, Identifiable {
         case .stats:
             return AnyView(StatsView(pokemon: pokemon))
         case .evolution:
-            return AnyView(StatsView(pokemon: pokemon))
+            return AnyView(EmptyView())
         case .moves:
-            return AnyView(StatsView(pokemon: pokemon))
+            return AnyView(EmptyView())
         }
     }
 }

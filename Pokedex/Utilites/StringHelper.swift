@@ -13,6 +13,10 @@ class StringHelper {
         return englishText.map({$0.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)}).joined(separator: "\n")
     }
     
+    static func createEnglishText(from texts: [Description]) -> String {
+        return texts.filter({$0.language.name == "en"}).map({$0.description}).uniques.first ?? ""
+    }
+    
     static func weightString(from hectogram: Int) -> String {
         let weight = "%@kg (%@lbs)"
         let kilogramString = String(format: "%.1f", UnitHelper.weightInKg(from: hectogram))

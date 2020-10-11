@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum Stat: Int, CaseIterable {
+enum PokeStat: Int, CaseIterable {
     case hp
     case attack
     case defense
@@ -38,59 +38,52 @@ enum Stat: Int, CaseIterable {
     var maxValue: Int {
         switch self {
         case .total:
-            return (Stat.allCases.count - 1) * 100
+            return (PokeStat.allCases.count - 1) * 100
         default:
             return 100
         }
     }
 }
 
-struct StatsView: View, Identifiable {
-    var id = UUID()
-    let pokemon = Pokemon()
-    
-    var numbers: [PokeStat] = []
+struct StatsView: View {
+    @ObservedObject var updater: StatUpdater
     
     init(pokemon: Pokemon) {
-        numbers = pokemon.stats
-        let allStat = pokemon.stats.map({$0.baseStat}).reduce(0, +)
-        numbers.append(PokeStat(statUrl: NamedAPIResource(name: "Total", url: ""), baseStat: allStat))
+        self.updater = StatUpdater(of: pokemon)
     }
     
     var body: some View {
-        VStack(spacing: 15) {
-            VStack(spacing: 10) {
-                ForEach(numbers) { pokeStat in
-                    if let stat = pokeStat.stat {
-                        LevelInformationView(stat: stat,
-                                             amount: pokeStat.baseStat)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 15) {
+                VStack(spacing: 10) {
+                    ForEach(updater.numbers) { pokeStat in
+                        if let stat = pokeStat.stat {
+                            LevelInformationView(stat: stat,
+                                                 amount: pokeStat.baseStat)
+                        }
                     }
                 }
-            }
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-
-
-            CustomText(text: "Type defenses", size: 15, weight: .bold, textColor: .black)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
+                
+                if !updater.characteristics.isEmpty {
+                    VStack(alignment: .leading, spacing: 5, content: {
+                        CustomText(text: "Characteristics", size: 15, weight: .bold, textColor: .black)
+                        DescriptionView(characteristics: $updater.descriptions)
+                    })
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
 
-            CustomText(text: "Type defenses Type defenses Type defenses Type defenses Type defenses Type defenses Type defenses Type defenses Type defenses",
-                       size: 12,
-                       weight: .bold,
-                       textColor: .gray)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
-            
-            Spacer()
-        }.padding(.top, 20)
+                }
+                Spacer()
+            }.padding(.top, 20)
+        }
     }
 }
 
 struct LevelInformationView: View {
-    let stat: Stat
+    let stat: PokeStat
     let amount: Int
     
     var body: some View {
@@ -125,6 +118,77 @@ struct LevelBar: View {
                     .clipped()
             }
         })
+    }
+}
+
+struct DescriptionView: View {
+    @Binding var characteristics: [String]
+
+    @State private var totalHeight
+          = CGFloat.zero       // << variant for ScrollView/List
+    //    = CGFloat.infinity   // << variant for VStack
+
+    var body: some View {
+        VStack {
+            GeometryReader { geometry in
+                self.generateContent(in: geometry)
+            }
+        }
+        .frame(height: totalHeight)// << variant for ScrollView/List
+        //.frame(maxHeight: totalHeight) // << variant for VStack
+    }
+
+    private func generateContent(in geometry: GeometryProxy) -> some View {
+        var width = CGFloat.zero
+        var height = CGFloat.zero
+
+        return ZStack(alignment: .topLeading) {
+            ForEach(self.characteristics, id: \.self) { characteristic in
+                self.item(for: characteristic)
+                    .padding([.horizontal, .vertical], 4)
+                    .alignmentGuide(.leading, computeValue: { d in
+                        if (abs(width - d.width) > geometry.size.width)
+                        {
+                            width = 0
+                            height -= d.height
+                        }
+                        let result = width
+                        if let last = characteristics.last, characteristic == last {
+                            width = 0
+                        } else {
+                            width -= d.width
+                        }
+                        return result
+                    })
+                    .alignmentGuide(.top, computeValue: {_ in
+                        let result = height
+                        if let last = characteristics.last, characteristic == last {
+                            height = 0
+                        }
+                        return result
+                    })
+            }
+        }.background(viewHeightReader($totalHeight))
+    }
+
+    private func item(for text: String) -> some View {
+        Text(text)
+            .font(.system(size: 12))
+            .padding(.all, 5)
+            .font(.body)
+            .background(HexColor.lightGrey)
+            .foregroundColor(Color.white)
+            .cornerRadius(6)
+    }
+
+    private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
+        return GeometryReader { geometry -> Color in
+            let rect = geometry.frame(in: .local)
+            DispatchQueue.main.async {
+                binding.wrappedValue = rect.size.height
+            }
+            return .clear
+        }
     }
 }
 

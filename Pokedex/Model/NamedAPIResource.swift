@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NamedAPIResource: Codable, Identifiable {
+struct NamedAPIResource: Codable, Identifiable {
     var id = UUID().uuidString
     var name: String = ""
     var url: String = ""

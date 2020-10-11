@@ -7,7 +7,7 @@
 
 import Foundation
 
-class TypeResult: Codable {
+struct TypeResult: Codable {
     var slot: Int = 0
     var type: NamedAPIResource = NamedAPIResource(name: "", url: "")
 }

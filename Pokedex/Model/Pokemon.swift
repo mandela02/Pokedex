@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class Pokemon: Codable, Identifiable {
+struct Pokemon: Codable, Identifiable {
     var id = UUID().uuidString
     var name: String = ""
     var types: [TypeResult] = []
@@ -19,7 +19,7 @@ class Pokemon: Codable, Identifiable {
     var height: Int = 0
     var weight: Int = 0
     var abilities: [AbilitiesResult] = []
-    var stats: [PokeStat] = []
+    var stats: [PokeStatUrl] = []
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -39,7 +39,7 @@ class Pokemon: Codable, Identifiable {
     }
 }
 
-class PokemonImage: Codable {
+struct PokemonImage: Codable {
     var back: String?
     var backFemale: String?
     var backShiny: String?
@@ -63,7 +63,7 @@ class PokemonImage: Codable {
     }
 }
 
-class OtherImage: Codable {
+struct OtherImage: Codable {
     var front: String = ""
     var frontFemale: String?
     
@@ -73,7 +73,7 @@ class OtherImage: Codable {
     }
 }
 
-class OtherImageResult: Codable {
+struct OtherImageResult: Codable {
     var dreamWorld: OtherImage = OtherImage()
     var artwork: OtherImage = OtherImage()
     
@@ -83,12 +83,12 @@ class OtherImageResult: Codable {
     }
 }
 
-class PokeStat: Codable, Identifiable {
+struct PokeStatUrl: Codable, Identifiable {
     var id = UUID().uuidString
     var baseStat: Int = 0
     var effort: Int = 0
     var statUrl: NamedAPIResource = NamedAPIResource(name: "", url: "")
-    var stat: Stat? {
+    var stat: PokeStat? {
         switch statUrl.name {
         case "hp":
             return .hp
