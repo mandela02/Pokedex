@@ -56,7 +56,8 @@ struct AnimatedImageView: View {
     @State private var showSplash: Bool = false
     @State private var showSplashTilted: Bool = false
     @State private var showStrokeBorder: Bool  = false
-    
+    @State private var needHidden: Bool  = false
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -69,6 +70,9 @@ struct AnimatedImageView: View {
                         .animation(Animation.easeInOut(duration: 1).delay(0.5))
                         .onAppear(perform: {
                             self.isComplete.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                needHidden = true
+                            })
                         })
                 } else {
                     Image("pokeball")
@@ -104,6 +108,7 @@ struct AnimatedImageView: View {
                         .scaleEffect(showStrokeBorder ? 1 : 0)
                         .animation(Animation.easeInOut(duration: 0.5))
                         .scaleEffect(7)
+                        .isRemove(needHidden)
 
                     Image("splash")
                         .resizable()
@@ -113,6 +118,7 @@ struct AnimatedImageView: View {
                         .scaleEffect(showSplash ? 1 : 0)
                         .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
                         .scaleEffect(7)
+                        .isRemove(needHidden)
 
                     Image("splash_tilted")
                         .resizable()
@@ -123,6 +129,7 @@ struct AnimatedImageView: View {
                         .scaleEffect(1.1)
                         .animation(Animation.easeOut(duration: 0.5).delay(0.1))
                         .scaleEffect(7)
+                        .isRemove(needHidden)
                 }
             }
         }

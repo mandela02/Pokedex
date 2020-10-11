@@ -49,6 +49,7 @@ struct PulsatingPlayButton: View {
             Image(systemName: isSpeaking ? "speaker.2" : "speaker.slash")
                 .font(.largeTitle)
                 .foregroundColor(pokemon.mainType.color.text)
+                .scaleEffect(0.7)
         }
         .shadow(radius: 26)
         .onTapGesture {
