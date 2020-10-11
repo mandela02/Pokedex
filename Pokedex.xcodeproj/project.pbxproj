@@ -24,6 +24,8 @@
 		847A125F2531EF0500146D24 /* Stat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A125E2531EF0500146D24 /* Stat.swift */; };
 		847A126B2533249000146D24 /* AnimatedLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A126A2533249000146D24 /* AnimatedLikeButton.swift */; };
 		847A12802533696200146D24 /* FlexibleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A127F2533696200146D24 /* FlexibleGridView.swift */; };
+		847A128B25337ABC00146D24 /* VoiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A128A25337ABB00146D24 /* VoiceHelper.swift */; };
+		847A12902533871200146D24 /* PulsatingPlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A128F2533871200146D24 /* PulsatingPlayButton.swift */; };
 		84D9AFE5252B763500E4C9D5 /* PokemonResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D9AFE4252B763500E4C9D5 /* PokemonResult.swift */; };
 		84D9AFEA252B774800E4C9D5 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D9AFE9252B774800E4C9D5 /* Session.swift */; };
 		84D9AFEF252B776800E4C9D5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D9AFEE252B776800E4C9D5 /* Constant.swift */; };
@@ -95,6 +97,8 @@
 		847A125E2531EF0500146D24 /* Stat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stat.swift; sourceTree = "<group>"; };
 		847A126A2533249000146D24 /* AnimatedLikeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedLikeButton.swift; sourceTree = "<group>"; };
 		847A127F2533696200146D24 /* FlexibleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleGridView.swift; sourceTree = "<group>"; };
+		847A128A25337ABB00146D24 /* VoiceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceHelper.swift; sourceTree = "<group>"; };
+		847A128F2533871200146D24 /* PulsatingPlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsatingPlayButton.swift; sourceTree = "<group>"; };
 		84D9AFE4252B763500E4C9D5 /* PokemonResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonResult.swift; sourceTree = "<group>"; };
 		84D9AFE9252B774800E4C9D5 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		84D9AFEE252B776800E4C9D5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -162,6 +166,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		847A12972533874900146D24 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				90BC1ECB2530081500A39177 /* StringHelper.swift */,
+				90400AAB2530160000659CD1 /* UnitHelper.swift */,
+				847A128A25337ABB00146D24 /* VoiceHelper.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		847A12982533876700146D24 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				907D5F51252B130100E30748 /* ImageLoader.swift */,
+				90AD3BEE252C2AB5009EECEE /* CacheImage.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		84D9AFE3252B761C00E4C9D5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -278,13 +301,11 @@
 		907D5F4F252B12ED00E30748 /* Utilites */ = {
 			isa = PBXGroup;
 			children = (
+				847A12982533876700146D24 /* Common */,
+				847A12972533874900146D24 /* Helper */,
 				84D9AFF3252B801E00E4C9D5 /* Extension */,
-				907D5F51252B130100E30748 /* ImageLoader.swift */,
 				907D5F59252B186E00E30748 /* Color.swift */,
 				84D9AFEE252B776800E4C9D5 /* Constant.swift */,
-				90AD3BEE252C2AB5009EECEE /* CacheImage.swift */,
-				90BC1ECB2530081500A39177 /* StringHelper.swift */,
-				90400AAB2530160000659CD1 /* UnitHelper.swift */,
 			);
 			path = Utilites;
 			sourceTree = "<group>";
@@ -329,6 +350,7 @@
 				90C1E48E252DC358009FD50D /* RotatingPokeballView.swift */,
 				847A126A2533249000146D24 /* AnimatedLikeButton.swift */,
 				847A127F2533696200146D24 /* FlexibleGridView.swift */,
+				847A128F2533871200146D24 /* PulsatingPlayButton.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -476,12 +498,14 @@
 			files = (
 				847A1245253158D700146D24 /* Meta.swift in Sources */,
 				847A12362531586D00146D24 /* Ability.swift in Sources */,
+				847A12902533871200146D24 /* PulsatingPlayButton.swift in Sources */,
 				8422CFD1252E0F00006F4535 /* AbilitiesResult.swift in Sources */,
 				84D9AFEA252B774800E4C9D5 /* Session.swift in Sources */,
 				847A124F25315C0600146D24 /* EvolutionUpdater.swift in Sources */,
 				847A126B2533249000146D24 /* AnimatedLikeButton.swift in Sources */,
 				847A124A253158FA00146D24 /* Item.swift in Sources */,
 				907D5F74252B272600E30748 /* PokemonListView.swift in Sources */,
+				847A128B25337ABC00146D24 /* VoiceHelper.swift in Sources */,
 				84707A982530CB0400DEA772 /* Evolution.swift in Sources */,
 				90400AAC2530160000659CD1 /* UnitHelper.swift in Sources */,
 				90454D2A252E9E1F000F5B79 /* DetailPageView.swift in Sources */,

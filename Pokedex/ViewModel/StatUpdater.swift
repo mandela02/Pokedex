@@ -27,7 +27,7 @@ class StatUpdater: ObservableObject {
         didSet {
             if !characteristics.isEmpty {
                 descriptions = characteristics
-                    .map({StringHelper.createEnglishText(from: $0.descriptions)})
+                    .map({StringHelper.getEnglishTexts(from: $0.descriptions)})
             }
         }
     }

@@ -9,6 +9,9 @@ import SwiftUI
 
 struct PokemonView: View {
     @ObservedObject var updater: PokemonUpdater
+    @ObservedObject var voiceUpdater: VoiceHelper = VoiceHelper()
+    @State var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
+    
     @Binding var isShowing: Bool
     
     @State private var isExpanded = true
@@ -16,6 +19,7 @@ struct PokemonView: View {
     @State private var offset = CGSize.zero
 
     @State private var opacity: Double = 1
+    @State private var image: UIImage?
 
     @Namespace private var namespace
     
@@ -81,7 +85,9 @@ struct PokemonView: View {
                 } else {
                     RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                         .ignoresSafeArea()
-                        .frame(width: geometry.size.width * 4/5, height: geometry.size.height * 4/5, alignment: .center)
+                        .frame(width: geometry.size.width * 4/5,
+                               height: geometry.size.height * 4/5,
+                               alignment: .center)
                         .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
                 }
                 
@@ -92,7 +98,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(of: updater.pokemon)
+                    DetailPageView(updater: $speciesUpdater, pokemon: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.gesture(drag(in: size))
@@ -114,14 +120,43 @@ struct PokemonView: View {
                 
                 if isShowingImage {
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
-                                        needAnimated: true)
+                                        needAnimated: true,
+                                        image: $image)
                         .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
                         .offset(y: -size.width/2 + 30)
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                         .opacity(opacity)
+                        .gesture(drag(in: size))
                 }
+                
+                VStack(alignment: .trailing) {
+                    Spacer()
+                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+                                        about: $updater.pokemon)
+                        .padding(.trailing, 30)
+                        .padding(.bottom, 30)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .bottomTrailing)
             }
             .ignoresSafeArea()
+            .onChange(of: image) { image in
+                withAnimation(.spring()) {
+                    voiceUpdater.isSpeaking = true
+                }
+            }
+            .onAppear {
+                speciesUpdater = SpeciesUpdater(url: updater.pokemon.species.url)
+                voiceUpdater.pokemon = updater.pokemon
+                voiceUpdater.species = speciesUpdater.species
+            }
+            .onDisappear {
+                withAnimation(.spring()) {
+                    voiceUpdater.isSpeaking = false
+                }
+            }
+            .onReceive(speciesUpdater.$species, perform: { species in
+                voiceUpdater.species = species
+            })
         })
     }
 }
