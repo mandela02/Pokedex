@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Pokemon: Codable, Identifiable {
     var id = UUID().uuidString
+    
     var name: String = ""
     var types: [TypeResult] = []
     var sprites: PokemonImage = PokemonImage()
@@ -64,7 +65,7 @@ struct PokemonImage: Codable {
 }
 
 struct OtherImage: Codable {
-    var front: String = ""
+    var front: String?
     var frontFemale: String?
     
     enum CodingKeys: String, CodingKey {

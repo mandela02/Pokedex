@@ -60,7 +60,7 @@ struct PokedexCardView: View {
 
                 VStack {
                     Spacer()
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
                                         needAnimated: false,
                                         image: $image)
                         .frame(width: size.width/2,

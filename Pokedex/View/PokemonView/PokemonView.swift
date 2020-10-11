@@ -119,7 +119,7 @@ struct PokemonView: View {
                 }
                 
                 if isShowingImage {
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
                                         needAnimated: true,
                                         image: $image)
                         .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)

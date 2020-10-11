@@ -10,6 +10,7 @@ import SwiftUI
 struct PokemonListView: View {
     @ObservedObject var updater: Updater
     @State var isLoading = false
+    @State var isFinal = false
     
     init(updater: Updater) {
         self.updater = updater
@@ -24,24 +25,30 @@ struct PokemonListView: View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
             ZStack {
-                List {
-                    ForEach(updater.pokemonsCells) { cell in
-                        let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
+                VStack {
+                    List {
+                        ForEach(updater.pokemonsCells) { cell in
+                            let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
+                            
+                            PokemonListCellView(firstPokemon: cell.firstPokemon,
+                                                secondPokemon: cell.secondPokemon)
+                                .listRowInsets(EdgeInsets())
+                                .frame(width: geometry.size.width, height: cellHeight)
+                                .padding(.bottom, 10)
+                                .listRowBackground(Color.clear)
+                                .onAppear(perform: {
+                                    updater.loadMorePokemonIfNeeded(current: cell)
+                                })
+                        }
                         
-                        PokemonListCellView(firstPokemon: cell.firstPokemon,
-                                            secondPokemon: cell.secondPokemon)
-                            .listRowInsets(EdgeInsets())
-                            .frame(width: geometry.size.width, height: cellHeight)
-                            .padding(.bottom, 10)
-                            .listRowBackground(Color.clear)
-                            .onAppear(perform: {
-                                updater.loadMorePokemonIfNeeded(current: cell)
-                            })
+                        if isFinal {
+                            CompleteView().frame(height: 200)
+                        }
                     }
+                    .animation(.linear)
+                    .listStyle(SidebarListStyle())
+                    .blur(radius: isLoading ? 3.0 : 0)
                 }
-                .animation(.linear)
-                .listStyle(SidebarListStyle())
-                .blur(radius: isLoading ? 3.0 : 0)
     
                 VStack {
                     Spacer()
@@ -55,9 +62,16 @@ struct PokemonListView: View {
                 }
             }
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation(Animation.spring()) {
                         self.isLoading = isLoading
+                    }
+                }
+            })
+            .onReceive(updater.$isFinal, perform: { isFinal in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    withAnimation(Animation.spring()) {
+                        self.isFinal = isFinal
                     }
                 }
             })
