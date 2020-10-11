@@ -10,14 +10,18 @@ import Combine
 import AVFoundation
 
 class PokemonUpdater: ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon()
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            
+        }
+    }
     var pokemonUrl: String?
         
     @Published var isFinishLoading = false
     @Published var isSelected = false {
         didSet {
             if isSelected {
-                //do something
+                print(pokemon)
             }
         }
     }

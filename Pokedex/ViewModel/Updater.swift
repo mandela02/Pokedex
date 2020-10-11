@@ -24,8 +24,9 @@ class Updater: ObservableObject {
 
     
     private var canLoadMore = true
-    @Published private var isLoadingPage = false
-    
+    @Published var isLoadingPage = false
+    @Published var isFinal = false
+
     var url: String = UrlType.pokemons.urlString
     
     private var cancellable: AnyCancellable?
@@ -34,6 +35,8 @@ class Updater: ObservableObject {
         didSet {
             guard let nextURL = pokemonResult.next else {
                 canLoadMore = false
+                isLoadingPage = false
+                isFinal = true
                 return
             }
             let result = pokemonResult.results.map({NamedAPIResource(name: $0.name, url: $0.url)})
