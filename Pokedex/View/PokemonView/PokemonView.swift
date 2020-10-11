@@ -201,7 +201,7 @@ struct ButtonView: View {
                     .clipShape(Circle())
                     .frame(width: 50, height: 50, alignment: .center)
             }
-            .padding(.top, UIDevice().hasNotch ? 50 : 8)
+            .padding(.top, UIDevice().hasNotch ? 44 : 8)
             .padding(.horizontal)
     }
 }

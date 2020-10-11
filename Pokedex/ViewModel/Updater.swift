@@ -24,7 +24,7 @@ class Updater: ObservableObject {
 
     
     private var canLoadMore = true
-    @Published var isLoadingPage = false
+    @Published private var isLoadingPage = false
     
     var url: String = UrlType.pokemons.urlString
     
@@ -45,6 +45,7 @@ class Updater: ObservableObject {
                     pokemonsCells.append(newPokemons)
                 }
             }
+            self.isLoadingPage = false
         }
     }
     
@@ -76,9 +77,6 @@ class Updater: ObservableObject {
             .replaceError(with: PokemonResult())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .handleEvents(receiveOutput: { response in
-                self.isLoadingPage = false
-            })
             .assign(to: \.pokemonResult, on: self)
     }
 }
