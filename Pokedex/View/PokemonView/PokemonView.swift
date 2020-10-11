@@ -137,7 +137,7 @@ struct ButtonView: View {
     var pokemon: Pokemon
     var namespace: Namespace.ID
     
-    var isFavorite = false
+    @State var isFavorite = false
 
     var body: some View {
             HStack{
@@ -164,14 +164,10 @@ struct ButtonView: View {
                         .matchedGeometryEffect(id: "nameText", in: namespace)
                     Spacer()
                 }
-                Button {
-                } label: {
-                    Image(systemName:  isFavorite ? "suit.heart.fill" : "suit.heart")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.clear)
-                        .clipShape(Circle())
-                }
+                AnimatedLikeButton(isFavorite: $isFavorite)
+                    .padding()
+                    .background(Color.clear)
+                    .clipShape(Circle())
             }
             .padding(.top, UIDevice().hasNotch ? 50 : 8)
             .padding(.horizontal)

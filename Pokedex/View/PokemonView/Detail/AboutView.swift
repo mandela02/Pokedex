@@ -56,6 +56,7 @@ struct AboutView: View, Identifiable {
                 Spacer()
             }.background(Color.clear)
         }.background(Color.clear)
+        .animation(.linear)
     }
 }
 
