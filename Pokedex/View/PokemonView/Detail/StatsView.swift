@@ -47,9 +47,11 @@ enum PokeStat: Int, CaseIterable {
 
 struct StatsView: View {
     @ObservedObject var updater: StatUpdater
-    
-    init(pokemon: Pokemon) {
+    @Binding var selectedIndex: Int
+
+    init(pokemon: Pokemon, selectedIndex: Binding<Int>) {
         self.updater = StatUpdater(of: pokemon)
+        self._selectedIndex = selectedIndex
     }
     
     var body: some View {
@@ -59,7 +61,8 @@ struct StatsView: View {
                     ForEach(updater.numbers) { pokeStat in
                         if let stat = pokeStat.stat {
                             LevelInformationView(stat: stat,
-                                                 amount: pokeStat.baseStat)
+                                                 amount: pokeStat.baseStat,
+                                                 selectedIndex: $selectedIndex)
                         }
                     }
                 }
@@ -69,7 +72,7 @@ struct StatsView: View {
                 if !updater.characteristics.isEmpty {
                     VStack(alignment: .leading, spacing: 5, content: {
                         CustomText(text: "Characteristics", size: 15, weight: .bold, textColor: .black)
-                        DescriptionView(characteristics: $updater.descriptions)
+                        FlexibleGridView(characteristics: $updater.descriptions)
                     })
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
@@ -86,7 +89,9 @@ struct StatsView: View {
 struct LevelInformationView: View {
     let stat: PokeStat
     let amount: Int
-    
+    @Binding var selectedIndex: Int
+    @State var isLoading: Bool = false
+
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             CustomText(text: stat.title, size: 12, weight: .bold, textColor: .gray)
@@ -95,8 +100,11 @@ struct LevelInformationView: View {
                 .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)
             LevelBar(level: amount,
-                     maxLevel: stat.maxValue)
+                     maxLevel: stat.maxValue, isLoading: $isLoading)
                 .frame(height: 3, alignment: .center)
+        }
+        .onChange(of: selectedIndex) { index in
+            isLoading = index == Tab.stats.rawValue
         }
     }
 }
@@ -104,97 +112,28 @@ struct LevelInformationView: View {
 struct LevelBar: View {
     let level: Int
     let maxLevel: Int
-    
+    @Binding var isLoading: Bool
+
     var body: some View {
         GeometryReader(content: { geometry in
             let ratio = level >= maxLevel ? 1 : CGFloat(level)/CGFloat(maxLevel)
             let redWidth = geometry.size.width * ratio
             
-            HStack(alignment: .center, spacing: 0) {
-                Rectangle().fill(Color.red)
-                    .frame(width: redWidth, alignment: .center)
+            ZStack {
+                RoundedRectangle(cornerSize: CGSize(width: 3, height: 3))
+                    .fill(Color.gray.opacity(0.5))
+                    .frame(width: geometry.size.width, alignment: .center)
                     .clipped()
-                Rectangle().fill(Color.gray.opacity(0.5))
-                    .frame(width: geometry.size.width - redWidth, alignment: .center)
-                    .clipped()
+                HStack {
+                    RoundedRectangle(cornerSize: CGSize(width: 3, height: 3))
+                        .trim(from: 0, to: 1)
+                        .fill(Color.red)
+                        .frame(width: isLoading ? redWidth : 0, alignment: .center)
+                        .clipped()
+                        .animation(Animation.easeIn(duration: 1))
+                    Spacer()
+                }
             }
         })
-    }
-}
-
-struct DescriptionView: View {
-    @Binding var characteristics: [String]
-
-    @State private var totalHeight
-          = CGFloat.zero       // << variant for ScrollView/List
-    //    = CGFloat.infinity   // << variant for VStack
-
-    var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                self.generateContent(in: geometry)
-            }
-        }
-        .frame(height: totalHeight)// << variant for ScrollView/List
-        //.frame(maxHeight: totalHeight) // << variant for VStack
-    }
-
-    private func generateContent(in geometry: GeometryProxy) -> some View {
-        var width = CGFloat.zero
-        var height = CGFloat.zero
-
-        return ZStack(alignment: .topLeading) {
-            ForEach(self.characteristics, id: \.self) { characteristic in
-                self.item(for: characteristic)
-                    .padding([.horizontal, .vertical], 4)
-                    .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > geometry.size.width)
-                        {
-                            width = 0
-                            height -= d.height
-                        }
-                        let result = width
-                        if let last = characteristics.last, characteristic == last {
-                            width = 0
-                        } else {
-                            width -= d.width
-                        }
-                        return result
-                    })
-                    .alignmentGuide(.top, computeValue: {_ in
-                        let result = height
-                        if let last = characteristics.last, characteristic == last {
-                            height = 0
-                        }
-                        return result
-                    })
-            }
-        }.background(viewHeightReader($totalHeight))
-    }
-
-    private func item(for text: String) -> some View {
-        Text(text)
-            .font(.system(size: 12))
-            .padding(.all, 5)
-            .font(.body)
-            .background(HexColor.lightGrey)
-            .foregroundColor(Color.white)
-            .cornerRadius(6)
-    }
-
-    private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
-        return GeometryReader { geometry -> Color in
-            let rect = geometry.frame(in: .local)
-            DispatchQueue.main.async {
-                binding.wrappedValue = rect.size.height
-            }
-            return .clear
-        }
-    }
-}
-
-struct StatsView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatsView(pokemon: Pokemon())
     }
 }
