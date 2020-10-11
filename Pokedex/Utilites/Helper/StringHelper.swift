@@ -8,12 +8,21 @@
 import Foundation
 
 class StringHelper {
-    static func createEnglishText(from texts: [FlavorTextEntry]) -> String {
+    static func getEnglishTexts(from texts: [FlavorTextEntry]) -> String {
         let englishText = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.prefix(5)
-        return englishText.map({$0.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)}).joined(separator: "\n")
+        return englishText
+            .map({$0.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)})
+            .joined(separator: "\n")
     }
     
-    static func createEnglishText(from texts: [Description]) -> String {
+    static func getRandomEnglishText(from texts: [FlavorTextEntry]) -> String {
+        let englishText = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques
+        return englishText
+            .map({$0.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)})
+            .randomElement() ?? ""
+    }
+    
+    static func getEnglishTexts(from texts: [Description]) -> String {
         return texts.filter({$0.language.name == "en"}).map({$0.description}).uniques.first ?? ""
     }
     

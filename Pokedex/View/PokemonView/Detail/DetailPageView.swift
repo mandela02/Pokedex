@@ -85,15 +85,13 @@ struct TabControlView: View {
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @State private var offset: CGFloat = 0.0
+    @Binding var updater: SpeciesUpdater
+
     var pokemon: Pokemon
-    
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-    }
 
     var body: some View {
         GeometryReader(content: { geometry in
-            let views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon, selectedIndex: $selected)})
+            let views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon, updater: $updater, selectedIndex: $selected)})
             VStack(alignment: .center, spacing: 0, content: {
                 TabControlView(selected: $selected, offset: $offset)
                 PagerView(index: $selected,
@@ -109,16 +107,9 @@ struct PageContentView: View, Identifiable {
     
     var tab: Tab
     var pokemon: Pokemon
-    var updater: SpeciesUpdater
     
+    @Binding var updater: SpeciesUpdater
     @Binding var selectedIndex: Int
-
-    init(tab: Tab, pokemon: Pokemon, selectedIndex: Binding<Int>) {
-        self.tab = tab
-        self.pokemon = pokemon
-        self.updater = SpeciesUpdater(url: pokemon.species.url)
-        self._selectedIndex = selectedIndex
-    }
     
     var body: some View {
         switch tab {

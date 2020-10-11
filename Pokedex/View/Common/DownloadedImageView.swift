@@ -9,18 +9,19 @@ import SwiftUI
 
 struct DownloadedImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
-    @State private var image: UIImage?
+    @Binding private var image: UIImage?
         
     var needAnimated: Bool
     
-    init(withURL url: String, needAnimated: Bool) {
+    init(withURL url: String, needAnimated: Bool, image: Binding<UIImage?>) {
         self.imageLoader = ImageLoader(url: url)
         self.needAnimated = needAnimated
+        self._image = image
     }
     
     var body: some View {
         if needAnimated {
-            AnimatedImageView(imageLoader: imageLoader)
+            AnimatedImageView(imageLoader: imageLoader, image: $image)
         } else {
             NormalImageView(imageLoader: imageLoader)
         }
@@ -49,13 +50,13 @@ struct NormalImageView: View {
 
 struct AnimatedImageView: View {
     @ObservedObject var imageLoader: ImageLoader
-    @State private var image: UIImage?
+    @Binding var image: UIImage?
     @State private var isComplete: Bool = false
     @State private var isStartWigle: Bool = false
     @State private var showSplash: Bool = false
     @State private var showSplashTilted: Bool = false
     @State private var showStrokeBorder: Bool  = false
-
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {

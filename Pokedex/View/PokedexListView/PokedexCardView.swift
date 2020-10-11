@@ -18,6 +18,7 @@ struct TabableCardView: View {
             .onTapGesture(count: 1, perform: {
                 withAnimation(.spring()){
                     show.toggle()
+                    updater.isSelected = true
                 }
             })
             .fullScreenCover(isPresented: $show,
@@ -42,6 +43,7 @@ struct PokedexCardView: View {
     var size: (width: CGFloat, height: CGFloat)
     
     @State var loaded: Bool = false
+    @State var image: UIImage?
 
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
@@ -59,7 +61,8 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
-                                        needAnimated: false)
+                                        needAnimated: false,
+                                        image: $image)
                         .frame(width: size.width/2,
                                height: size.height,
                                alignment: .bottomTrailing)

@@ -35,6 +35,6 @@ class SpeciesUpdater: ObservableObject {
     }
     
     func createText() -> String {
-        return StringHelper.createEnglishText(from: species.flavorTextEntries)
+        return StringHelper.getEnglishTexts(from: species.flavorTextEntries)
     }
 }

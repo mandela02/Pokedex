@@ -7,14 +7,23 @@
 
 import Foundation
 import Combine
+import AVFoundation
 
 class PokemonUpdater: ObservableObject {
     @Published var pokemon: Pokemon = Pokemon()
     var pokemonUrl: String?
-    
-    private var cancellable: AnyCancellable?
+        
     @Published var isFinishLoading = false
+    @Published var isSelected = false {
+        didSet {
+            if isSelected {
+                //do something
+            }
+        }
+    }
 
+    private var cancellable: AnyCancellable?
+    
     deinit {
         cancellable?.cancel()
     }
