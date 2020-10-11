@@ -16,7 +16,6 @@ struct PokemonView: View {
     @State private var offset = CGSize.zero
 
     @State private var opacity: Double = 1
-    @State private var isAllowPaging: Bool = true
 
     @Namespace private var namespace
     
@@ -30,11 +29,7 @@ struct PokemonView: View {
         return DragGesture()
             .onChanged({ gesture in
                 if abs(gesture.translation.height) > 50 {
-                    let direction = Direction.getDirection(value: gesture)
                     withAnimation(.spring()) {
-                        if direction == .up || direction == .down {
-                            isAllowPaging = false
-                        }
                         self.offset = gesture.translation
                         opacity = 1 + Double(offset.height/collapseValue)
                         hideImage(in: size)
@@ -42,7 +37,6 @@ struct PokemonView: View {
                 }
             }).onEnded({ _ in
                 withAnimation(.spring()) {
-                    isAllowPaging = true
                     updateView(with: size)
                 }
             })
@@ -98,7 +92,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(of: updater.pokemon, isAllowPaging: $isAllowPaging)
+                    DetailPageView(of: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.gesture(drag(in: size))
@@ -119,7 +113,8 @@ struct PokemonView: View {
                 }
                 
                 if isShowingImage {
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
+                                        needAnimated: true)
                         .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
                         .offset(y: -size.width/2 + 30)
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
@@ -137,7 +132,7 @@ struct ButtonView: View {
     var pokemon: Pokemon
     var namespace: Namespace.ID
     
-    var isFavorite = false
+    @State var isFavorite = false
 
     var body: some View {
             HStack{
@@ -152,6 +147,7 @@ struct ButtonView: View {
                         .background(Color.clear)
                         .clipShape(Circle())
                 }
+                .frame(width: 50, height: 50, alignment: .center)
                 Spacer()
                 if !isInExpandeMode {
                     Text(pokemon.name.capitalizingFirstLetter())
@@ -164,14 +160,11 @@ struct ButtonView: View {
                         .matchedGeometryEffect(id: "nameText", in: namespace)
                     Spacer()
                 }
-                Button {
-                } label: {
-                    Image(systemName:  isFavorite ? "suit.heart.fill" : "suit.heart")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.clear)
-                        .clipShape(Circle())
-                }
+                AnimatedLikeButton(isFavorite: $isFavorite)
+                    .padding()
+                    .background(Color.clear)
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50, alignment: .center)
             }
             .padding(.top, UIDevice().hasNotch ? 50 : 8)
             .padding(.horizontal)

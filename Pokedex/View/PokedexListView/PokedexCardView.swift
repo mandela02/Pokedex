@@ -22,8 +22,12 @@ struct TabableCardView: View {
             })
             .fullScreenCover(isPresented: $show,
                              content: {
-                                PokemonView(updater: updater,
-                                                  isShowing: $show)
+                                NavigationView {
+                                    PokemonView(updater: updater,
+                                                      isShowing: $show)
+                                        .navigationBarTitle("")
+                                        .navigationBarHidden(true)
+                                }
                              })
             .onReceive(updater.$isFinishLoading) { _ in
                 self.isTapable = updater.isFinishLoading
@@ -54,7 +58,8 @@ struct PokedexCardView: View {
 
                 VStack {
                     Spacer()
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front)
+                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front,
+                                        needAnimated: false)
                         .frame(width: size.width/2,
                                height: size.height,
                                alignment: .bottomTrailing)

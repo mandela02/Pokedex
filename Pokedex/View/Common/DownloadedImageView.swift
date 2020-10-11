@@ -8,29 +8,121 @@
 import SwiftUI
 
 struct DownloadedImageView: View {
-    @ObservedObject var imageLoader: ImageLoader
-    @State var image: UIImage?
-    @Namespace var namespace
+    @ObservedObject private var imageLoader: ImageLoader
+    @State private var image: UIImage?
         
-    init(withURL url: String) {
+    var needAnimated: Bool
+    
+    init(withURL url: String, needAnimated: Bool) {
         self.imageLoader = ImageLoader(url: url)
+        self.needAnimated = needAnimated
     }
+    
+    var body: some View {
+        if needAnimated {
+            AnimatedImageView(imageLoader: imageLoader)
+        } else {
+            NormalImageView(imageLoader: imageLoader)
+        }
+    }
+}
+
+struct NormalImageView: View {
+    @ObservedObject var imageLoader: ImageLoader
+    @State private var image: UIImage?
     
     var body: some View {
         if let image = image {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
         } else {
-            if let pokeball = UIImage(named: "pokeball") {
-                Image(uiImage: pokeball)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .onReceive(imageLoader.$displayImage, perform: { value in
-                        self.image = value
-                    })
-                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+            Image("pokeball")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                    self.image = displayImage
+                })
+        }
+    }
+}
+
+struct AnimatedImageView: View {
+    @ObservedObject var imageLoader: ImageLoader
+    @State private var image: UIImage?
+    @State private var isComplete: Bool = false
+    @State private var isStartWigle: Bool = false
+    @State private var showSplash: Bool = false
+    @State private var showSplashTilted: Bool = false
+    @State private var showStrokeBorder: Bool  = false
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                if let image = image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .offset(x: isComplete ? 0 : -150)
+                        .scaleEffect(isComplete ? 1 : 0)
+                        .animation(Animation.easeInOut(duration: 1).delay(0.5))
+                        .onAppear(perform: {
+                            self.isComplete.toggle()
+                        })
+                } else {
+                    Image("pokeball")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                                if displayImage != nil {
+                                    self.image = displayImage
+                                    self.showStrokeBorder = true
+                                    self.showSplash = true
+                                    self.showSplashTilted = true
+                                }
+                            })
+                        })
+                        .rotationEffect(.degrees(isStartWigle ? 0 : 2.5), anchor: .bottom)
+                        .onAppear() {
+                            // fix bug animation on iphone SE
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                                withAnimation(Animation.easeInOut(duration: 0.15).repeatForever(autoreverses: true)) {
+                                    isStartWigle.toggle()
+                                }
+                            })
+                        }
+                }
+                ZStack {
+                    Circle()
+                        .strokeBorder(lineWidth: showStrokeBorder ? 1 : 35/2,
+                                      antialiased: false)
+                        .opacity(showStrokeBorder ? 0 : 1)
+                        .frame(width: 35, height: 35)
+                        .foregroundColor(.purple)
+                        .scaleEffect(showStrokeBorder ? 1 : 0)
+                        .animation(Animation.easeInOut(duration: 0.5))
+                        .scaleEffect(7)
+
+                    Image("splash")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .opacity(showSplash ? 0 : 1)
+                        .frame(width: 48, height: 48)
+                        .scaleEffect(showSplash ? 1 : 0)
+                        .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
+                        .scaleEffect(7)
+
+                    Image("splash_tilted")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .opacity(showSplashTilted ? 0 : 1)
+                        .frame(width: 50, height: 50)
+                        .scaleEffect(showSplashTilted ? 1.1 : 0)
+                        .scaleEffect(1.1)
+                        .animation(Animation.easeOut(duration: 0.5).delay(0.1))
+                        .scaleEffect(7)
+                }
             }
         }
     }
