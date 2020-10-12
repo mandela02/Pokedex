@@ -23,10 +23,13 @@ class SpeciesUpdater: ObservableObject {
     @Published var species: Species = Species() {
         didSet {
             description = createText()
+            initEvolution(of: species.evolutionChain.url)
         }
     }
+
     @Published var description: String = ""
-    
+    @Published var evolution: Evolution = Evolution()
+
     private var cancellables = Set<AnyCancellable>()
 
     private func initPokemonSpecies(from url: String) {
@@ -40,5 +43,15 @@ class SpeciesUpdater: ObservableObject {
     
     func createText() -> String {
         return StringHelper.getEnglishTexts(from: species.flavorTextEntries)
+    }
+    
+    
+    private func initEvolution(of url: String) {
+        Session.share.evolution(from: url)
+            .replaceError(with: Evolution())
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.evolution, on: self)
+            .store(in: &cancellables)
     }
 }

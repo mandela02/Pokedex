@@ -10,20 +10,24 @@ import Combine
 
 enum UrlType: String, CaseIterable {
     case pokemons
-    case images
+    case trigger
 
     var urlString: String {
         switch self {
         case .pokemons:
             //return Constants.baseUrl + "pokemon?offset=900&limit=50"
             return Constants.baseUrl + "pokemon?limit=50"
-        case .images:
-            return Constants.baseImageUrl
+        case .trigger:
+            return Constants.baseUrl + "evolution-trigger/"
         }
     }
     
     static func getImageUrlString(of order: Int) -> String {
         return String(format: Constants.baseImageUrl, "\(order)")
+    }
+    
+    static func getPokemonUrl(of order: Int) -> String {
+        return Constants.baseUrl + "pokemon/\(order)/"
     }
 }
 
@@ -36,7 +40,7 @@ class Session {
         return call(url)
     }
     
-    func pokemon(from url: String) -> AnyPublisher<Pokemon, Error>? {
+    func pokemon(from url: String) -> AnyPublisher<Pokemon, Error> {
         return call(url)
     }
     
@@ -56,6 +60,10 @@ class Session {
         return call(url)
     }
     
+    func allTriggers(from url: String) -> AnyPublisher<EvolutionTriggers, Error> {
+        return call(url)
+    }
+
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return PassthroughSubject<T, Error>().eraseToAnyPublisher()

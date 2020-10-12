@@ -223,7 +223,7 @@ struct NameView: View {
                 .lineLimit(1)
                 .matchedGeometryEffect(id: "nameText", in: namespace)
             Spacer()
-            Text(String(format: "#%03d", pokemon.order))
+            Text(String(format: "#%03d", pokemon.id))
                 .font(.system(size: 20))
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)

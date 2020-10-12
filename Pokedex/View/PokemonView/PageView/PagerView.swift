@@ -34,7 +34,7 @@ enum Direction {
 
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
-    @Binding var offset: CGFloat
+    @State var offset: CGFloat = 0.0
     var pages: [Content]
     
     @State private var isGestureActive: Bool = false
@@ -66,24 +66,27 @@ struct PagerView<Content: View & Identifiable>: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center, spacing: 0) {
-                    ForEach(self.pages) { page in
-                        page
-                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .background(HexColor.white)
+            VStack {
+                TabControlView(selected: $index, offset: $offset)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 0) {
+                        ForEach(self.pages) { page in
+                            page
+                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .background(HexColor.white)
+                        }
                     }
                 }
+                .content
+                .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))
+                .frame(width: geometry.size.width, height: nil, alignment: .leading)
+                .gesture(drag(in: geometry.size))
+                .onChange(of: index, perform: { _ in
+                    withAnimation(.linear) {
+                        self.offset = -geometry.size.width * CGFloat(self.index)
+                    }
+                })
             }
-            .content
-            .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))
-            .frame(width: geometry.size.width, height: nil, alignment: .leading)
-            .gesture(drag(in: geometry.size))
-            .onChange(of: index, perform: { _ in
-                withAnimation(.linear) {
-                    self.offset = -geometry.size.width * CGFloat(self.index)
-                }
-            })
         }
     }
 }

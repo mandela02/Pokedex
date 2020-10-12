@@ -20,7 +20,7 @@ class VoiceHelper: NSObject, ObservableObject {
 
             if isSpeaking {
                 if isFirstTime {
-                    let text = pokemon.name + ", pokemon no \(pokemon.order)"
+                    let text = pokemon.name + ", pokemon no \(pokemon.id)"
                     speak(text: text)
                     isFirstTime = false
                 } else {

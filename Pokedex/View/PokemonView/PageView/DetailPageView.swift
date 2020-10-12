@@ -67,7 +67,7 @@ struct TabItem: View {
 struct TabControlView: View {
     @Binding var selected: Int
     @Binding var offset: CGFloat
-
+    
     @Namespace var namespace
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -84,21 +84,23 @@ struct TabControlView: View {
 
 struct DetailPageView: View {
     @State private var selected: Int = 0
-    @State private var offset: CGFloat = 0.0
     @ObservedObject var updater: SpeciesUpdater
-
+    
     var pokemon: Pokemon
-
+    var views: [PageContentView] = []
+    
     var body: some View {
-        GeometryReader(content: { geometry in
-            let views = Tab.allCases.map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
-            VStack(alignment: .center, spacing: 0, content: {
-                TabControlView(selected: $selected, offset: $offset)
-                PagerView(index: $selected,
-                          offset: $offset,
-                          pages: views)
-            })
-        })
+        GeometryReader { geometry in
+            if updater.evolution.allChains.isEmpty && !updater.species.havingMega {
+                let views = [Tab.about, Tab.stats, Tab.moves]
+                    .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
+                PagerView(index: $selected, pages: views)
+            } else {
+                let views = Tab.allCases
+                    .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
+                PagerView(index: $selected, pages: views)
+            }
+        }
     }
 }
 

@@ -15,7 +15,7 @@ class PokemonUpdater: ObservableObject {
             
         }
     }
-     var pokemonUrl: String?
+    var pokemonUrl: String?
         
     @Published var isFinishLoading = false
     @Published var isSelected = false {
@@ -41,7 +41,7 @@ class PokemonUpdater: ObservableObject {
         guard let url = pokemonUrl else { return }
         self.cancellable = Session
             .share
-            .pokemon(from: url)?
+            .pokemon(from: url)
             .replaceError(with: Pokemon())
             .receive(on: RunLoop.main)
             .handleEvents(receiveOutput: { [weak self] _ in
