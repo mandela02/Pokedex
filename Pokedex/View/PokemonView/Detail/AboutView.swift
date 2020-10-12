@@ -50,7 +50,7 @@ struct AboutView: View, Identifiable {
                 
                 BreedingView(rate: updater.species.genderRate,
                              group: updater.species.eggGroup.first?.name ?? "",
-                             habitat: updater.species.habitat.name)
+                             habitat: updater.species.habitat?.name ?? "")
                     .padding(.leading, 20)
                     .padding(.top, 10)
                 Spacer()

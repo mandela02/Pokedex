@@ -50,6 +50,8 @@ struct PokedexCardView: View {
                                     vertical: .center),
                content: {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
+                    .blur(radius: 1)
+
                 Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
                     .resizable()
                     .scaledToFit()
@@ -57,6 +59,7 @@ struct PokedexCardView: View {
                     .foregroundColor(updater.pokemon.mainType.color.background.opacity(0.5))
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                     .offset(x: size.width * 1/4, y: size.height * 1/3 )
+                    .blur(radius: 1)
 
                 VStack {
                     Spacer()

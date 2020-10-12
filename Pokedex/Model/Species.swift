@@ -13,7 +13,7 @@ struct Species: Codable {
     var flavorTextEntries: [FlavorTextEntry] = []
     var genderRate: Int = 1
     var eggGroup: [NamedAPIResource] = []
-    var habitat: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var habitat: NamedAPIResource?
     var evolutionChain: APIResource = APIResource(url: "")
     
     enum CodingKeys: String, CodingKey {

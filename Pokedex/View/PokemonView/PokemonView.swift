@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokemonView: View {
     @ObservedObject var updater: PokemonUpdater
-    @ObservedObject var voiceUpdater: VoiceHelper = VoiceHelper()
+    @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @State var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @Binding var isShowing: Bool

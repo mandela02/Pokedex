@@ -27,7 +27,7 @@ struct PokedexView: View {
                     .ignoresSafeArea()
                     .frame(width: size.width, height: size.height, alignment: .center)
                     .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
-                
+
                 PokemonListView(updater: Updater())
                     .ignoresSafeArea(.container, edges: .bottom)
                     .ignoresSafeArea(.container, edges: .top)

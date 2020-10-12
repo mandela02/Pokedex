@@ -15,7 +15,7 @@ enum UrlType: String, CaseIterable {
     var urlString: String {
         switch self {
         case .pokemons:
-            //"pokemon?offset=900&limit=50"
+            //return Constants.baseUrl + "pokemon?offset=900&limit=50"
             return Constants.baseUrl + "pokemon?limit=50"
         case .images:
             return Constants.baseImageUrl

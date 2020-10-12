@@ -36,7 +36,7 @@ struct LoadingView: View {
                 .offset()
                 .rotationEffect(.degrees(isSpining ? 360 : 0))
                 .onAppear {
-                    withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
+                    withAnimation(Animation.linear(duration: 1).repeatForever(autoreverses: false)) {
                         isSpining.toggle()
                     }
                 }

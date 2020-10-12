@@ -59,17 +59,22 @@ struct PokemonListView: View {
                 
                 if isLoading {
                     LoadingView()
+                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation(Animation.spring()) {
-                        self.isLoading = isLoading
-                    }
+                        if isLoading {
+                            self.isLoading = isLoading
+                        } else {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                self.isLoading = isLoading
+                            }
+                        }
                 }
             })
             .onReceive(updater.$isFinal, perform: { isFinal in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation(Animation.spring()) {
                         self.isFinal = isFinal
                     }

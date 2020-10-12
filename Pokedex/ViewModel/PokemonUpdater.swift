@@ -15,13 +15,13 @@ class PokemonUpdater: ObservableObject {
             
         }
     }
-    var pokemonUrl: String?
+     var pokemonUrl: String?
         
     @Published var isFinishLoading = false
     @Published var isSelected = false {
         didSet {
             if isSelected {
-                print(pokemon)
+                //print(pokemon)
             }
         }
     }

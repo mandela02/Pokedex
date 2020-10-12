@@ -20,32 +20,36 @@ struct RotatingPokeballView: View {
     var body: some View {
         GeometryReader (content: { geometry in
             let size = geometry.size
-            
-            VStack(content: {
+            VStack(alignment: .center) {
                 Spacer()
-                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
-                    .resizable()
-                    .scaledToFit()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(color)
-                    .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
-                    .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
-                    .animation(self.isAnimating ? foreverAnimation : .default)
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                            withAnimation(foreverAnimation) {
-                                self.isAnimating = true
+                HStack(alignment: .center, spacing: 0 ,content: {
+                    Spacer()
+                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                        .resizable()
+                        .scaledToFit()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(color)
+                        .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
+                        .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
+                        .animation(self.isAnimating ? foreverAnimation : .default)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                withAnimation(foreverAnimation) {
+                                    self.isAnimating = true
+                                }
+                            })
+                         }
+                        .onDisappear {
+                            withAnimation(.default) {
+                                self.isAnimating = false
                             }
-                        })
-                     }
-                    .onDisappear {
-                        withAnimation(.default) {
-                            self.isAnimating = false
                         }
-                    }
-                Rectangle().fill(Color.clear)
-                    .frame(height: abs(size.height/2 - 55), alignment: .center)
-            })
+                        .offset(y: -abs(size.height/2 - 55))
+                        .frame(minWidth: 0, idealWidth: .infinity, alignment: .center)
+                        .blur(radius: 2)
+                    Spacer()
+                })
+            }
         })
     }
 }

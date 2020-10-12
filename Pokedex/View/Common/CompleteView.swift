@@ -22,11 +22,6 @@ struct CompleteView: View {
                         .foregroundColor(showFirstStroke ? .green : .pink)
                         .rotation3DEffect(.degrees(showFirstStroke ? 0 : 360),
                                           axis: (x: 1, y: 1, z: 1))
-                        .onAppear {
-                            withAnimation(Animation.easeInOut(duration: 2).delay(1)) {
-                                showFirstStroke.toggle()
-                            }
-                        }
                     
                     Circle()
                         .strokeBorder(lineWidth: showSecondStroke ? 5 : 50, antialiased: false)
@@ -34,11 +29,7 @@ struct CompleteView: View {
                         .foregroundColor(showSecondStroke ? .green : .pink)
                         .rotation3DEffect(.degrees(showSecondStroke ? 0 : 360),
                                           axis: (x: -1, y: -1, z: -1))
-                        .onAppear {
-                            withAnimation(Animation.easeInOut(duration: 2).delay(1)) {
-                                showSecondStroke.toggle()
-                            }
-                        }
+
                     Path { path in
                         path.move(to: CGPoint(x: 25, y: 45))
                         path.addLine(to: CGPoint(x: 25, y: 45))
@@ -49,11 +40,12 @@ struct CompleteView: View {
                     .stroke(style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
                     .foregroundColor(.green)
                     .offset(x: geometry.size.width/2 - 45, y: geometry.size.height/2 - 55)
-                    .onAppear {
-                        withAnimation(Animation.easeInOut.delay(3)) {
-                            showCheckMark.toggle()
-                        }
-                    }
+                }
+                .onDisappear {
+                    toggle(isGone: true)
+                }
+                .onAppear {
+                    toggle(isGone: false)
                 }
                 
                 CustomText(text: "This is the end of line, my man",
@@ -63,6 +55,18 @@ struct CompleteView: View {
                            textColor: .red)
             }
         })
+    }
+    
+    private func toggle(isGone: Bool) {
+        withAnimation(Animation.easeInOut.delay(3)) {
+            showCheckMark = isGone
+        }
+        withAnimation(Animation.easeInOut(duration: 2).delay(1)) {
+            showSecondStroke = isGone
+        }
+        withAnimation(Animation.easeInOut(duration: 2).delay(1)) {
+            showFirstStroke = isGone
+        }
     }
 }
 
