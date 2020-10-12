@@ -22,8 +22,8 @@ enum UrlType: String, CaseIterable {
         }
     }
     
-    static func getImageUrlString(of pokemon: Pokemon) -> String {
-        return String(format: Constants.baseImageUrl, "\(pokemon.order)")
+    static func getImageUrlString(of order: Int) -> String {
+        return String(format: Constants.baseImageUrl, "\(order)")
     }
 }
 
@@ -40,7 +40,7 @@ class Session {
         return call(url)
     }
     
-    func species(from url: String) -> AnyPublisher<Species, Error>? {
+    func species(from url: String) -> AnyPublisher<Species, Error> {
         return call(url)
     }
     

@@ -118,7 +118,7 @@ struct PageContentView: View, Identifiable {
         case .stats:
             StatsView(pokemon: pokemon, selectedIndex: $selectedIndex)
         case .evolution:
-            EmptyView()
+            EvolutionView(speciesUpdater: updater)
         case .moves:
             EmptyView()
         }

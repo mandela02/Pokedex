@@ -27,7 +27,7 @@ class SpeciesUpdater: ObservableObject {
     }
         
     private func initPokemonSpecies(from url: String) {
-        self.cancellable = Session.share.species(from: url)?
+        self.cancellable = Session.share.species(from: url)
             .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()

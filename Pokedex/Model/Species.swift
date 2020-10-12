@@ -8,6 +8,7 @@
 import Foundation
 
 struct Species: Codable {
+    var id: Int = 1
     var name: String = ""
     var baseHappiness: Int = 0
     var flavorTextEntries: [FlavorTextEntry] = []
@@ -17,6 +18,7 @@ struct Species: Codable {
     var evolutionChain: APIResource = APIResource(url: "")
     
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case baseHappiness = "base_happiness"
         case flavorTextEntries = "flavor_text_entries"
