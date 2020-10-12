@@ -23,7 +23,7 @@ struct EvolutionView: View {
 struct EvolutionChainView: View {
     var speciesUpdater: SpeciesUpdater
     @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
-
+    
     var body: some View {
         VStack(alignment: .center) {
             VStack(alignment: .leading) {
@@ -118,7 +118,7 @@ struct ArrowView: View {
 struct PokemonCellView: View {
     @State var image: UIImage?
     @State var show: Bool = false
-
+    
     var updater: PokemonUpdater
     var url: String
     var name: String
@@ -139,23 +139,28 @@ struct PokemonCellView: View {
         }
     }
     var body: some View {
-        NavigationLink(destination: PokemonView(updater: updater,
-                                                isShowing: $show)
-                        .navigationBarTitle("")
-                        .navigationBarHidden(true)
-                       ,isActive: $show) {
-            VStack(alignment: .center, spacing: 10) {
-                ZStack {
-                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(Color.gray.opacity(0.5))
-                    DownloadedImageView(withURL: url, needAnimated: false, image: $image)
-                }
-                CustomText(text: name.capitalizingFirstLetter(),
-                           size: 15,
-                           weight: .semibold)
+        VStack(alignment: .center, spacing: 10) {
+            ZStack {
+                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(Color.gray.opacity(0.5))
+                DownloadedImageView(withURL: url, needAnimated: false, image: $image)
             }
+            CustomText(text: name.capitalizingFirstLetter(),
+                       size: 15,
+                       weight: .semibold)
         }
+        .onTapGesture(count: 1, perform: {
+            withAnimation(.spring()){
+                show.toggle()
+                updater.isSelected = true
+            }
+        })
+        .fullScreenCover(isPresented: $show,
+                         content: {
+                                PokemonView(updater: updater,
+                                            isShowing: $show)
+                         })
     }
 }
