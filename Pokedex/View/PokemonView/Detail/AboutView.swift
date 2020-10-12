@@ -24,7 +24,7 @@ enum Gender: String {
 struct AboutView: View, Identifiable {
     var id = UUID()
     var pokemon: Pokemon
-    var updater: SpeciesUpdater
+    @ObservedObject var updater: SpeciesUpdater
     
     @State var description: String = ""
     

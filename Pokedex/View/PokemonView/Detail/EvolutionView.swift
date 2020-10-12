@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EvolutionView: View {
     var speciesUpdater: SpeciesUpdater
-
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             EvolutionChainView(speciesUpdater: speciesUpdater)
@@ -20,33 +20,27 @@ struct EvolutionView: View {
 
 struct EvolutionChainView: View {
     var speciesUpdater: SpeciesUpdater
-    @State var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
+    @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
+    
     @State var needUpdateView = false
     var body: some View {
-        if needUpdateView {
-            VStack(alignment: .leading) {
-                CustomText(text: "Evolution Chain",
-                           size: 20,
-                           weight: .bold,
-                           textColor: .black)
-                
-                ForEach(evolutionUpdater.evolutionLinks) { link in
-                    EvolutionCellView(evoLink: link)
-                }
-                Spacer()
+        VStack(alignment: .leading) {
+            CustomText(text: "Evolution Chain",
+                       size: 20,
+                       weight: .bold,
+                       textColor: .black)
+            
+            ForEach(evolutionUpdater.evolutionLinks) { link in
+                EvolutionCellView(evoLink: link)
+                    .padding(.bottom, 5)
             }
-        } else {
-            Text("No DATA")
-                .onReceive(speciesUpdater.$species, perform: { species in
-                    if !species.evolutionChain.url.isEmpty {
-                        evolutionUpdater = EvolutionUpdater(of: species)
-                    }
-                }).onReceive(evolutionUpdater.$evolutionLinks, perform: { links in
-                    if !links.isEmpty {
-                        needUpdateView = true
-                    }
-                })
+            Spacer()
         }
+        .onReceive(speciesUpdater.$species, perform: { species in
+            if !species.evolutionChain.url.isEmpty {
+                evolutionUpdater.species = species
+            }
+        })
     }
 }
 
@@ -57,20 +51,17 @@ struct EvolutionCellView: View {
         HStack(alignment: .center, spacing: 10) {
             Spacer()
             PokemonCellView(species: evoLink.fromSpecies ?? Species())
-            Spacer()
             ArrowView()
-            Spacer()
             PokemonCellView(species: evoLink.toSpecies ?? Species())
             Spacer()
         }
-        .padding()
     }
 }
 
 struct ArrowView: View {
     var body: some View {
         VStack {
-            HStack {
+            HStack(spacing: 0) {
                 Image(systemName: "shift.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)

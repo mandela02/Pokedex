@@ -18,12 +18,22 @@ struct EvoLink: Identifiable {
 }
 
 class EvolutionUpdater: ObservableObject {
+    init(of species: Species) {
+        self.species = species
+    }
+    
+    var species: Species? {
+        didSet {
+            initEvolution(of: species?.evolutionChain.url ?? "")
+        }
+    }
+    
     @Published var evolution: Evolution = Evolution() {
         didSet {
             evolutionChains = evolution.allChains
         }
     }
-
+    
     @Published var evolutionChains: [EvolutionChain] = [] {
         didSet {
             var links: [EvoLink] = []
@@ -38,34 +48,27 @@ class EvolutionUpdater: ObservableObject {
             psuedoEvolutionLink = links
         }
     }
-            
+    
     @Published var psuedoEvolutionLink: [EvoLink] = [] {
         didSet {
-                let speciesUrls = evolutionChains.map({$0.species})
-                getSpecies(from: speciesUrls)
+            let speciesUrls = evolutionChains.map({$0.species})
+            getSpecies(from: speciesUrls)
         }
     }
     
     @Published var speciesChain: [Species] = [] {
         didSet {
             evolutionLinks = psuedoEvolutionLink.map({ [weak self] in EvoLink(from: $0.from,
-                                                                         fromSpecies: self?.getSpecies(from: $0.from.name),
-                                                                         to: $0.to,
-                                                                         toSpecies: self?.getSpecies(from: $0.to.name),
-                                                                         detail: $0.detail)})
+                                                                              fromSpecies: self?.getSpecies(from: $0.from.name),
+                                                                              to: $0.to,
+                                                                              toSpecies: self?.getSpecies(from: $0.to.name),
+                                                                              detail: $0.detail)})
         }
     }
     
     @Published var evolutionLinks: [EvoLink] = []
     
     private var cancellables = Set<AnyCancellable>()
-    private var species: Species?
-    private var isFirstTimeLoad = true
-    
-    init(of species: Species) {
-        self.species = species
-        initEvolution(of: species.evolutionChain.url)
-    }
     
     private func initEvolution(of url: String) {
         Session.share.evolution(from: url)

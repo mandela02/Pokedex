@@ -10,7 +10,7 @@ import SwiftUI
 struct PokemonView: View {
     @ObservedObject var updater: PokemonUpdater
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
-    @State var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
+    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @Binding var isShowing: Bool
     
@@ -98,7 +98,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(updater: $speciesUpdater, pokemon: updater.pokemon)
+                    DetailPageView(updater: speciesUpdater, pokemon: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.gesture(drag(in: size))
@@ -145,7 +145,7 @@ struct PokemonView: View {
                 }
             }
             .onAppear {
-                speciesUpdater = SpeciesUpdater(url: updater.pokemon.species.url)
+                speciesUpdater.speciesUrl = updater.pokemon.species.url
                 voiceUpdater.pokemon = updater.pokemon
                 voiceUpdater.species = speciesUpdater.species
             }

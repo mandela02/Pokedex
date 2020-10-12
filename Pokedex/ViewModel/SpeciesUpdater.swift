@@ -9,29 +9,33 @@ import Foundation
 import Combine
 
 class SpeciesUpdater: ObservableObject {
+    init(url: String) {
+        self.speciesUrl = url
+    }
+
+    var speciesUrl: String = "" {
+        didSet {
+            initPokemonSpecies(from: speciesUrl)
+        }
+    }
+
+
     @Published var species: Species = Species() {
         didSet {
             description = createText()
         }
     }
     @Published var description: String = ""
-
-    private var cancellable: AnyCancellable?
-
-    deinit {
-        cancellable?.cancel()
-    }
     
-    init(url: String) {
-        initPokemonSpecies(from: url)
-    }
-        
+    private var cancellables = Set<AnyCancellable>()
+
     private func initPokemonSpecies(from url: String) {
-        self.cancellable = Session.share.species(from: url)
+         Session.share.species(from: url)
             .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
             .assign(to: \.species, on: self)
+            .store(in: &cancellables)
     }
     
     func createText() -> String {
