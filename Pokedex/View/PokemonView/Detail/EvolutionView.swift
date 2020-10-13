@@ -139,7 +139,6 @@ struct PokemonCellView: View {
             updater = PokemonUpdater(url: "")
         }
     }
-    
     var body: some View {
         Button {
             show = true
@@ -157,11 +156,37 @@ struct PokemonCellView: View {
                            size: 15,
                            weight: .semibold)
             }
-        }.sheet(isPresented: $show) {
-            PokemonView(updater: updater, isShowing: $show)
-                .environmentObject(voiceUpdater)
+            .background(NavigationLink(destination: PokemonView(updater: updater,
+                                                                isShowing: $show)
+                                        .environmentObject(voiceUpdater),
+                                       isActive: $show) {
+                                        EmptyView()
+                                       })
         }
     }
+
+//    var body: some View {
+//        Button {
+//            show = true
+//        } label: {
+//            VStack(alignment: .center, spacing: 10) {
+//                ZStack {
+//                    Image("ic_pokeball")
+//                        .renderingMode(.template)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .foregroundColor(Color.gray.opacity(0.5))
+//                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
+//                }
+//                CustomText(text: name.capitalizingFirstLetter(),
+//                           size: 15,
+//                           weight: .semibold)
+//            }
+//        }.sheet(isPresented: $show) {
+//            PokemonView(updater: updater, isShowing: $show)
+//                .environmentObject(voiceUpdater)
+//        }
+//    }
 }
 
 
