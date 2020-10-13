@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct PokemonView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
     @ObservedObject var updater: PokemonUpdater
-    @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @Binding var isShowing: Bool
@@ -152,12 +153,8 @@ struct PokemonView: View {
             .onReceive(speciesUpdater.$species, perform: { species in
                 voiceUpdater.species = species
             })
-            .onChange(of: isShowing, perform: { isShowing in
-                if isShowing == false {
-                    withAnimation(.spring()) {
-                        voiceUpdater.isSpeaking = false
-                    }
-                }
+            .onDisappear(perform: {
+                voiceUpdater.isSpeaking = false
             })
             .navigationBarTitle("")
             .navigationBarHidden(true)

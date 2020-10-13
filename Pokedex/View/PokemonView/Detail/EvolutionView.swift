@@ -114,6 +114,8 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
+    @EnvironmentObject var voiceHelper: VoiceHelper
+
     @State var image: UIImage?
     @State var show: Bool = false
     
@@ -153,7 +155,8 @@ struct PokemonCellView: View {
                            weight: .semibold)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
-                                                                isShowing: $show),
+                                                                isShowing: $show)
+                                        .environmentObject(voiceHelper),
                                        isActive: $show) {
                                         EmptyView()
                                        })

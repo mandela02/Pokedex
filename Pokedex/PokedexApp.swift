@@ -13,6 +13,7 @@ struct PokedexApp: App {
         WindowGroup {
             PokedexView()
                 .statusBar(hidden: true)
+                .environmentObject(VoiceHelper())
         }
     }
 }
