@@ -9,10 +9,22 @@ import SwiftUI
 
 @main
 struct PokedexApp: App {
+    @State var show = false
     var body: some Scene {
         WindowGroup {
-            PokedexView()
-                .statusBar(hidden: true)
+            EmptyView()
+                .fullScreenCover(isPresented: $show) {
+                    NavigationView {
+                        PokedexView()
+                            .statusBar(hidden: true)
+                            .environmentObject(VoiceHelper())
+                            .navigationTitle("")
+                            .navigationBarHidden(true)
+                    }
+                }
+                .onAppear {
+                    show = true
+                }
         }
     }
 }

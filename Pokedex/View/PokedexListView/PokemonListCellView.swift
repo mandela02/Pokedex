@@ -17,14 +17,15 @@ struct PokemonListCellView: View {
             let height = geometry.size.height
             HStack(alignment: .center, spacing: 10, content: {
                 if let first = firstPokemon {
-                    TabableCardView(updater: PokemonUpdater(url: first.url),
+                    TappableCardView(updater: PokemonUpdater(url: first.url),
                                     size: (width, height))
                 }
                 if let second = secondPokemon {
-                    TabableCardView(updater: PokemonUpdater(url: second.url),
+                    TappableCardView(updater: PokemonUpdater(url: second.url),
                                     size: (width, height))
                 }
             })
+            .buttonStyle(PlainButtonStyle())
         })
     }
 }

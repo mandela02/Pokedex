@@ -23,21 +23,20 @@ struct EvolutionChainView: View {
     var body: some View {
         List {
             Section (header: CustomText(text: "Evolution Chain",
-                                                            size: 20,
-                                                            weight: .bold,
-                                                            textColor: .black)) {
+                                        size: 20,
+                                        weight: .bold,
+                                        textColor: .black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
                     EvolutionCellView(link: link)
                         .padding(.bottom, 5)
                 }
-
             }
             .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-
+            
             Section (header: CustomText(text: "Mega Evolution",
-                                                            size: 20,
-                                                            weight: .bold,
-                                                            textColor: .black)) {
+                                        size: 20,
+                                        weight: .bold,
+                                        textColor: .black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
                     EvolutionCellView(megaLink: link)
                         .padding(.bottom, 5)
@@ -53,6 +52,7 @@ struct EvolutionChainView: View {
         .onReceive(speciesUpdater.$evolution, perform: { evolution in
             evolutionUpdater.evolution = evolution
         })
+        .listStyle(SidebarListStyle())
     }
 }
 
@@ -82,7 +82,6 @@ struct EvolutionCellView: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
-
     }
 }
 
@@ -114,12 +113,16 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+    
     @State var image: UIImage?
     @State var show: Bool = false
     
     var updater: PokemonUpdater
     var url: String
     var name: String
+    
+    var canTap: Bool = true
     
     init(species: Species? = nil, pokemon: Pokemon? = nil) {
         if let species = species {
@@ -142,7 +145,8 @@ struct PokemonCellView: View {
         } label: {
             VStack(alignment: .center, spacing: 10) {
                 ZStack {
-                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                    Image("ic_pokeball")
+                        .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
@@ -153,10 +157,70 @@ struct PokemonCellView: View {
                            weight: .semibold)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
-                                                                isShowing: $show),
+                                                                isShowing: $show)
+                                        .environmentObject(voiceUpdater),
                                        isActive: $show) {
                                         EmptyView()
                                        })
         }
+    }
+
+//    var body: some View {
+//        Button {
+//            show = true
+//        } label: {
+//            VStack(alignment: .center, spacing: 10) {
+//                ZStack {
+//                    Image("ic_pokeball")
+//                        .renderingMode(.template)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .foregroundColor(Color.gray.opacity(0.5))
+//                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
+//                }
+//                CustomText(text: name.capitalizingFirstLetter(),
+//                           size: 15,
+//                           weight: .semibold)
+//            }
+//        }.sheet(isPresented: $show) {
+//            PokemonView(updater: updater, isShowing: $show)
+//                .environmentObject(voiceUpdater)
+//        }
+//    }
+}
+
+
+struct CustomAlertView: View {
+    @Binding var image: UIImage?
+    @Binding var isPresented: Bool
+    
+    var body: some View {
+        VStack(alignment: .center, spacing: 10) {
+            ZStack {
+                Image("ic_pokeball")
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(Color.gray.opacity(0.5))
+                Image(uiImage: image ?? UIImage())
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(Color.gray.opacity(0.5))
+            }
+            Button(action: {
+                withAnimation(.linear) {
+                    isPresented = false
+                }
+            }, label: {
+                Text("OK")
+                    .font(.largeTitle)
+                    .frame(minWidth: 0,
+                           maxWidth: .infinity,
+                           alignment: .center)
+                    .background(Color.gray.opacity(0.3))
+                    .cornerRadius(20)
+            })
+        }.background(Color.clear)
     }
 }

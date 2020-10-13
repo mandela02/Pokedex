@@ -10,14 +10,21 @@ import AVFoundation
 import SwiftUI
 
 class VoiceHelper: NSObject, ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon()
-    @Published var species: Species = Species()
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            print("pokemon 2\(pokemon.name)")
+        }
+    }
+    @Published var species: Species = Species() {
+        didSet {
+            print("pokemon 3\(species.name)")
+        }
+    }
 
-    private var isFirstTime = true
+    var isFirstTime = true
     
     @Published var isSpeaking = false {
         didSet {
-
             if isSpeaking {
                 if isFirstTime {
                     let text = pokemon.name + ", pokemon no \(pokemon.pokeId)"
@@ -51,6 +58,11 @@ class VoiceHelper: NSObject, ObservableObject {
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voice
         speechSynthesizer.speak(utterance)
+    }
+    
+    func refresh() {
+        isFirstTime = true
+        isSpeaking = false
     }
 }
 

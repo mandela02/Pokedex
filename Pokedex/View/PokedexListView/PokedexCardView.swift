@@ -7,50 +7,45 @@
 
 import SwiftUI
 
-struct TabableCardView: View {
+struct TappableCardView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+    
     @ObservedObject var updater: PokemonUpdater
     var size: (width: CGFloat, height: CGFloat)
     @State var show: Bool = false
     @State var isTapable: Bool = false
-
+    
     var body: some View {
-        PokedexCardView(updater: updater, size: size)
-            .onTapGesture(count: 1, perform: {
-                withAnimation(.spring()){
-                    show = true
-                    updater.isSelected = true
-                }
-            })
-            .fullScreenCover(isPresented: $show,
-                             content: {
-                                NavigationView {
-                                    PokemonView(updater: updater,
-                                                isShowing: $show)
-                                }
-                             })
-            .onReceive(updater.$isFinishLoading) { _ in
-                self.isTapable = updater.isFinishLoading
-            }
-            .disabled(isTapable)
+        Button {
+            show = true
+            updater.isSelected = true
+        } label: {
+            PokedexCardView(updater: updater, size: size)
+                .background(NavigationLink(destination: PokemonView(updater: updater,
+                                                                    isShowing: $show)
+                                            .environmentObject(voiceUpdater),
+                                           isActive: $show) { EmptyView() })
+        }
     }
 }
 
 struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
-
+    
     var size: (width: CGFloat, height: CGFloat)
     
     @State var loaded: Bool = false
     @State var image: UIImage?
-
+    
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
                     .blur(radius: 1)
-
-                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                
+                Image("ic_pokeball")
+                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
@@ -58,7 +53,7 @@ struct PokedexCardView: View {
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                     .offset(x: size.width * 1/4, y: size.height * 1/3 )
                     .blur(radius: 1)
-
+                
                 VStack {
                     Spacer()
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
