@@ -20,7 +20,7 @@ struct PokemonCell: Identifiable, Equatable {
 
 class Updater: ObservableObject {
     @Published var pokemons: [NamedAPIResource] = []
-    @Published var pokemonsCells: [PokemonCell] = [PokemonCell()]
+    @Published var pokemonsCells: [PokemonCell] = []
 
     
     private var canLoadMore = true
@@ -76,7 +76,7 @@ class Updater: ObservableObject {
         
         self.cancellable = Session
             .share
-            .pokemons(from: url)?
+            .pokemons(from: url)
             .replaceError(with: PokemonResult())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()

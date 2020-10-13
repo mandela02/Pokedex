@@ -130,14 +130,16 @@ struct PokemonView: View {
                         .gesture(drag(in: size))
                 }
                 
-                VStack(alignment: .trailing) {
+                VStack() {
                     Spacer()
-                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
-                                        about: $updater.pokemon)
-                        .padding(.trailing, 30)
-                        .padding(.bottom, 30)
+                    HStack {
+                        Spacer()
+                        PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+                                            about: $updater.pokemon)
+                            .padding(.trailing, 30)
+                            .padding(.bottom, 30)
+                    }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .bottomTrailing)
             }
             .ignoresSafeArea()
             .onChange(of: image) { image in

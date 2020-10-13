@@ -15,7 +15,7 @@ struct PokedexApp: App {
             EmptyView()
                 .fullScreenCover(isPresented: $show) {
                     NavigationView {
-                        PokedexView()
+                        HomeView()
                             .statusBar(hidden: true)
                             .environmentObject(VoiceHelper())
                             .navigationTitle("")
@@ -29,7 +29,7 @@ struct PokedexApp: App {
     }
 }
 
-struct PokedexView: View {
+struct HomeView: View {
     var body: some View {
         ZStack {
             GeometryReader { geometry  in
@@ -40,18 +40,12 @@ struct PokedexView: View {
                     .frame(width: size.width, height: size.height, alignment: .center)
                     .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
 
-                PokemonListView(updater: Updater())
+                PokedexView()
                     .ignoresSafeArea(.container, edges: .bottom)
                     .ignoresSafeArea(.container, edges: .top)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
 
             }
         }
-    }
-}
-
-struct PokedexApp_Previews: PreviewProvider {
-    static var previews: some View {
-        PokedexView()
     }
 }
