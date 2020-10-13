@@ -69,7 +69,7 @@ struct AnimatedImageView: View {
                         .scaleEffect(isComplete ? 1 : 0)
                         .animation(Animation.easeInOut(duration: 1).delay(0.5))
                         .onAppear(perform: {
-                            self.isComplete.toggle()
+                            self.isComplete = true
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
                                 needHidden = true
                             })

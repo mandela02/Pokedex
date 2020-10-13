@@ -11,13 +11,9 @@ struct EvolutionView: View {
     var speciesUpdater: SpeciesUpdater
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            EvolutionChainView(speciesUpdater: speciesUpdater)
-                .padding()
-            Color.clear.frame(height: 150, alignment: .center)
-        }
+        EvolutionChainView(speciesUpdater: speciesUpdater)
+            .frame(minHeight: 0, maxHeight: .infinity, alignment: .center)
     }
-    
 }
 
 struct EvolutionChainView: View {
@@ -25,31 +21,31 @@ struct EvolutionChainView: View {
     @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
     
     var body: some View {
-        VStack(alignment: .center) {
-            VStack(alignment: .leading) {
-                CustomText(text: "Evolution Chain",
-                           size: 20,
-                           weight: .bold,
-                           textColor: .black)
-                
+        List {
+            Section (header: CustomText(text: "Evolution Chain",
+                                                            size: 20,
+                                                            weight: .bold,
+                                                            textColor: .black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
                     EvolutionCellView(link: link)
                         .padding(.bottom, 5)
                 }
-                Spacer()
-            }.isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-            
-            VStack(alignment: .leading) {
-                CustomText(text: "Mega Evolution",
-                           size: 20,
-                           weight: .bold,
-                           textColor: .black)
+
+            }
+            .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
+
+            Section (header: CustomText(text: "Mega Evolution",
+                                                            size: 20,
+                                                            weight: .bold,
+                                                            textColor: .black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
                     EvolutionCellView(megaLink: link)
                         .padding(.bottom, 5)
                 }
-                Spacer()
-            }.isRemove(!speciesUpdater.species.havingMega)
+            }
+            .isRemove(!speciesUpdater.species.havingMega)
+            
+            Color.clear.frame(height: 100, alignment: .center)
         }
         .onReceive(speciesUpdater.$species, perform: { species in
             evolutionUpdater.species = species
@@ -85,6 +81,8 @@ struct EvolutionCellView: View {
                 Spacer()
             }
         }
+        .buttonStyle(PlainButtonStyle())
+
     }
 }
 
@@ -139,28 +137,26 @@ struct PokemonCellView: View {
         }
     }
     var body: some View {
-        VStack(alignment: .center, spacing: 10) {
-            ZStack {
-                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.gray.opacity(0.5))
-                DownloadedImageView(withURL: url, needAnimated: false, image: $image)
+        Button {
+            show = true
+        } label: {
+            VStack(alignment: .center, spacing: 10) {
+                ZStack {
+                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(Color.gray.opacity(0.5))
+                    DownloadedImageView(withURL: url, needAnimated: false, image: $image)
+                }
+                CustomText(text: name.capitalizingFirstLetter(),
+                           size: 15,
+                           weight: .semibold)
             }
-            CustomText(text: name.capitalizingFirstLetter(),
-                       size: 15,
-                       weight: .semibold)
+            .background(NavigationLink(destination: PokemonView(updater: updater,
+                                                                isShowing: $show),
+                                       isActive: $show, label: {
+                                        EmptyView()
+                                       }))
         }
-        .onTapGesture(count: 1, perform: {
-            withAnimation(.spring()){
-                show.toggle()
-                updater.isSelected = true
-            }
-        })
-        .fullScreenCover(isPresented: $show,
-                         content: {
-                                PokemonView(updater: updater,
-                                            isShowing: $show)
-                         })
     }
 }

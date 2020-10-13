@@ -119,6 +119,23 @@ struct PokemonView: View {
                 }
                 
                 if isShowingImage {
+//                    ZStack {
+//                        if let image = image {
+//                            Image(uiImage: image)
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                        } else {
+//                            DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
+//                                                needAnimated: true,
+//                                                image: $image)
+//                        }
+//                    }
+//                    .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
+//                    .offset(y: -size.width/2 + 30)
+//                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+//                    .opacity(opacity)
+//                    .gesture(drag(in: size))
+
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
                                         needAnimated: true,
                                         image: $image)
@@ -157,11 +174,15 @@ struct PokemonView: View {
             .onReceive(speciesUpdater.$species, perform: { species in
                 voiceUpdater.species = species
             })
+            .navigationBarTitle("")
+            .navigationBarHidden(true)
         })
     }
 }
 
 struct ButtonView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
@@ -173,7 +194,8 @@ struct ButtonView: View {
             HStack{
                 Button {
                     withAnimation(.spring()){
-                        isShowing.toggle()
+                        isShowing = false
+                        print(isShowing)
                     }
                 } label: {
                     Image(systemName: "xmark")

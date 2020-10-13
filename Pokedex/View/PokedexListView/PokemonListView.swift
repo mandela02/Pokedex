@@ -16,9 +16,10 @@ struct PokemonListView: View {
         self.updater = updater
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
+        UITableView.appearance().allowsSelection = false
         UITableViewCell.appearance().backgroundColor = .clear
-        UITableView.appearance().separatorStyle = .singleLine
-        UITableView.appearance().separatorColor = .red
+        UITableViewCell.appearance().selectionStyle = .none
+        UITableViewCell.appearance().selectionStyle = .none
     }
     
     var body: some View {
