@@ -15,6 +15,7 @@ struct PokedexApp: App {
                 .statusBar(hidden: true)
                 .environmentObject(VoiceHelper())
         }
+
     }
 }
 

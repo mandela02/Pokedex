@@ -13,11 +13,10 @@ class VoiceHelper: NSObject, ObservableObject {
     @Published var pokemon: Pokemon = Pokemon()
     @Published var species: Species = Species()
 
-    private var isFirstTime = true
+    var isFirstTime = true
     
     @Published var isSpeaking = false {
         didSet {
-
             if isSpeaking {
                 if isFirstTime {
                     let text = pokemon.name + ", pokemon no \(pokemon.pokeId)"

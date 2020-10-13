@@ -24,7 +24,8 @@ struct RotatingPokeballView: View {
                 Spacer()
                 HStack(alignment: .center, spacing: 0 ,content: {
                     Spacer()
-                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                    Image("ic_pokeball")
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .aspectRatio(contentMode: .fit)

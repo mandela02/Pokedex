@@ -21,7 +21,7 @@ struct PokemonView: View {
 
     @State private var opacity: Double = 1
     @State private var image: UIImage?
-
+    
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
@@ -82,7 +82,6 @@ struct PokemonView: View {
                     RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                         .ignoresSafeArea()
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
-                    
                 } else {
                     RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
                         .ignoresSafeArea()
@@ -142,19 +141,20 @@ struct PokemonView: View {
             .ignoresSafeArea()
             .onChange(of: image) { image in
                 withAnimation(.spring()) {
+                    voiceUpdater.isFirstTime = true
                     voiceUpdater.isSpeaking = true
                 }
             }
             .onAppear {
                 speciesUpdater.speciesUrl = updater.pokemon.species.url
                 voiceUpdater.pokemon = updater.pokemon
-                voiceUpdater.species = speciesUpdater.species
             }
             .onReceive(speciesUpdater.$species, perform: { species in
                 voiceUpdater.species = species
             })
             .onDisappear(perform: {
                 voiceUpdater.isSpeaking = false
+                voiceUpdater.isFirstTime = true
             })
             .navigationBarTitle("")
             .navigationBarHidden(true)

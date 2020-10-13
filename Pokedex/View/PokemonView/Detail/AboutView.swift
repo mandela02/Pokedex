@@ -104,7 +104,8 @@ struct GenderView: View {
     
     var body: some View {
         HStack(spacing: 10) {
-            Image(uiImage: UIImage(named: gender.rawValue)!.withRenderingMode(.alwaysTemplate))
+            Image(gender.rawValue)
+                .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 14, alignment: .center)

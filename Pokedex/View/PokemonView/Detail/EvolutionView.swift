@@ -114,8 +114,6 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
-    @EnvironmentObject var voiceHelper: VoiceHelper
-
     @State var image: UIImage?
     @State var show: Bool = false
     
@@ -144,7 +142,8 @@ struct PokemonCellView: View {
         } label: {
             VStack(alignment: .center, spacing: 10) {
                 ZStack {
-                    Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                    Image("ic_pokeball")
+                        .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
@@ -155,8 +154,7 @@ struct PokemonCellView: View {
                            weight: .semibold)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
-                                                                isShowing: $show)
-                                        .environmentObject(voiceHelper),
+                                                                isShowing: $show),
                                        isActive: $show) {
                                         EmptyView()
                                        })

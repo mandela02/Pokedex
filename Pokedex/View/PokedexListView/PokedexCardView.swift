@@ -50,7 +50,8 @@ struct PokedexCardView: View {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
                     .blur(radius: 1)
 
-                Image(uiImage: UIImage(named: "ic_pokeball")!.withRenderingMode(.alwaysTemplate))
+                Image("ic_pokeball")
+                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
