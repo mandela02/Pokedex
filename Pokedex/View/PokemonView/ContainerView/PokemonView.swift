@@ -101,6 +101,7 @@ struct PokemonView: View {
                     DetailPageView(updater: speciesUpdater, pokemon: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
+                        .isRemove(!isShowing)
                 }.gesture(drag(in: size))
                 
                 VStack {
@@ -185,8 +186,6 @@ struct ButtonView: View {
                 Button {
                     withAnimation(.spring()){
                         isShowing = false
-                        presentationMode.wrappedValue.dismiss()
-                        print(isShowing)
                     }
                 } label: {
                     Image(systemName: (presentationMode.wrappedValue.isPresented ? "arrow.uturn.left" : "xmark"))

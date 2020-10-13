@@ -19,7 +19,6 @@ struct PokemonListView: View {
         UITableView.appearance().allowsSelection = false
         UITableViewCell.appearance().backgroundColor = .clear
         UITableViewCell.appearance().selectionStyle = .none
-        UITableViewCell.appearance().selectionStyle = .none
     }
     
     var body: some View {
