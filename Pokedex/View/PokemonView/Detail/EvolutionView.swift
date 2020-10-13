@@ -114,6 +114,8 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
     @State var image: UIImage?
     @State var show: Bool = false
     
@@ -136,9 +138,37 @@ struct PokemonCellView: View {
             updater = PokemonUpdater(url: "")
         }
     }
+    
+// body when want na push to navigation stack
+//    var body: some View {
+//        Button {
+//            show = true
+//        } label: {
+//            VStack(alignment: .center, spacing: 10) {
+//                ZStack {
+//                    Image("ic_pokeball")
+//                        .renderingMode(.template)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .foregroundColor(Color.gray.opacity(0.5))
+//                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
+//                }
+//                CustomText(text: name.capitalizingFirstLetter(),
+//                           size: 15,
+//                           weight: .semibold)
+//            }
+//            .background(NavigationLink(destination: PokemonView(updater: updater,
+//                                                                isShowing: $show),
+//                                       isActive: $show) {
+//                                        EmptyView()
+//                                       })
+//        }
+//    }
+
+    // body when present
     var body: some View {
         Button {
-            show = true
+            show.toggle()
         } label: {
             VStack(alignment: .center, spacing: 10) {
                 ZStack {
@@ -153,11 +183,9 @@ struct PokemonCellView: View {
                            size: 15,
                            weight: .semibold)
             }
-            .background(NavigationLink(destination: PokemonView(updater: updater,
-                                                                isShowing: $show),
-                                       isActive: $show) {
-                                        EmptyView()
-                                       })
+        }.sheet(isPresented: $show) {
+            PokemonView(updater: updater, isShowing: $show)
+                .environmentObject(voiceUpdater)
         }
     }
 }

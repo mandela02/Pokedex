@@ -18,16 +18,16 @@ struct PokemonView: View {
     @State private var isExpanded = true
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
-
     @State private var opacity: Double = 1
     @State private var image: UIImage?
-    
+    @State private var isFirstTimeLoading = true
+
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
         return UIDevice().hasNotch ? 0 : 120
     }
-    
+        
     private func drag(in size: CGSize) -> some Gesture {
         let collapseValue = size.height / 4 - 100
         
@@ -140,21 +140,29 @@ struct PokemonView: View {
             }
             .ignoresSafeArea()
             .onChange(of: image) { image in
-                withAnimation(.spring()) {
-                    voiceUpdater.isFirstTime = true
-                    voiceUpdater.isSpeaking = true
+                if isFirstTimeLoading {
+                    withAnimation(.spring()) {
+                        voiceUpdater.isFirstTime = true
+                        voiceUpdater.isSpeaking = true
+                    }
+                    isFirstTimeLoading = false
                 }
             }
             .onAppear {
                 speciesUpdater.speciesUrl = updater.pokemon.species.url
-                voiceUpdater.pokemon = updater.pokemon
+                print("Updater onAppear \(updater.pokemon.name)")
             }
             .onReceive(speciesUpdater.$species, perform: { species in
-                voiceUpdater.species = species
+                if !species.name.isEmpty {
+                    voiceUpdater.species = species
+                    voiceUpdater.pokemon = updater.pokemon
+                    print("Updater onReceive \(updater.pokemon.name)")
+                }
             })
             .onDisappear(perform: {
-                voiceUpdater.isSpeaking = false
-                voiceUpdater.isFirstTime = true
+                voiceUpdater.refresh()
+                print("Updater  onDisappear \(updater.pokemon.name)")
+
             })
             .navigationBarTitle("")
             .navigationBarHidden(true)
@@ -181,7 +189,7 @@ struct ButtonView: View {
                         print(isShowing)
                     }
                 } label: {
-                    Image(systemName: "xmark")
+                    Image(systemName: (presentationMode.wrappedValue.isPresented ? "arrow.uturn.left" : "xmark"))
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.clear)
@@ -197,7 +205,7 @@ struct ButtonView: View {
                         .background(Color.clear)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                         .lineLimit(1)
-                        .matchedGeometryEffect(id: "nameText", in: namespace)
+                        .matchedGeometryEffect(id: pokemon.name, in: namespace)
                     Spacer()
                 }
                 AnimatedLikeButton(isFavorite: $isFavorite)
@@ -226,7 +234,7 @@ struct NameView: View {
                 .background(Color.clear)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .lineLimit(1)
-                .matchedGeometryEffect(id: "nameText", in: namespace)
+                .matchedGeometryEffect(id: pokemon.name, in: namespace)
             Spacer()
             Text(String(format: "#%03d", pokemon.pokeId))
                 .font(.system(size: 20))

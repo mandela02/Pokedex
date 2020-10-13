@@ -10,12 +10,13 @@ import Combine
 import AVFoundation
 
 class PokemonUpdater: ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon() {
+    @Published var pokemon: Pokemon = Pokemon()
+    
+    @Published var pokemonUrl: String? {
         didSet {
-            
+            initPokemon()
         }
     }
-    var pokemonUrl: String?
         
     @Published var isFinishLoading = false
     @Published var isSelected = false {
@@ -34,7 +35,6 @@ class PokemonUpdater: ObservableObject {
     
     init(url: String) {
         self.pokemonUrl = url
-        initPokemon()
     }
     
     private func initPokemon() {
