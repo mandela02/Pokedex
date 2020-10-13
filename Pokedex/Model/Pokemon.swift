@@ -21,6 +21,7 @@ struct Pokemon: Codable, Identifiable {
     var weight: Int = 0
     var abilities: [AbilitiesResult] = []
     var stats: [PokeStatUrl] = []
+    var pokeId: Int = 0
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -37,6 +38,7 @@ struct Pokemon: Codable, Identifiable {
         case weight = "weight"
         case abilities = "abilities"
         case stats
+        case pokeId = "id"
     }
 }
 

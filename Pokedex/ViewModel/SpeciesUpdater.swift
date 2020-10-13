@@ -9,32 +9,49 @@ import Foundation
 import Combine
 
 class SpeciesUpdater: ObservableObject {
+    init(url: String) {
+        self.speciesUrl = url
+    }
+
+    var speciesUrl: String = "" {
+        didSet {
+            initPokemonSpecies(from: speciesUrl)
+        }
+    }
+
+
     @Published var species: Species = Species() {
         didSet {
             description = createText()
+            initEvolution(of: species.evolutionChain.url)
         }
     }
+
     @Published var description: String = ""
+    @Published var evolution: Evolution = Evolution()
 
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
-    deinit {
-        cancellable?.cancel()
-    }
-    
-    init(url: String) {
-        initPokemonSpecies(from: url)
-    }
-        
     private func initPokemonSpecies(from url: String) {
-        self.cancellable = Session.share.species(from: url)?
+         Session.share.species(from: url)
             .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
             .assign(to: \.species, on: self)
+            .store(in: &cancellables)
     }
     
     func createText() -> String {
         return StringHelper.getEnglishTexts(from: species.flavorTextEntries)
+    }
+    
+    
+    private func initEvolution(of url: String) {
+        Session.share.evolution(from: url)
+            .replaceError(with: Evolution())
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.evolution, on: self)
+            .store(in: &cancellables)
     }
 }

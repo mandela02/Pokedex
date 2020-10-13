@@ -17,7 +17,7 @@ struct TabableCardView: View {
         PokedexCardView(updater: updater, size: size)
             .onTapGesture(count: 1, perform: {
                 withAnimation(.spring()){
-                    show.toggle()
+                    show = true
                     updater.isSelected = true
                 }
             })
@@ -25,9 +25,7 @@ struct TabableCardView: View {
                              content: {
                                 NavigationView {
                                     PokemonView(updater: updater,
-                                                      isShowing: $show)
-                                        .navigationBarTitle("")
-                                        .navigationBarHidden(true)
+                                                isShowing: $show)
                                 }
                              })
             .onReceive(updater.$isFinishLoading) { _ in

@@ -81,6 +81,7 @@ struct StatsView: View {
                 }
                 Spacer()
             }.padding(.top, 20)
+            Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
     }

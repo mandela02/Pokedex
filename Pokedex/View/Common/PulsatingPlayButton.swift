@@ -46,7 +46,7 @@ struct PulsatingPlayButton: View {
             Circle()
                 .frame(width: size, height: size)
                 .foregroundColor(pokemon.mainType.color.background)
-            Image(systemName: isSpeaking ? "speaker.2" : "speaker.slash")
+            Image(systemName: isSpeaking ? "speaker.slash" : "speaker.2")
                 .font(.largeTitle)
                 .foregroundColor(pokemon.mainType.color.text)
                 .scaleEffect(0.7)

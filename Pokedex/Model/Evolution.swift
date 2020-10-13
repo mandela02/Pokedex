@@ -75,6 +75,22 @@ struct EvolutionDetail: Codable {
     var trigger: NamedAPIResource?
     var turnUpsideDown: Bool?
     
+    var evolutionTrigger: EvolutionTrigger {
+        switch trigger?.name {
+        case "level-up":
+            return .level
+        case "trade":
+            return .trade
+        case "use-item":
+            return .item
+        case "shed":
+            return .shed
+
+        default:
+            return .level
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case gender
         case heldItem = "held_item"
@@ -95,4 +111,10 @@ struct EvolutionDetail: Codable {
         case trigger
         case turnUpsideDown = "turn_upside_down"
     }
+}
+
+struct EvolutionTriggers: Codable {
+    var count: Int = 0
+    var next, previous: String?
+    var results: [NamedAPIResource] = []
 }

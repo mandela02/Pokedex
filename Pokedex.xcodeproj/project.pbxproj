@@ -189,6 +189,23 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
+		84B40AA725348ABE00E31921 /* PageView */ = {
+			isa = PBXGroup;
+			children = (
+				90454D29252E9E1F000F5B79 /* DetailPageView.swift */,
+				90C1E496252DC5E0009FD50D /* PagerView.swift */,
+			);
+			path = PageView;
+			sourceTree = "<group>";
+		};
+		84B40AA825348AC700E31921 /* ContainerView */ = {
+			isa = PBXGroup;
+			children = (
+				8407B83D252C5E2000341270 /* PokemonView.swift */,
+			);
+			path = ContainerView;
+			sourceTree = "<group>";
+		};
 		84D9AFE3252B761C00E4C9D5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -222,8 +239,9 @@
 		90454D1C252E9DB1000F5B79 /* PokemonView */ = {
 			isa = PBXGroup;
 			children = (
+				84B40AA825348AC700E31921 /* ContainerView */,
+				84B40AA725348ABE00E31921 /* PageView */,
 				90DF66EE252F0EBE000284A6 /* Detail */,
-				8407B83D252C5E2000341270 /* PokemonView.swift */,
 			);
 			path = PokemonView;
 			sourceTree = "<group>";
@@ -364,8 +382,6 @@
 		90DF66EE252F0EBE000284A6 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				90454D29252E9E1F000F5B79 /* DetailPageView.swift */,
-				90C1E496252DC5E0009FD50D /* PagerView.swift */,
 				90DF66E9252F0EA0000284A6 /* AboutView.swift */,
 				90F0BBE8252F185B00A37B3C /* StatsView.swift */,
 				847A125325316BF300146D24 /* EvolutionView.swift */,

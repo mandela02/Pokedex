@@ -10,7 +10,7 @@ import SwiftUI
 struct PokemonView: View {
     @ObservedObject var updater: PokemonUpdater
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
-    @State var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
+    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @Binding var isShowing: Bool
     
@@ -98,7 +98,7 @@ struct PokemonView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(updater: $speciesUpdater, pokemon: updater.pokemon)
+                    DetailPageView(updater: speciesUpdater, pokemon: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                 }.gesture(drag(in: size))
@@ -145,23 +145,29 @@ struct PokemonView: View {
                 }
             }
             .onAppear {
-                speciesUpdater = SpeciesUpdater(url: updater.pokemon.species.url)
+                speciesUpdater.speciesUrl = updater.pokemon.species.url
                 voiceUpdater.pokemon = updater.pokemon
                 voiceUpdater.species = speciesUpdater.species
-            }
-            .onDisappear {
-                withAnimation(.spring()) {
-                    voiceUpdater.isSpeaking = false
-                }
             }
             .onReceive(speciesUpdater.$species, perform: { species in
                 voiceUpdater.species = species
             })
+            .onChange(of: isShowing, perform: { isShowing in
+                if isShowing == false {
+                    withAnimation(.spring()) {
+                        voiceUpdater.isSpeaking = false
+                    }
+                }
+            })
+            .navigationBarTitle("")
+            .navigationBarHidden(true)
         })
     }
 }
 
 struct ButtonView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
@@ -173,7 +179,9 @@ struct ButtonView: View {
             HStack{
                 Button {
                     withAnimation(.spring()){
-                        isShowing.toggle()
+                        isShowing = false
+                        presentationMode.wrappedValue.dismiss()
+                        print(isShowing)
                     }
                 } label: {
                     Image(systemName: "xmark")
@@ -223,7 +231,7 @@ struct NameView: View {
                 .lineLimit(1)
                 .matchedGeometryEffect(id: "nameText", in: namespace)
             Spacer()
-            Text(String(format: "#%03d", pokemon.order))
+            Text(String(format: "#%03d", pokemon.pokeId))
                 .font(.system(size: 20))
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)
