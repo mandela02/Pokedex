@@ -119,23 +119,6 @@ struct PokemonView: View {
                 }
                 
                 if isShowingImage {
-//                    ZStack {
-//                        if let image = image {
-//                            Image(uiImage: image)
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fit)
-//                        } else {
-//                            DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
-//                                                needAnimated: true,
-//                                                image: $image)
-//                        }
-//                    }
-//                    .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
-//                    .offset(y: -size.width/2 + 30)
-//                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-//                    .opacity(opacity)
-//                    .gesture(drag(in: size))
-
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
                                         needAnimated: true,
                                         image: $image)
@@ -166,13 +149,15 @@ struct PokemonView: View {
                 voiceUpdater.pokemon = updater.pokemon
                 voiceUpdater.species = speciesUpdater.species
             }
-            .onDisappear {
-                withAnimation(.spring()) {
-                    voiceUpdater.isSpeaking = false
-                }
-            }
             .onReceive(speciesUpdater.$species, perform: { species in
                 voiceUpdater.species = species
+            })
+            .onChange(of: isShowing, perform: { isShowing in
+                if isShowing == false {
+                    withAnimation(.spring()) {
+                        voiceUpdater.isSpeaking = false
+                    }
+                }
             })
             .navigationBarTitle("")
             .navigationBarHidden(true)
@@ -195,6 +180,7 @@ struct ButtonView: View {
                 Button {
                     withAnimation(.spring()){
                         isShowing = false
+                        presentationMode.wrappedValue.dismiss()
                         print(isShowing)
                     }
                 } label: {

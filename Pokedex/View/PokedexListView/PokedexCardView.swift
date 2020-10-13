@@ -25,7 +25,7 @@ struct TabableCardView: View {
                              content: {
                                 NavigationView {
                                     PokemonView(updater: updater,
-                                                      isShowing: $show)
+                                                isShowing: $show)
                                 }
                              })
             .onReceive(updater.$isFinishLoading) { _ in

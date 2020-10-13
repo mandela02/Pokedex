@@ -146,7 +146,7 @@ struct PokemonCellView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
-                    DownloadedImageView(withURL: url, needAnimated: false, image: $image)
+                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
                 }
                 CustomText(text: name.capitalizingFirstLetter(),
                            size: 15,
@@ -154,9 +154,9 @@ struct PokemonCellView: View {
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
                                                                 isShowing: $show),
-                                       isActive: $show, label: {
+                                       isActive: $show) {
                                         EmptyView()
-                                       }))
+                                       })
         }
     }
 }
