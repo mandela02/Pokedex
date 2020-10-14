@@ -67,6 +67,7 @@
 		90DF66DF252EFF42000284A6 /* Devide+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DF66DE252EFF42000284A6 /* Devide+Extension.swift */; };
 		90DF66EA252F0EA0000284A6 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DF66E9252F0EA0000284A6 /* AboutView.swift */; };
 		90F0BBE9252F185B00A37B3C /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F0BBE8252F185B00A37B3C /* StatsView.swift */; };
+		90F9426D2536A4E4003C23FF /* HamburgerButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +154,8 @@
 		90DF66DE252EFF42000284A6 /* Devide+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Devide+Extension.swift"; sourceTree = "<group>"; };
 		90DF66E9252F0EA0000284A6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		90F0BBE8252F185B00A37B3C /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		90F9425025369620003C23FF /* Pokedex.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pokedex.entitlements; sourceTree = "<group>"; };
+		90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HamburgerButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +300,7 @@
 		907D5F17252B12C500E30748 /* Pokedex */ = {
 			isa = PBXGroup;
 			children = (
+				90F9425025369620003C23FF /* Pokedex.entitlements */,
 				84D9AFE3252B761C00E4C9D5 /* Network */,
 				907D5F6C252B23CF00E30748 /* Model */,
 				907D5F63252B1ACC00E30748 /* ViewModel */,
@@ -406,6 +410,7 @@
 				84F555F72533914000F09E84 /* LoadingView.swift */,
 				84F55603253398B900F09E84 /* CompleteView.swift */,
 				841E96772536191700FAD664 /* FloatingMenu.swift */,
+				90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -580,6 +585,7 @@
 				8407B83E252C5E2000341270 /* PokemonView.swift in Sources */,
 				90BC1EC7252FF6AC00A39177 /* Species.swift in Sources */,
 				907D5F5A252B186E00E30748 /* Color.swift in Sources */,
+				90F9426D2536A4E4003C23FF /* HamburgerButtonView.swift in Sources */,
 				8422CFCC252E0E9D006F4535 /* NamedAPIResource.swift in Sources */,
 				84D9AFEF252B776800E4C9D5 /* Constant.swift in Sources */,
 				84D9B002252B895500E4C9D5 /* PokemonUpdater.swift in Sources */,
@@ -761,10 +767,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = DAB2NZFLN5;
+				DEVELOPMENT_TEAM = J243X8N8UC;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -772,9 +780,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.komorebi.SimpleDiary;
+				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = simplediary_develop_20200826;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -785,10 +795,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = DAB2NZFLN5;
+				DEVELOPMENT_TEAM = J243X8N8UC;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -796,9 +808,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.komorebi.SimpleDiary;
+				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = simplediary_develop_20200826;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

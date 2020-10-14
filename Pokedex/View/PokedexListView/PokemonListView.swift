@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonListView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
     @StateObject var updater: Updater = Updater()
     @State var isLoading = false
     @State var isFinal = false
@@ -29,6 +31,7 @@ struct PokemonListView: View {
                                 .onAppear(perform: {
                                     updater.loadMorePokemonIfNeeded(current: cell)
                                 })
+                                .environmentObject(voiceUpdater)
                         }
                         
                         if isFinal {

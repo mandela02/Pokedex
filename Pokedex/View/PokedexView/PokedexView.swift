@@ -37,8 +37,6 @@ struct PokedexView: View {
                 HStack {
                     Spacer()
                     FloatingMenu(active: $active)
-                        .padding(.bottom, 30)
-                        .padding(.trailing, 30)
                 }
             }
         }

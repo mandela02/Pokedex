@@ -10,11 +10,11 @@ import SwiftUI
 struct TypeListView: View {
     @StateObject var updater: TypeUpdater = TypeUpdater()
     @State var isLoading = false
-    
+    @State var isFirstTimeLoadView: Bool = true
     var body: some View {
         GeometryReader(content: { geometry in
             let width = (geometry.size.width - 20 - 40) / 2
-            let height = (geometry.size.height) / 6
+            let height = (geometry.size.height) / 8
             let gridItem = GridItem(.fixed(width), spacing: 10)
             let columns = [gridItem, gridItem]
             ZStack {
@@ -56,10 +56,15 @@ struct TypeListView: View {
                 }
             }
             .onAppear(perform: {
-                isLoading = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    isLoading = false
+                if isFirstTimeLoadView {
+                    withAnimation(.easeIn) {
+                        isLoading = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            isLoading = false
+                        }
+                    }
                 }
+                isFirstTimeLoadView = false
             })
         })
     }

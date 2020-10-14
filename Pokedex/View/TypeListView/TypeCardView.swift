@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TappableTypeCardView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
     var cell: TypeCell
     var size: (width: CGFloat, height: CGFloat)
     var avatar: Int
@@ -19,7 +21,7 @@ struct TappableTypeCardView: View {
             show = true
         } label: {
             TypeCardView(cell: cell, size: size, avatar: avatar)
-                .background(NavigationLink(destination: TypePokemonListView(cells: cell),
+                .background(NavigationLink(destination: TypePokemonListView(show: $show, typeCell: cell).environmentObject(voiceUpdater),
                                            isActive: $show) { EmptyView() })
         }
     }

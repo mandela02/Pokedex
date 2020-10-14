@@ -190,7 +190,7 @@ struct ButtonView: View {
                         isShowing = false
                     }
                 } label: {
-                    Image(systemName: (presentationMode.wrappedValue.isPresented ? "arrow.uturn.left" : "xmark"))
+                    Image(systemName: ("arrow.uturn.left"))
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.clear)
