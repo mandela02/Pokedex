@@ -23,10 +23,8 @@ struct FloatingMenu: View {
                     MenuItem(icon: "camera", text: "Nothing yet", tag: 2, selected: $active)
                         .animation(Animation.default.delay(0.2))
                         .onTapGesture {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                withAnimation(.spring()) {
-                                    active = 2
-                                }
+                            withAnimation(.spring()) {
+                                active = 2
                             }
                         }
                 }
@@ -34,10 +32,8 @@ struct FloatingMenu: View {
                     MenuItem(icon: "photo.on.rectangle", text: "Type", tag: 1, selected: $active)
                         .animation(Animation.default.delay(0.1))
                         .onTapGesture {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                withAnimation(.spring()) {
-                                    active = 1
-                                }
+                            withAnimation(.spring()) {
+                                active = 1
                             }
                         }
                 }
@@ -45,17 +41,15 @@ struct FloatingMenu: View {
                     MenuItem(icon: "square.and.arrow.up", text: "National Dex", tag: 0, selected: $active)
                         .animation(Animation.default.delay(0))
                         .onTapGesture {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                withAnimation(.spring()) {
-                                    active = 0
-                                }
+                            withAnimation(.spring()) {
+                                active = 0
                             }
                         }
                 }
             }
             HamburgerButtonView(pressed: $pressed)
                 .frame(width: 60, height: 60)
-                .foregroundColor(.blue)
+                .foregroundColor(.red)
                 .shadow(radius: 26)
                 .onChange(of: pressed, perform: { value in
                     showMenuAnimated()
@@ -82,14 +76,14 @@ struct MenuItem: View {
             Image(systemName: icon)
                 .renderingMode(.template)
                 .imageScale(.large)
-                .foregroundColor(selected == tag ? .white : .blue)
-            CustomText(text: text, size: 12, weight: .semibold, background: .clear, textColor: selected == tag ? .white : .blue)
+                .foregroundColor(selected == tag ? .white : .red)
+            CustomText(text: text, size: 12, weight: .semibold, background: .clear, textColor: selected == tag ? .white : .red)
         }
         .frame(height: 20, alignment: .trailing)
         .shadow(radius: 26)
         .transition(AnyTransition.move(edge: .trailing))
         .background(Capsule(style: .circular)
-                        .fill(selected == tag ? Color.blue : Color.white)
+                        .fill(selected == tag ? Color.red : Color.white)
                         .padding(EdgeInsets(top: -10, leading: -20, bottom: -10, trailing: -20)))
         .padding(.trailing, 30)
     }

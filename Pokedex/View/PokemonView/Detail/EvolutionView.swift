@@ -53,6 +53,7 @@ struct EvolutionChainView: View {
             evolutionUpdater.evolution = evolution
         })
         .listStyle(SidebarListStyle())
+        .animation(.linear)
     }
 }
 
@@ -113,7 +114,6 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
-    @EnvironmentObject var voiceUpdater: VoiceHelper
     
     @State var image: UIImage?
     @State var show: Bool = false
@@ -150,15 +150,16 @@ struct PokemonCellView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
-                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
+                    DownloadedImageView(withURL: url,
+                                        needAnimated: false,
+                                        image: $image)
                 }
                 CustomText(text: name.capitalizingFirstLetter(),
                            size: 15,
                            weight: .semibold)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
-                                                                isShowing: $show)
-                                        .environmentObject(voiceUpdater),
+                                                                isShowing: $show),
                                        isActive: $show) {
                                         EmptyView()
                                        })
@@ -184,7 +185,6 @@ struct PokemonCellView: View {
 //            }
 //        }.sheet(isPresented: $show) {
 //            PokemonView(updater: updater, isShowing: $show)
-//                .environmentObject(voiceUpdater)
 //        }
 //    }
 }

@@ -8,27 +8,28 @@
 import SwiftUI
 
 struct TypePokemonListView: View {
-    @EnvironmentObject var voiceUpdater: VoiceHelper
 
     @State var isLoading = false
-    @Binding var show: Bool
+    @State var isFirstTimeLoading = true
 
-    var typeCell : TypeCell
-        
+    @Binding var show: Bool
+    var type : PokemonType
+    
+    @StateObject var updater: TypePokemonsUpdater = TypePokemonsUpdater()
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
             ZStack {
                 VStack {
                     List {
-                        ForEach(typeCell.cells) { cell in
+                        ForEach(updater.pokemons) { cell in
                             PokemonListCellView(firstPokemon: cell.firstPokemon,
                                                 secondPokemon: cell.secondPokemon)
                                 .listRowInsets(EdgeInsets())
                                 .frame(width: geometry.size.width, height: height)
                                 .padding(.bottom, 10)
                                 .listRowBackground(Color.clear)
-                                .environmentObject(voiceUpdater)
                         }
                     }
                     .animation(.linear)
@@ -53,18 +54,23 @@ struct TypePokemonListView: View {
             }
             .ignoresSafeArea()
             .onAppear(perform: {
-                isLoading = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    isLoading = false
+                if isFirstTimeLoading {
+                    updater.pokemonType = type
+                    isLoading = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        isLoading = false
+                    }
                 }
+                isFirstTimeLoading = false
             })
-            .navigationTitle(typeCell.type.name.capitalizingFirstLetter())
+            .navigationTitle(updater.name.capitalizingFirstLetter())
             .background(NavigationConfigurator { nc in
                 nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
                 nc.navigationBar.backgroundColor = .clear
                 nc.navigationBar.isTranslucent = true
                 nc.navigationBar.shadowImage = UIImage()
                 nc.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.black]
+                nc.navigationBar.tintColor = .red
             })
         })
     }
@@ -94,17 +100,5 @@ struct BackButtonView: View {
             }
             .padding(.top, UIDevice().hasNotch ? 44 : 8)
             .padding(.horizontal)
-    }
-}
-
-struct NavigationConfigurator: UIViewControllerRepresentable {
-    var configure: (UINavigationController) -> Void = { _ in }
-    func makeUIViewController(context: UIViewControllerRepresentableContext<NavigationConfigurator>) -> UIViewController {
-        UIViewController()
-    }
-    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<NavigationConfigurator>) {
-        if let nc = uiViewController.navigationController {
-            self.configure(nc)
-        }
     }
 }

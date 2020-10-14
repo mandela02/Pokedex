@@ -9,8 +9,7 @@ import SwiftUI
 
 struct TypeListView: View {
     @StateObject var updater: TypeUpdater = TypeUpdater()
-    @State var isLoading = false
-    @State var isFirstTimeLoadView: Bool = true
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let width = (geometry.size.width - 20 - 40) / 2
@@ -21,10 +20,9 @@ struct TypeListView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     Color.clear.frame(height: 100)
                     LazyVGrid(columns: columns, spacing: 10) {
-                        ForEach(updater.typeCells) { cell in
-                            TappableTypeCardView(cell: cell,
-                                                 size: (width, height),
-                                                 avatar: StringHelper.getPokemonId(from: cell.cells.first?.firstPokemon?.url ?? ""))
+                        ForEach(updater.allTypes, id: \.self) { type in
+                            TappableTypeCardView(type: type,
+                                                 size: (width, height))
                         }
                         .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                         Color.clear.frame(height: 150)
@@ -49,23 +47,7 @@ struct TypeListView: View {
                         .frame(height: 100, alignment: .center)
                         .blur(radius: 3.0)
                 }
-                
-                if isLoading {
-                    LoadingView()
-                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-                }
             }
-            .onAppear(perform: {
-                if isFirstTimeLoadView {
-                    withAnimation(.easeIn) {
-                        isLoading = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            isLoading = false
-                        }
-                    }
-                }
-                isFirstTimeLoadView = false
-            })
         })
     }
 }

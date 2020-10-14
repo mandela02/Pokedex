@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct TappableTypeCardView: View {
-    @EnvironmentObject var voiceUpdater: VoiceHelper
 
-    var cell: TypeCell
+    var type: PokemonType
     var size: (width: CGFloat, height: CGFloat)
-    var avatar: Int
     
     @State var show: Bool = false
     
@@ -20,22 +18,22 @@ struct TappableTypeCardView: View {
         Button {
             show = true
         } label: {
-            TypeCardView(cell: cell, size: size, avatar: avatar)
-                .background(NavigationLink(destination: TypePokemonListView(show: $show, typeCell: cell).environmentObject(voiceUpdater),
+            TypeCardView(type: type, size: size)
+                .background(NavigationLink(destination: TypePokemonListView(show: $show,
+                                                                            type: type),
                                            isActive: $show) { EmptyView() })
         }
     }
 }
 
 struct TypeCardView: View {
-    var cell: TypeCell
+    var type: PokemonType
     var size: (width: CGFloat, height: CGFloat)
-    var avatar: Int
     
     @State var image: UIImage?
     var body: some View {
         ZStack {
-            PokemonType.type(from: cell.type.name).color.background
+            type.color.background
                 .ignoresSafeArea().saturation(5.0)
                 .blur(radius: 1)
             
@@ -44,22 +42,12 @@ struct TypeCardView: View {
                 .resizable()
                 .scaledToFit()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(PokemonType.type(from: cell.type.name).color.background.opacity(0.5))
+                .foregroundColor(type.color.background.opacity(0.5))
                 .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                 .offset(x: size.width * 1/4, y: size.height * 1/3 )
                 .blur(radius: 1)
             
-            VStack {
-                Spacer()
-                DownloadedImageView(withURL: UrlType.getImageUrlString(of: avatar),
-                                    needAnimated: false, image: $image)
-                    .frame(width: size.width * 1/2,
-                           height: size.height,
-                           alignment: .bottomTrailing)
-                    .padding(.all, 5)
-            }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
-            
-            CustomText(text: cell.type.name.uppercased(),
+            CustomText(text: type.rawValue.uppercased(),
                        size: 30,
                        weight: .black, textColor: .white)
                 .frame(width: size.width, height: size.height)
@@ -69,13 +57,5 @@ struct TypeCardView: View {
         .cornerRadius(25)
         .transition(.opacity)
         .animation(.spring())
-        
-    }
-}
-
-struct TypeCardView_Previews: PreviewProvider {
-    static var previews: some View {
-        TypeCardView(cell: TypeCell(type: PokeType(id: 1, name: "GROUND",
-                                                   pokemon: []), cells: []), size: (250, 200), avatar: 1)
     }
 }

@@ -17,6 +17,8 @@ struct TypeCell: Identifiable {
 }
 
 class TypeUpdater: ObservableObject {
+    @Published var allTypes: [PokemonType] = PokemonType.allCases
+    
     init() {
         isLoading = true
         getAllType()
