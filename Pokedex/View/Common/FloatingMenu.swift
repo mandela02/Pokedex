@@ -77,7 +77,9 @@ struct MenuItem: View {
                 .renderingMode(.template)
                 .imageScale(.large)
                 .foregroundColor(selected == tag ? .white : .red)
-            CustomText(text: text, size: 12, weight: .semibold, background: .clear, textColor: selected == tag ? .white : .red)
+            Text(text)
+                .font(Biotif.semiBold(size: 12).font)
+                .foregroundColor(selected == tag ? .white : .red)
         }
         .frame(height: 20, alignment: .trailing)
         .shadow(radius: 26)

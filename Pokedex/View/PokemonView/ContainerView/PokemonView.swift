@@ -200,7 +200,7 @@ struct ButtonView: View {
                 Spacer()
                 if !isInExpandeMode {
                     Text(pokemon.name.capitalizingFirstLetter())
-                        .font(.system(size: 25))
+                        .font(Biotif.bold(size: 25).font)
                         .fontWeight(.bold)
                         .foregroundColor(pokemon.mainType.color.text)
                         .background(Color.clear)
@@ -229,7 +229,7 @@ struct NameView: View {
     var body: some View {
         HStack(alignment: .lastTextBaseline){
             Text(pokemon.name.capitalizingFirstLetter())
-                .font(.system(size: 35))
+                .font(Biotif.bold(size: 35).font)
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)
                 .background(Color.clear)
@@ -238,7 +238,7 @@ struct NameView: View {
                 .matchedGeometryEffect(id: pokemon.name, in: namespace)
             Spacer()
             Text(String(format: "#%03d", pokemon.pokeId))
-                .font(.system(size: 20))
+                .font(Biotif.bold(size: 20).font)
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)
                 .background(Color.clear)

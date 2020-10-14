@@ -30,10 +30,9 @@ struct TypeListView: View {
                     .animation(.linear)
                 }
                 VStack {
-                    CustomText(text: "All Type Available",
-                               size: 30,
-                               weight: .black,
-                               textColor: .black)
+                    Text("All Type Available")
+                        .font(Biotif.black(size: 30).font)
+                        .foregroundColor(.black)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         .padding(EdgeInsets(top: 50, leading: 20, bottom: 0, trailing: 20))
                     Spacer()
