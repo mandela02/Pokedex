@@ -9,12 +9,12 @@ import Foundation
 
 struct TypeResult: Codable {
     var slot: Int = 0
-    var type: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var type: NamedAPIResource = NamedAPIResource()
 }
 
 struct TypePokemon: Codable {
     var slot: Int = 0
-    var pokemon: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var pokemon: NamedAPIResource = NamedAPIResource()
 }
 
 struct PokeType: Codable {

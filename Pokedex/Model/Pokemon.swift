@@ -15,7 +15,7 @@ struct Pokemon: Codable, Identifiable {
     var types: [TypeResult] = []
     var sprites: PokemonImage = PokemonImage()
     var order: Int = 0
-    var species: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var species: NamedAPIResource = NamedAPIResource()
     var baseExp: Int = 0
     var height: Int = 0
     var weight: Int = 0
@@ -90,7 +90,7 @@ struct PokeStatUrl: Codable, Identifiable {
     var id = UUID().uuidString
     var baseStat: Int = 0
     var effort: Int = 0
-    var statUrl: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var statUrl: NamedAPIResource = NamedAPIResource()
     var stat: PokeStat? {
         switch statUrl.name {
         case "hp":

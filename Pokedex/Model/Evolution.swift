@@ -45,7 +45,7 @@ struct EvolutionChain: Codable, EvolutionVending {
     var evolutionDetails: [EvolutionDetail] = []
     var evolvesTo: [EvolutionChain] = []
     var isBaby: Bool = false
-    var species: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var species: NamedAPIResource = NamedAPIResource()
     
     enum CodingKeys: String, CodingKey {
         case evolutionDetails = "evolution_details"

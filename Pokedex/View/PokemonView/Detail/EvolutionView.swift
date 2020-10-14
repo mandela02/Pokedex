@@ -27,18 +27,18 @@ struct EvolutionChainView: View {
                                         weight: .bold,
                                         textColor: .black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
-                    EvolutionCellView(link: link)
+                    EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
                 }
             }
             .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-            
+
             Section (header: CustomText(text: "Mega Evolution",
                                         size: 20,
                                         weight: .bold,
                                         textColor: .black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
-                    EvolutionCellView(megaLink: link)
+                    EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
                 }
             }
@@ -59,28 +59,14 @@ struct EvolutionChainView: View {
 
 struct EvolutionCellView: View {
     var evoLink: EvoLink?
-    var megaEvoLink: MegaEvoLink?
-    
-    init(link: EvoLink? = nil, megaLink: MegaEvoLink? = nil) {
-        self.evoLink = link
-        self.megaEvoLink = megaLink
-    }
-    
+        
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
-            if let link = evoLink {
                 Spacer()
-                PokemonCellView(species: link.fromSpecies ?? Species())
-                ArrowView(trigger: link.triggers ?? "")
-                PokemonCellView(species: link.toSpecies ?? Species())
+                PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource())
+                ArrowView(trigger: evoLink?.triggers ?? "")
+                PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource())
                 Spacer()
-            } else if let megaLink = megaEvoLink {
-                Spacer()
-                PokemonCellView(species: megaLink.fromSpecies ?? Species())
-                ArrowView(trigger: megaLink.triggers ?? "")
-                PokemonCellView(pokemon: megaLink.toPokemon ?? Pokemon())
-                Spacer()
-            }
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -124,20 +110,11 @@ struct PokemonCellView: View {
     
     var canTap: Bool = true
     
-    init(species: Species? = nil, pokemon: Pokemon? = nil) {
-        if let species = species {
-            self.url = UrlType.getImageUrlString(of: species.id)
-            self.name = species.name
-            updater = PokemonUpdater(url: species.pokemon.url)
-        } else if let pokemon = pokemon {
-            self.url = pokemon.sprites.other.artwork.front ?? ""
-            self.name = pokemon.name
-            updater = PokemonUpdater(url: UrlType.getPokemonUrl(of: pokemon.pokeId))
-        } else {
-            self.url = ""
-            self.name = ""
-            updater = PokemonUpdater(url: "")
-        }
+    init(pokemon: NamedAPIResource) {
+        let pokeId = StringHelper.getPokemonId(from: pokemon.url)
+        self.name = pokemon.name
+        self.url = UrlType.getImageUrlString(of: pokeId)
+        self.updater = PokemonUpdater(url: UrlType.getPokemonUrl(of: pokeId))
     }
     var body: some View {
         Button {
@@ -165,28 +142,6 @@ struct PokemonCellView: View {
                                        })
         }
     }
-
-//    var body: some View {
-//        Button {
-//            show = true
-//        } label: {
-//            VStack(alignment: .center, spacing: 10) {
-//                ZStack {
-//                    Image("ic_pokeball")
-//                        .renderingMode(.template)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .foregroundColor(Color.gray.opacity(0.5))
-//                    DownloadedImageView(withURL: url, needAnimated: true, image: $image)
-//                }
-//                CustomText(text: name.capitalizingFirstLetter(),
-//                           size: 15,
-//                           weight: .semibold)
-//            }
-//        }.sheet(isPresented: $show) {
-//            PokemonView(updater: updater, isShowing: $show)
-//        }
-//    }
 }
 
 

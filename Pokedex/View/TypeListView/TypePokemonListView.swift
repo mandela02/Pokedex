@@ -50,6 +50,14 @@ struct TypePokemonListView: View {
                     LoadingView()
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
+                
+                VStack {
+                    HStack {
+                        BackButtonView(isShowing: $show)
+                        Spacer()
+                    }
+                    Spacer()
+                }
                                 
             }
             .ignoresSafeArea()
@@ -63,24 +71,14 @@ struct TypePokemonListView: View {
                 }
                 isFirstTimeLoading = false
             })
-            .navigationTitle(updater.name.capitalizingFirstLetter())
-            .background(NavigationConfigurator { nc in
-                nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
-                nc.navigationBar.backgroundColor = .clear
-                nc.navigationBar.isTranslucent = true
-                nc.navigationBar.shadowImage = UIImage()
-                nc.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.black]
-                nc.navigationBar.tintColor = .red
-            })
+            .navigationTitle("")
+            .navigationBarHidden(true)
         })
     }
 }
 
 struct BackButtonView: View {
     @Binding var isShowing: Bool
-    
-    @State var isFavorite = false
-
     var body: some View {
             HStack{
                 Button {
