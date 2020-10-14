@@ -17,7 +17,6 @@ struct TappableCardView: View {
     var body: some View {
         Button {
             show = true
-            updater.isSelected = true
         } label: {
             PokedexCardView(updater: updater, size: size)
                 .background(NavigationLink(destination: PokemonView(updater: updater,

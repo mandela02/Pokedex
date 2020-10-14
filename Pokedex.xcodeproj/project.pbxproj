@@ -71,6 +71,7 @@
 		90F942B92536D381003C23FF /* TypePokemonsUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F942B82536D381003C23FF /* TypePokemonsUpdater.swift */; };
 		90F942CE2536DC5D003C23FF /* NavigationConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F942CD2536DC5D003C23FF /* NavigationConfigurator.swift */; };
 		90F942D62536DC79003C23FF /* WillDisappearHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F942D52536DC79003C23FF /* WillDisappearHandler.swift */; };
+		90F942FF2536FAD5003C23FF /* LoadingHorizontalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F942FE2536FAD4003C23FF /* LoadingHorizontalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +163,7 @@
 		90F942B82536D381003C23FF /* TypePokemonsUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypePokemonsUpdater.swift; sourceTree = "<group>"; };
 		90F942CD2536DC5D003C23FF /* NavigationConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationConfigurator.swift; sourceTree = "<group>"; };
 		90F942D52536DC79003C23FF /* WillDisappearHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WillDisappearHandler.swift; sourceTree = "<group>"; };
+		90F942FE2536FAD4003C23FF /* LoadingHorizontalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingHorizontalView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -419,6 +421,7 @@
 				84F55603253398B900F09E84 /* CompleteView.swift */,
 				841E96772536191700FAD664 /* FloatingMenu.swift */,
 				90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */,
+				90F942FE2536FAD4003C23FF /* LoadingHorizontalView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -576,6 +579,7 @@
 				847A12362531586D00146D24 /* Ability.swift in Sources */,
 				84F55604253398B900F09E84 /* CompleteView.swift in Sources */,
 				847A12902533871200146D24 /* PulsatingPlayButton.swift in Sources */,
+				90F942FF2536FAD5003C23FF /* LoadingHorizontalView.swift in Sources */,
 				8422CFD1252E0F00006F4535 /* AbilitiesResult.swift in Sources */,
 				84D9AFEA252B774800E4C9D5 /* Session.swift in Sources */,
 				847A124F25315C0600146D24 /* EvolutionUpdater.swift in Sources */,

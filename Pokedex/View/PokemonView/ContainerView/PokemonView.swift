@@ -20,8 +20,9 @@ struct PokemonView: View {
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
     @State private var image: UIImage?
-    @State private var isFirstTimeLoading = true
-
+    @State private var isFirstTimeLoadImage = true
+    @State private var isFirstTimeLoadView = true
+    
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
@@ -143,16 +144,19 @@ struct PokemonView: View {
             }
             .ignoresSafeArea()
             .onChange(of: image) { image in
-                if isFirstTimeLoading {
+                if isFirstTimeLoadImage {
                     withAnimation(.spring()) {
                         voiceUpdater.isFirstTime = true
                         voiceUpdater.isSpeaking = true
                     }
-                    isFirstTimeLoading = false
+                    isFirstTimeLoadImage = false
                 }
             }
             .onAppear {
-                speciesUpdater.speciesUrl = updater.pokemon.species.url
+                if isFirstTimeLoadView {
+                    speciesUpdater.speciesUrl = updater.pokemon.species.url
+                    isFirstTimeLoadView = false
+                }
             }
             .onReceive(speciesUpdater.$species, perform: { species in
                 if !species.name.isEmpty {
@@ -170,6 +174,8 @@ struct PokemonView: View {
 }
 
 struct ButtonView: View {
+    @Environment(\.presentationMode) var presentationMode
+
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon

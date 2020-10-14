@@ -16,7 +16,7 @@ struct PokemonListView: View {
 
     var body: some View {
         GeometryReader(content: { geometry in
-            let height: CGFloat = geometry.size.height / 6
+            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
             ZStack {
                 VStack {
                     List {

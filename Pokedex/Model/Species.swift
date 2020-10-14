@@ -38,7 +38,7 @@ struct Species: Codable {
     }
     
     var pokemon: NamedAPIResource {
-        return varieties.map({$0.pokemon}).filter({!$0.name.contains("mega")}).first ?? NamedAPIResource()
+        return varieties.filter({$0.isDefault}).first?.pokemon ?? NamedAPIResource()
     }
 }
 
