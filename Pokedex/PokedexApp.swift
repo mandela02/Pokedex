@@ -22,6 +22,7 @@ struct PokedexApp: App {
                             .navigationBarHidden(true)
                     }
                 }
+                .statusBar(hidden: true)
                 .onAppear {
                     show = true
                 }
@@ -41,8 +42,7 @@ struct HomeView: View {
                     .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
 
                 PokedexView()
-                    .ignoresSafeArea(.container, edges: .bottom)
-                    .ignoresSafeArea(.container, edges: .top)
+                    .ignoresSafeArea()
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
 
             }

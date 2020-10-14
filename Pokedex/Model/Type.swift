@@ -18,9 +18,9 @@ struct TypePokemon: Codable {
 }
 
 struct PokeType: Codable {
-    var id: Int
-    var name: String
-    var pokemon: [TypePokemon]
+    var id: Int = 1
+    var name: String = ""
+    var pokemon: [TypePokemon] = []
 
     enum CodingKeys: String, CodingKey {
         case id

@@ -11,7 +11,8 @@ struct PokemonListView: View {
     @StateObject var updater: Updater = Updater()
     @State var isLoading = false
     @State var isFinal = false
-    
+    @State var isFirstTimeLoadView = true
+
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
@@ -54,10 +55,10 @@ struct PokemonListView: View {
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
                 withAnimation(Animation.spring()) {
                     if isLoading {
-                        self.isLoading = isLoading
+                        self.isLoading = true
                     } else {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            self.isLoading = isLoading
+                            self.isLoading = false
                         }
                     }
                 }
@@ -69,6 +70,17 @@ struct PokemonListView: View {
                     }
                 }
             })
+            .onAppear {
+                if isFirstTimeLoadView {
+                    self.isLoading = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        withAnimation(Animation.spring()) {
+                            updater.url = UrlType.pokemons.urlString
+                        }
+                    }
+                }
+                isFirstTimeLoadView = false
+            }
         })
     }
 }

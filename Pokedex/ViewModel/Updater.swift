@@ -27,7 +27,11 @@ class Updater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
 
-    var url: String = UrlType.pokemons.urlString
+    var url: String = "" {
+        didSet {
+            loadPokemonData()
+        }
+    }
     
     private var cancellable: AnyCancellable?
     
@@ -55,11 +59,7 @@ class Updater: ObservableObject {
     deinit {
         cancellable?.cancel()
     }
-    
-    init() {
-        loadPokemonData()
-    }
-    
+        
     func loadMorePokemonIfNeeded(current pokemonCell: PokemonCell) {
         let thresholdIndex = pokemonsCells.index(pokemonsCells.endIndex, offsetBy: -5)
         if pokemonsCells.firstIndex(where: { $0 == pokemonCell }) == thresholdIndex {

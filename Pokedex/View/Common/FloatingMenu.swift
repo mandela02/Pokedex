@@ -18,32 +18,38 @@ struct FloatingMenu: View {
             VStack(alignment: .trailing, spacing: 30) {
                 Spacer()
                 if showMenuItem1 {
-                    MenuItem(icon: "camera", text: "Nothing yet", tag: 3, selected: $active)
+                    MenuItem(icon: "camera", text: "Nothing yet", tag: 2, selected: $active)
                         .animation(Animation.default.delay(0.2))
                         .onTapGesture {
                             showMenu()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                active = 3
+                                withAnimation(.spring()) {
+                                    active = 2
+                                }
                             }
                         }
                 }
                 if showMenuItem2 {
-                    MenuItem(icon: "photo.on.rectangle", text: "Type", tag: 2, selected: $active)
+                    MenuItem(icon: "photo.on.rectangle", text: "Type", tag: 1, selected: $active)
                         .animation(Animation.default.delay(0.1))
                         .onTapGesture {
                             showMenu()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                active = 2
+                                withAnimation(.spring()) {
+                                active = 1
+                                }
                             }
                         }
                 }
                 if showMenuItem3 {
-                    MenuItem(icon: "square.and.arrow.up", text: "National Dex", tag: 1, selected: $active)
+                    MenuItem(icon: "square.and.arrow.up", text: "National Dex", tag: 0, selected: $active)
                         .animation(Animation.default.delay(0))
                         .onTapGesture {
                             showMenu()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                                active = 1
+                                withAnimation(.spring()) {
+                                active = 0
+                                }
                             }
                         }
                 }

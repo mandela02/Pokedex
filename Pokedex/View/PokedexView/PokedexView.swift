@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokedexView: View {
-    @State var active = 1
+    @State var active = 0
     
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
@@ -21,11 +21,13 @@ struct PokedexView: View {
     var body: some View {
         ZStack {
             switch active {
-            case 1:
+            case 0:
                 PokemonListView()
+                    .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
+            case 1:
+                TypeListView()
+                    .transition(AnyTransition.move(edge: .trailing).combined(with: .opacity))
             case 2:
-                TypePokemonListView()
-            case 3:
                 EmptyView()
             default:
                 EmptyView()

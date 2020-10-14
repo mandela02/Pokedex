@@ -61,4 +61,9 @@ class StringHelper {
         
         return String(format: "%.1f%", gender == .female ? femaleRate : maleRate)
     }
+    
+    static func getPokemonId(from url: String) -> Int {
+        return Int(url.replacingOccurrences(of: Constants.basePokemonUrl, with: "")
+                    .replacingOccurrences(of: "/", with: "")) ?? 0
+    }
 }

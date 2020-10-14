@@ -8,29 +8,31 @@
 import SwiftUI
 
 struct TypePokemonListView: View {
-    @StateObject var updater: TypeUpdater = TypeUpdater()
+    @State var typeCell: TypeCell = TypeCell(type: PokeType(), cells: [])
     @State var isLoading = false
+
+    init(cells: TypeCell) {
+        self.typeCell = cells
+    }
     
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
             ZStack {
-                if let list = updater.typeCells.first {
-                    VStack {
-                        List {
-                            ForEach(list.cells) { cell in
-                                PokemonListCellView(firstPokemon: cell.firstPokemon,
-                                                    secondPokemon: cell.secondPokemon)
-                                    .listRowInsets(EdgeInsets())
-                                    .frame(width: geometry.size.width, height: height)
-                                    .padding(.bottom, 10)
-                                    .listRowBackground(Color.clear)
-                            }
+                VStack {
+                    List {
+                        ForEach(typeCell.cells) { cell in
+                            PokemonListCellView(firstPokemon: cell.firstPokemon,
+                                                secondPokemon: cell.secondPokemon)
+                                .listRowInsets(EdgeInsets())
+                                .frame(width: geometry.size.width, height: height)
+                                .padding(.bottom, 10)
+                                .listRowBackground(Color.clear)
                         }
-                        .animation(.linear)
-                        .listStyle(SidebarListStyle())
-                        .blur(radius: isLoading ? 3.0 : 0)
                     }
+                    .animation(.linear)
+                    .listStyle(SidebarListStyle())
+                    .blur(radius: isLoading ? 3.0 : 0)
                 }
                 
                 VStack {
@@ -47,17 +49,14 @@ struct TypePokemonListView: View {
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }
-            .onReceive(updater.$isLoading, perform: { isLoading in
-                withAnimation(Animation.spring()) {
-                    if isLoading {
-                        self.isLoading = isLoading
-                    } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            self.isLoading = isLoading
-                        }
-                    }
+            .onAppear(perform: {
+                isLoading = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    isLoading = false
                 }
             })
+            .navigationTitle("")
+            .navigationBarHidden(true)
         })
     }
 }
