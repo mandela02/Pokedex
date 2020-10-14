@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct PokemonView: View {
-    @EnvironmentObject var voiceUpdater: VoiceHelper
-
+    @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
+    
     @ObservedObject var updater: PokemonUpdater
     @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
@@ -20,8 +20,9 @@ struct PokemonView: View {
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
     @State private var image: UIImage?
-    @State private var isFirstTimeLoading = true
-
+    @State private var isFirstTimeLoadImage = true
+    @State private var isFirstTimeLoadView = true
+    
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
@@ -143,30 +144,29 @@ struct PokemonView: View {
             }
             .ignoresSafeArea()
             .onChange(of: image) { image in
-                if isFirstTimeLoading {
+                if isFirstTimeLoadImage {
                     withAnimation(.spring()) {
                         voiceUpdater.isFirstTime = true
                         voiceUpdater.isSpeaking = true
                     }
-                    isFirstTimeLoading = false
+                    isFirstTimeLoadImage = false
                 }
             }
             .onAppear {
-                speciesUpdater.speciesUrl = updater.pokemon.species.url
-                print("Updater onAppear \(updater.pokemon.name)")
+                if isFirstTimeLoadView {
+                    speciesUpdater.speciesUrl = updater.pokemon.species.url
+                    isFirstTimeLoadView = false
+                }
             }
             .onReceive(speciesUpdater.$species, perform: { species in
                 if !species.name.isEmpty {
                     voiceUpdater.species = species
                     voiceUpdater.pokemon = updater.pokemon
-                    print("Updater onReceive \(updater.pokemon.name)")
                 }
             })
-            .onDisappear(perform: {
+            .onWillDisappear {
                 voiceUpdater.refresh()
-                print("Updater  onDisappear \(updater.pokemon.name)")
-
-            })
+            }
             .navigationBarTitle("")
             .navigationBarHidden(true)
         })
@@ -174,7 +174,7 @@ struct PokemonView: View {
 }
 
 struct ButtonView: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.presentationMode) var presentationMode
 
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool

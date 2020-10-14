@@ -38,7 +38,7 @@ struct MoveStatAffectSets: Codable {
 
 struct MoveStatAffect: Codable {
     var change: Int = 0
-    var move: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var move: NamedAPIResource = NamedAPIResource()
 }
 
 // MARK: - AffectingNatures
@@ -52,7 +52,7 @@ struct Characteristic: Codable, Identifiable {
 
     var descriptions: [Description] = []
     var geneModulo: Int = 0
-    var highestStat: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var highestStat: NamedAPIResource = NamedAPIResource()
     var pokeId: Int = 0
     var possibleValues: [Int] = []
 
@@ -69,7 +69,7 @@ struct Description: Codable, Identifiable {
     var id = UUID().uuidString
     
     var description: String = ""
-    var language: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var language: NamedAPIResource = NamedAPIResource()
 
     enum CodingKeys: String, CodingKey {
         case description = "description"

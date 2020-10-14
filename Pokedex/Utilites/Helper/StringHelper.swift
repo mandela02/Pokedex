@@ -63,7 +63,11 @@ class StringHelper {
     }
     
     static func getPokemonId(from url: String) -> Int {
-        return Int(url.replacingOccurrences(of: Constants.basePokemonUrl, with: "")
+        var base = Constants.basePokemonUrl
+        if url.contains("pokemon-species") {
+            base = Constants.basePokemonSpeciesUrl
+        }
+        return Int(url.replacingOccurrences(of: base, with: "")
                     .replacingOccurrences(of: "/", with: "")) ?? 0
     }
 }

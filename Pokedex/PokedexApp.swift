@@ -17,7 +17,6 @@ struct PokedexApp: App {
                     NavigationView {
                         HomeView()
                             .statusBar(hidden: true)
-                            .environmentObject(VoiceHelper())
                             .navigationTitle("")
                             .navigationBarHidden(true)
                     }

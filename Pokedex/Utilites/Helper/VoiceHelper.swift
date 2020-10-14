@@ -10,16 +10,8 @@ import AVFoundation
 import SwiftUI
 
 class VoiceHelper: NSObject, ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon() {
-        didSet {
-            print("pokemon 2\(pokemon.name)")
-        }
-    }
-    @Published var species: Species = Species() {
-        didSet {
-            print("pokemon 3\(species.name)")
-        }
-    }
+    @Published var pokemon: Pokemon = Pokemon()
+    @Published var species: Species = Species()
 
     var isFirstTime = true
     

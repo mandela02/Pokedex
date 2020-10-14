@@ -36,7 +36,8 @@ struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
     var pages: [Content]
-    
+    var tabs: [Tab]
+
     @State private var isGestureActive: Bool = false
     
     private func drag(in size: CGSize) -> some Gesture{
@@ -67,7 +68,7 @@ struct PagerView<Content: View & Identifiable>: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                TabControlView(selected: $index, offset: $offset)
+                TabControlView(tabs: tabs, selected: $index, offset: $offset)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 0) {
                         ForEach(self.pages) { page in
@@ -87,6 +88,25 @@ struct PagerView<Content: View & Identifiable>: View {
                     }
                 })
             }
+        }
+    }
+}
+
+struct TabControlView: View {
+    var tabs: [Tab]
+    @Binding var selected: Int
+    @Binding var offset: CGFloat
+    
+    @Namespace var namespace
+    var body: some View {
+        VStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .center, spacing: 1, content: {
+                ForEach(tabs, id: \.self) { tab in
+                    TabItem(selected: $selected, tab: tab)
+                }
+            })
+            SelectedSegmentScrollView(numberOfSegment: tabs.count, offset: $offset)
+                .frame(height: 3, alignment: .center)
         }
     }
 }

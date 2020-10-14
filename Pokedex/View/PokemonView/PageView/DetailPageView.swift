@@ -64,24 +64,6 @@ struct TabItem: View {
     }
 }
 
-struct TabControlView: View {
-    @Binding var selected: Int
-    @Binding var offset: CGFloat
-    
-    @Namespace var namespace
-    var body: some View {
-        VStack(alignment: .center, spacing: 0) {
-            HStack(alignment: .center, spacing: 1, content: {
-                ForEach(Tab.allCases, id: \.self) { tab in
-                    TabItem(selected: $selected, tab: tab)
-                }
-            })
-            SelectedSegmentScrollView(numberOfSegment: Tab.allCases.count, offset: $offset)
-                .frame(height: 3, alignment: .center)
-        }
-    }
-}
-
 struct DetailPageView: View {
     @State private var selected: Int = 0
     @ObservedObject var updater: SpeciesUpdater
@@ -94,11 +76,11 @@ struct DetailPageView: View {
             if updater.evolution.allChains.isEmpty && !updater.species.havingMega {
                 let views = [Tab.about, Tab.stats, Tab.moves]
                     .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
-                PagerView(index: $selected, pages: views)
+                PagerView(index: $selected, pages: views, tabs: [Tab.about, Tab.stats, Tab.moves])
             } else {
                 let views = Tab.allCases
                     .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
-                PagerView(index: $selected, pages: views)
+                PagerView(index: $selected, pages: views, tabs: Tab.allCases)
             }
         }
     }

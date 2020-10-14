@@ -38,14 +38,14 @@ struct Species: Codable {
     }
     
     var pokemon: NamedAPIResource {
-        return varieties.map({$0.pokemon}).filter({!$0.name.contains("mega")}).first ?? NamedAPIResource(name: "", url: "")
+        return varieties.filter({$0.isDefault}).first?.pokemon ?? NamedAPIResource()
     }
 }
 
 class FlavorTextEntry: Codable {
     var flavorText: String = ""
-    var language: NamedAPIResource = NamedAPIResource(name: "", url: "")
-    var version: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var language: NamedAPIResource = NamedAPIResource()
+    var version: NamedAPIResource = NamedAPIResource()
 
     enum CodingKeys: String, CodingKey {
         case flavorText = "flavor_text"
@@ -56,7 +56,7 @@ class FlavorTextEntry: Codable {
 
 struct PokemonSpeciesVariety: Codable {
     var isDefault: Bool = true
-    var pokemon: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var pokemon: NamedAPIResource = NamedAPIResource()
     
     enum CodingKeys: String, CodingKey {
         case isDefault = "is_default"

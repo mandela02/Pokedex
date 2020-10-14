@@ -124,10 +124,12 @@ struct SizeView: View {
             VStack(alignment: .leading, spacing: 4) {
                 CustomText(text: "Height", size: 12, weight: .bold, textColor: .gray)
                 CustomText(text: StringHelper.heightString(from: height), size: 10, weight: .semibold)
+                    .isPlaceholder(height == 0)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 CustomText(text: "Weight", size: 12, weight: .bold, textColor: .gray)
                 CustomText(text: StringHelper.weightString(from: weight), size: 10, weight: .semibold)
+                    .isPlaceholder(weight == 0)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }.padding()
     }

@@ -12,7 +12,7 @@ struct HamburgerButtonView: View {
 
     var body: some View {
         ZStack {
-            Circle().fill(Color.blue)
+            Circle().fill(Color.red)
             VStack(alignment: .center, spacing: 5) {
                 Rectangle().fill(Color.white).frame(width: 30, height: 5)
                     .cornerRadius(4)

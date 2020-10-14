@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    @EnvironmentObject var voiceUpdater: VoiceHelper
 
     @StateObject var updater: Updater = Updater()
     @State var isLoading = false
@@ -17,7 +16,7 @@ struct PokemonListView: View {
 
     var body: some View {
         GeometryReader(content: { geometry in
-            let height: CGFloat = geometry.size.height / 6
+            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
             ZStack {
                 VStack {
                     List {
@@ -31,7 +30,6 @@ struct PokemonListView: View {
                                 .onAppear(perform: {
                                     updater.loadMorePokemonIfNeeded(current: cell)
                                 })
-                                .environmentObject(voiceUpdater)
                         }
                         
                         if isFinal {

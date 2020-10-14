@@ -11,12 +11,7 @@ struct NamedAPIResource: Codable, Identifiable {
     var id = UUID().uuidString
     var name: String = ""
     var url: String = ""
-    
-    init(name: String, url: String) {
-        self.name = name
-        self.url = url
-    }
-    
+        
     enum CodingKeys: String, CodingKey {
         case name
         case url
