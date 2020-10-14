@@ -19,7 +19,7 @@ struct TappableCardView: View {
             show = true
         } label: {
             PokedexCardView(updater: updater, size: size)
-                .background(NavigationLink(destination: PokemonView(updater: updater,
+                .background(NavigationLink(destination: PokemonInformationView(updater: updater,
                                                                     isShowing: $show),
                                            isActive: $show) { EmptyView() })
         }

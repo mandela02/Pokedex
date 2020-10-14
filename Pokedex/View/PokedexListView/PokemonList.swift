@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-struct PokemonListView: View {
-
+struct PokemonList: View {
     @StateObject var updater: Updater = Updater()
     @State var isLoading = false
     @State var isFinal = false
@@ -21,7 +20,7 @@ struct PokemonListView: View {
                 VStack {
                     List {
                         ForEach(updater.pokemonsCells) { cell in
-                            PokemonListCellView(firstPokemon: cell.firstPokemon,
+                            PokemonPairCell(firstPokemon: cell.firstPokemon,
                                                 secondPokemon: cell.secondPokemon)
                                 .listRowInsets(EdgeInsets())
                                 .frame(width: geometry.size.width, height: height)

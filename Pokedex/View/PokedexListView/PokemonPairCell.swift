@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PokemonListCellView: View {
+struct PokemonPairCell: View {
     @EnvironmentObject var voiceUpdater: VoiceHelper
 
     var firstPokemon: NamedAPIResource?
