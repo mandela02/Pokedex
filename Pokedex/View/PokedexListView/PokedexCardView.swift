@@ -64,7 +64,7 @@ struct PokedexCardView: View {
                 
                 VStack(alignment: .leading, spacing: 0, content: {
                     Text(updater.pokemon.name.capitalizingFirstLetter())
-                        .font(.custom("Biotif-Bold", size: 25))
+                        .font(Biotif.bold(size: 25).font)
                         .foregroundColor(updater.pokemon.mainType.color.text)
                         .frame(alignment: .topLeading)
                         .lineLimit(1)
@@ -72,7 +72,7 @@ struct PokedexCardView: View {
                     ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
                         Text(type.name)
                             .frame(alignment: .leading)
-                            .font(.custom("Biotif-SemiBold", size: 10))
+                            .font(Biotif.semiBold(size: 10).font)
                             .foregroundColor(updater.pokemon.mainType.color.text)
                             .background(Rectangle()
                                             .fill(updater.pokemon.mainType.color.background.opacity(0.5))

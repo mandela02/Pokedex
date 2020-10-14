@@ -23,7 +23,7 @@ struct EvolutionChainView: View {
     var body: some View {
         List {
             Section (header: Text("Evolution Chain")
-                        .font(.custom("Biotif-Bold", size: 20))
+                        .font(Biotif.extraBold(size: 20).font)
                         .foregroundColor(.black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
@@ -33,7 +33,7 @@ struct EvolutionChainView: View {
             .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
             
             Section (header: Text("Mega Evolution")
-                        .font(.custom("Biotif-Bold", size: 20))
+                        .font(Biotif.extraBold(size: 20).font)
                         .foregroundColor(.black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
@@ -90,7 +90,7 @@ struct ArrowView: View {
                     .scaleEffect(0.5)
             }
             Text(trigger)
-                .font(.custom("Biotif-SemiBold", size: 12))
+                .font(Biotif.semiBold(size: 12).font)
                 .foregroundColor(Color.gray.opacity(3))
         }
     }
@@ -129,7 +129,7 @@ struct PokemonCellView: View {
                                         image: $image)
                 }
                 Text(name.capitalizingFirstLetter())
-                    .font(.custom("Biotif-SemiBold", size: 15))
+                    .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
@@ -166,7 +166,7 @@ struct CustomAlertView: View {
                 }
             }, label: {
                 Text("OK")
-                    .font(.custom("Biotif-Bold", size: 25))
+                    .font(Biotif.bold(size: 25).font)
                     .frame(minWidth: 0,
                            maxWidth: .infinity,
                            alignment: .center)

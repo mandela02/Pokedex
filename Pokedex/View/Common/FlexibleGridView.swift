@@ -59,7 +59,7 @@ struct FlexibleGridView: View {
 
     private func item(for text: String) -> some View {
         Text(text)
-            .font(.custom("Biotif-Regular", size: 12))
+            .font(Biotif.regular(size: 12).font)
             .padding(.all, 5)
             .font(.body)
             .background(HexColor.lightGrey)

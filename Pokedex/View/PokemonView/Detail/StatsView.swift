@@ -72,7 +72,7 @@ struct StatsView: View {
                 if !updater.characteristics.isEmpty {
                     VStack(alignment: .leading, spacing: 5, content: {
                         Text("Characteristics")
-                            .font(.custom("Biotif-Bold", size: 15))
+                            .font(Biotif.bold(size: 15).font)
                             .foregroundColor(.black)
                         FlexibleGridView(characteristics: $updater.descriptions)
                     })
@@ -98,11 +98,11 @@ struct LevelInformationView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Text(stat.title)
-                .font(.custom("Biotif-Bold", size: 12))
+                .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.gray)
                 .frame(width: 80, alignment: .leading)
             Text("\(amount)")
-                .font(.custom("Biotif-Bold", size: 12))
+                .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.black)
                 .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)

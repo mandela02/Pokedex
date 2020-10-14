@@ -48,7 +48,7 @@ struct CompleteView: View {
                     toggle(isGone: false)
                 }
                 Text("This is the end of line, my man")
-                    .font(.custom("Biotif-SemiBold", size: 20))
+                    .font(Biotif.bold(size: 20).font)
                     .foregroundColor(.red)
             }
         })

@@ -35,6 +35,7 @@
 		8440592A253743E1009D4385 /* Biotif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440591A253743E1009D4385 /* Biotif-Regular.ttf */; };
 		8440592B253743E1009D4385 /* Biotif-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440591B253743E1009D4385 /* Biotif-Light.ttf */; };
 		84405930253745A9009D4385 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8440592F253745A9009D4385 /* Test.storyboard */; };
+		8440593525374B69009D4385 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440593425374B69009D4385 /* Font.swift */; };
 		84707A982530CB0400DEA772 /* Evolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84707A972530CB0400DEA772 /* Evolution.swift */; };
 		847A12312531584F00146D24 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12302531584F00146D24 /* Move.swift */; };
 		847A12362531586D00146D24 /* Ability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12352531586D00146D24 /* Ability.swift */; };
@@ -138,6 +139,7 @@
 		8440591A253743E1009D4385 /* Biotif-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-Regular.ttf"; sourceTree = "<group>"; };
 		8440591B253743E1009D4385 /* Biotif-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-Light.ttf"; sourceTree = "<group>"; };
 		8440592F253745A9009D4385 /* Test.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
+		8440593425374B69009D4385 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		84707A972530CB0400DEA772 /* Evolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evolution.swift; sourceTree = "<group>"; };
 		847A12302531584F00146D24 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
 		847A12352531586D00146D24 /* Ability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ability.swift; sourceTree = "<group>"; };
@@ -474,6 +476,7 @@
 				847A123F253158C300146D24 /* APIResource.swift */,
 				847A1244253158D700146D24 /* Meta.swift */,
 				847A125E2531EF0500146D24 /* Stat.swift */,
+				8440593425374B69009D4385 /* Font.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -684,6 +687,7 @@
 				84D9AFE5252B763500E4C9D5 /* PokemonResult.swift in Sources */,
 				907D5F48252B12E200E30748 /* PokedexCardView.swift in Sources */,
 				90400AA4253009F700659CD1 /* SpeciesUpdater.swift in Sources */,
+				8440593525374B69009D4385 /* Font.swift in Sources */,
 				90F942CE2536DC5D003C23FF /* NavigationConfigurator.swift in Sources */,
 				84D9AFFA252B849700E4C9D5 /* Type.swift in Sources */,
 				907D5F1B252B12C500E30748 /* ContentView.swift in Sources */,
