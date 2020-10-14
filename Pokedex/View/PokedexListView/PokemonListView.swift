@@ -8,19 +8,13 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    @ObservedObject var updater: Updater
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
+    @StateObject var updater: Updater = Updater()
     @State var isLoading = false
     @State var isFinal = false
-    
-    init(updater: Updater) {
-        self.updater = updater
-        UITableView.appearance().showsVerticalScrollIndicator = false
-        UITableView.appearance().backgroundColor = .clear
-        UITableView.appearance().allowsSelection = false
-        UITableViewCell.appearance().backgroundColor = .clear
-        UITableViewCell.appearance().selectionStyle = .none
-    }
-    
+    @State var isFirstTimeLoadView = true
+
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
@@ -28,17 +22,16 @@ struct PokemonListView: View {
                 VStack {
                     List {
                         ForEach(updater.pokemonsCells) { cell in
-                            let cellHeight = cell.firstPokemon == nil && cell.secondPokemon == nil ? 0.0 : height
-                            
                             PokemonListCellView(firstPokemon: cell.firstPokemon,
                                                 secondPokemon: cell.secondPokemon)
                                 .listRowInsets(EdgeInsets())
-                                .frame(width: geometry.size.width, height: cellHeight)
+                                .frame(width: geometry.size.width, height: height)
                                 .padding(.bottom, 10)
                                 .listRowBackground(Color.clear)
                                 .onAppear(perform: {
                                     updater.loadMorePokemonIfNeeded(current: cell)
                                 })
+                                .environmentObject(voiceUpdater)
                         }
                         
                         if isFinal {
@@ -49,7 +42,7 @@ struct PokemonListView: View {
                     .listStyle(SidebarListStyle())
                     .blur(radius: isLoading ? 3.0 : 0)
                 }
-    
+                
                 VStack {
                     Spacer()
                     LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0), Color.white.opacity(1)]), startPoint: .top, endPoint: .bottom)
@@ -63,14 +56,14 @@ struct PokemonListView: View {
                 }
             }
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
-                    withAnimation(Animation.spring()) {
-                        if isLoading {
-                            self.isLoading = isLoading
-                        } else {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                self.isLoading = isLoading
-                            }
+                withAnimation(Animation.spring()) {
+                    if isLoading {
+                        self.isLoading = true
+                    } else {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            self.isLoading = false
                         }
+                    }
                 }
             })
             .onReceive(updater.$isFinal, perform: { isFinal in
@@ -80,6 +73,17 @@ struct PokemonListView: View {
                     }
                 }
             })
+            .onAppear {
+                if isFirstTimeLoadView {
+                    self.isLoading = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        withAnimation(Animation.spring()) {
+                            updater.url = UrlType.pokemons.urlString
+                        }
+                    }
+                }
+                isFirstTimeLoadView = false
+            }
         })
     }
 }

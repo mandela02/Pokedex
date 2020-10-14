@@ -130,14 +130,16 @@ struct PokemonView: View {
                         .gesture(drag(in: size))
                 }
                 
-                VStack(alignment: .trailing) {
+                VStack() {
                     Spacer()
-                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
-                                        about: $updater.pokemon)
-                        .padding(.trailing, 30)
-                        .padding(.bottom, 30)
+                    HStack {
+                        Spacer()
+                        PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+                                            about: $updater.pokemon)
+                            .padding(.trailing, 30)
+                            .padding(.bottom, 30)
+                    }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .bottomTrailing)
             }
             .ignoresSafeArea()
             .onChange(of: image) { image in
@@ -188,7 +190,7 @@ struct ButtonView: View {
                         isShowing = false
                     }
                 } label: {
-                    Image(systemName: (presentationMode.wrappedValue.isPresented ? "arrow.uturn.left" : "xmark"))
+                    Image(systemName: ("arrow.uturn.left"))
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.clear)

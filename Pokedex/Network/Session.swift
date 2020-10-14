@@ -11,6 +11,7 @@ import Combine
 enum UrlType: String, CaseIterable {
     case pokemons
     case trigger
+    case type
 
     var urlString: String {
         switch self {
@@ -19,6 +20,8 @@ enum UrlType: String, CaseIterable {
             return Constants.baseUrl + "pokemon?limit=50"
         case .trigger:
             return Constants.baseUrl + "evolution-trigger/"
+        case .type:
+            return Constants.baseUrl + "type/"
         }
     }
     
@@ -36,7 +39,7 @@ class Session {
 
     private init() {}
     
-    func pokemons(from url: String) -> AnyPublisher<PokemonResult, Error>? {
+    func pokemons(from url: String) -> AnyPublisher<PokemonResult, Error> {
         return call(url)
     }
     
@@ -64,6 +67,10 @@ class Session {
         return call(url)
     }
 
+    func type(from url: String) -> AnyPublisher<PokeType, Error> {
+        return call(url)
+    }
+    
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return PassthroughSubject<T, Error>().eraseToAnyPublisher()

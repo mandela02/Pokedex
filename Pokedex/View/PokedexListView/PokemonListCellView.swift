@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonListCellView: View {
+    @EnvironmentObject var voiceUpdater: VoiceHelper
+
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
 
@@ -18,11 +20,11 @@ struct PokemonListCellView: View {
             HStack(alignment: .center, spacing: 10, content: {
                 if let first = firstPokemon {
                     TappableCardView(updater: PokemonUpdater(url: first.url),
-                                    size: (width, height))
+                                     size: (width, height)).environmentObject(voiceUpdater)
                 }
                 if let second = secondPokemon {
                     TappableCardView(updater: PokemonUpdater(url: second.url),
-                                    size: (width, height))
+                                    size: (width, height)).environmentObject(voiceUpdater)
                 }
             })
             .buttonStyle(PlainButtonStyle())
