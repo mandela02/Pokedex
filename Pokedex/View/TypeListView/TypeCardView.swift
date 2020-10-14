@@ -47,9 +47,9 @@ struct TypeCardView: View {
                 .offset(x: size.width * 1/4, y: size.height * 1/3 )
                 .blur(radius: 1)
             
-            CustomText(text: type.rawValue.uppercased(),
-                       size: 30,
-                       weight: .black, textColor: .white)
+            Text(type.rawValue.uppercased())
+                .font(.custom("Biotif-Black", size: 12))
+                .foregroundColor(.white)
                 .frame(width: size.width, height: size.height)
         }
         .frame(width: size.width, height: size.height)

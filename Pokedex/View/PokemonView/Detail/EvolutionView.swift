@@ -22,21 +22,19 @@ struct EvolutionChainView: View {
     
     var body: some View {
         List {
-            Section (header: CustomText(text: "Evolution Chain",
-                                        size: 20,
-                                        weight: .bold,
-                                        textColor: .black)) {
+            Section (header: Text("Evolution Chain")
+                        .font(.custom("Biotif-Bold", size: 20))
+                        .foregroundColor(.black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
                 }
             }
             .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-
-            Section (header: CustomText(text: "Mega Evolution",
-                                        size: 20,
-                                        weight: .bold,
-                                        textColor: .black)) {
+            
+            Section (header: Text("Mega Evolution")
+                        .font(.custom("Biotif-Bold", size: 20))
+                        .foregroundColor(.black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
@@ -59,14 +57,14 @@ struct EvolutionChainView: View {
 
 struct EvolutionCellView: View {
     var evoLink: EvoLink?
-        
+    
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
-                Spacer()
-                PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource())
-                ArrowView(trigger: evoLink?.triggers ?? "")
-                PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource())
-                Spacer()
+            Spacer()
+            PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource())
+            ArrowView(trigger: evoLink?.triggers ?? "")
+            PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource())
+            Spacer()
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -91,9 +89,8 @@ struct ArrowView: View {
                     .rotationEffect(.init(degrees: 90))
                     .scaleEffect(0.5)
             }
-            CustomText(text: trigger,
-                       size: 12,
-                       weight: .semibold)
+            Text(trigger)
+                .font(.custom("Biotif-SemiBold", size: 12))
                 .foregroundColor(Color.gray.opacity(3))
         }
     }
@@ -131,15 +128,15 @@ struct PokemonCellView: View {
                                         needAnimated: false,
                                         image: $image)
                 }
-                CustomText(text: name.capitalizingFirstLetter(),
-                           size: 15,
-                           weight: .semibold)
+                Text(name.capitalizingFirstLetter())
+                    .font(.custom("Biotif-SemiBold", size: 15))
+                    .foregroundColor(.black)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
                                                                 isShowing: $show),
                                        isActive: $show) {
-                                        EmptyView()
-                                       })
+                EmptyView()
+            })
         }
     }
 }
@@ -169,7 +166,7 @@ struct CustomAlertView: View {
                 }
             }, label: {
                 Text("OK")
-                    .font(.largeTitle)
+                    .font(.custom("Biotif-Bold", size: 25))
                     .frame(minWidth: 0,
                            maxWidth: .infinity,
                            alignment: .center)

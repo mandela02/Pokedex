@@ -71,7 +71,9 @@ struct StatsView: View {
                 
                 if !updater.characteristics.isEmpty {
                     VStack(alignment: .leading, spacing: 5, content: {
-                        CustomText(text: "Characteristics", size: 15, weight: .bold, textColor: .black)
+                        Text("Characteristics")
+                            .font(.custom("Biotif-Bold", size: 15))
+                            .foregroundColor(.black)
                         FlexibleGridView(characteristics: $updater.descriptions)
                     })
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -95,9 +97,13 @@ struct LevelInformationView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
-            CustomText(text: stat.title, size: 12, weight: .bold, textColor: .gray)
+            Text(stat.title)
+                .font(.custom("Biotif-Bold", size: 12))
+                .foregroundColor(.gray)
                 .frame(width: 80, alignment: .leading)
-            CustomText(text: "\(amount)", size: 12, weight: .bold, textColor: .black)
+            Text("\(amount)")
+                .font(.custom("Biotif-Bold", size: 12))
+                .foregroundColor(.black)
                 .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)
             LevelBar(level: amount,

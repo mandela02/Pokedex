@@ -47,12 +47,9 @@ struct CompleteView: View {
                 .onAppear {
                     toggle(isGone: false)
                 }
-                
-                CustomText(text: "This is the end of line, my man",
-                           size: 20,
-                           weight: .bold,
-                           background: .clear,
-                           textColor: .red)
+                Text("This is the end of line, my man")
+                    .font(.custom("Biotif-SemiBold", size: 20))
+                    .foregroundColor(.red)
             }
         })
     }

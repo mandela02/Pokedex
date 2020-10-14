@@ -52,7 +52,7 @@ struct TabItem: View {
     
     var body: some View {
         Text(tab.title)
-            .font(.system(size: 15))
+            .font(.custom("Biotif-Black", size: 15))
             .foregroundColor(.black)
             .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
             .frame(height: 50, alignment: .center)

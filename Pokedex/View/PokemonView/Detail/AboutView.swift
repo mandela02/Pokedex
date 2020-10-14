@@ -42,7 +42,9 @@ struct AboutContentView: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
-            CustomText(text: description, size: 15, weight: .medium, textColor: .black)
+            Text(description)
+                .font(.custom("Biotif-Medium", size: 15))
+                .foregroundColor(.black)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
                 .onReceive(updater.$description) { text in
                     description = text
@@ -55,7 +57,9 @@ struct AboutContentView: View {
                 .padding()
                 .padding(.bottom, 20)
             
-            CustomText(text: "Breeding", size: 20)
+            Text("Breeding")
+                .font(.custom("Biotif-SemiBold", size: 20))
+                .foregroundColor(.black)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
             
@@ -77,9 +81,15 @@ struct BreedingView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 30) {
             VStack(alignment: .leading, spacing: 10) {
-                CustomText(text: "Gender", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "Egg Groups", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: "Habitat", size: 12, weight: .bold, textColor: .gray)
+                Text("Gender")
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
+                Text("Egg Groups")
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
+                Text("Habitat")
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
             }
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .center, spacing: 20) {
@@ -90,8 +100,12 @@ struct BreedingView: View {
                         GenderView(gender: .non, rate: rate)
                     }
                 }
-                CustomText(text: group.capitalizingFirstLetter(), size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: habitat.capitalizingFirstLetter(), size: 12, weight: .bold, textColor: .gray)
+                Text(group.capitalizingFirstLetter())
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
+                Text(habitat.capitalizingFirstLetter())
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
@@ -110,7 +124,9 @@ struct GenderView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 14, alignment: .center)
                 .foregroundColor(gender.color)
-            CustomText(text: StringHelper.getGenderRateString(gender: gender, rate: rate), size: 12)
+            Text(StringHelper.getGenderRateString(gender: gender, rate: rate))
+                .font(.custom("Biotif-SemiBold", size: 12))
+                .foregroundColor(.gray)
         }
     }
 }
@@ -122,14 +138,20 @@ struct SizeView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                CustomText(text: "Height", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: StringHelper.heightString(from: height), size: 10, weight: .semibold)
-                    .isPlaceholder(height == 0)
+                Text("Height")
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
+                Text(StringHelper.heightString(from: height))
+                    .font(.custom("Biotif-SemiBold", size: 12))
+                    .foregroundColor(.gray)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
-                CustomText(text: "Weight", size: 12, weight: .bold, textColor: .gray)
-                CustomText(text: StringHelper.weightString(from: weight), size: 10, weight: .semibold)
-                    .isPlaceholder(weight == 0)
+                Text("Weight")
+                    .font(.custom("Biotif-Bold", size: 12))
+                    .foregroundColor(.gray)
+                Text(StringHelper.weightString(from: weight))
+                    .font(.custom("Biotif-SemiBold", size: 12))
+                    .foregroundColor(.gray)                
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }.padding()
     }
