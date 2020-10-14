@@ -63,18 +63,19 @@ struct PokedexCardView: View {
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 
                 VStack(alignment: .leading, spacing: 0, content: {
-                    Text(updater.pokemon.name.capitalizingFirstLetter())
-                        .font(.system(size: 25))
-                        .fontWeight(.bold)
-                        .foregroundColor(updater.pokemon.mainType.color.text)
+                    CustomText(text: updater.pokemon.name.capitalizingFirstLetter(),
+                               size: 18,
+                               weight: .bold,
+                               background: .clear,
+                               textColor: updater.pokemon.mainType.color.text)
                         .frame(alignment: .topLeading)
-                        .lineLimit(1)
                         .padding(.bottom, 10)
                     ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
-                        Text(type.name)
-                            .frame(alignment: .leading)
-                            .font(.system(size: 10))
-                            .foregroundColor(updater.pokemon.mainType.color.text)
+                        CustomText(text: type.name,
+                                   size: 8,
+                                   weight: .bold,
+                                   background: .clear,
+                                   textColor: updater.pokemon.mainType.color.text)
                             .background(Rectangle()
                                             .fill(updater.pokemon.mainType.color.background.opacity(0.5))
                                             .cornerRadius(10)

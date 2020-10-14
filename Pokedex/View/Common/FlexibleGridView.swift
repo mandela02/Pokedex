@@ -58,12 +58,13 @@ struct FlexibleGridView: View {
     }
 
     private func item(for text: String) -> some View {
-        Text(text)
-            .font(.system(size: 12))
+        CustomText(text: text,
+                   size: 12,
+                   weight: .bold,
+                   background: HexColor.lightGrey,
+                   textColor: .white)
             .padding(.all, 5)
-            .font(.body)
             .background(HexColor.lightGrey)
-            .foregroundColor(Color.white)
             .cornerRadius(6)
     }
 

@@ -50,5 +50,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>PKMN-Pinball.ttf</string>
+		<string>PKMN RBYGSC.ttf</string>
+		<string>Sun.ttf</string>
+	</array>
 </dict>
 </plist>

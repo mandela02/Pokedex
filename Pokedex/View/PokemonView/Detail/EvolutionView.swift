@@ -92,7 +92,7 @@ struct ArrowView: View {
                     .scaleEffect(0.5)
             }
             CustomText(text: trigger,
-                       size: 12,
+                       size: 8,
                        weight: .semibold)
                 .foregroundColor(Color.gray.opacity(3))
         }
@@ -132,7 +132,7 @@ struct PokemonCellView: View {
                                         image: $image)
                 }
                 CustomText(text: name.capitalizingFirstLetter(),
-                           size: 15,
+                           size: 10,
                            weight: .semibold)
             }
             .background(NavigationLink(destination: PokemonView(updater: updater,
@@ -168,8 +168,11 @@ struct CustomAlertView: View {
                     isPresented = false
                 }
             }, label: {
-                Text("OK")
-                    .font(.largeTitle)
+                CustomText(text: "OK",
+                           size: 15,
+                           weight: .bold,
+                           background: .clear,
+                           textColor: .black)
                     .frame(minWidth: 0,
                            maxWidth: .infinity,
                            alignment: .center)

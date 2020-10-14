@@ -28,7 +28,7 @@ struct PokemonView: View {
     private var safeAreaOffset: CGFloat {
         return UIDevice().hasNotch ? 0 : 120
     }
-        
+    
     private func drag(in size: CGSize) -> some Gesture {
         let collapseValue = size.height / 4 - 100
         
@@ -46,7 +46,7 @@ struct PokemonView: View {
                     updateView(with: size)
                 }
             })
-        }
+    }
     
     private func hideImage(in size: CGSize) {
         let collapseValue = size.height / 4 - 100
@@ -56,7 +56,7 @@ struct PokemonView: View {
     
     private func updateView(with size: CGSize) {
         let collapseValue = size.height / 4 - 100
-
+        
         if offset.height < 0 && abs(offset.height) > collapseValue {
             withAnimation(.spring()) {
                 isExpanded = false
@@ -75,7 +75,7 @@ struct PokemonView: View {
         GeometryReader(content: { geometry in
             let size = geometry.size
             let detailViewHeight = size.height * 0.6 - offset.height
-                        
+            
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
                 
@@ -175,73 +175,73 @@ struct PokemonView: View {
 
 struct ButtonView: View {
     @Environment(\.presentationMode) var presentationMode
-
+    
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
     var namespace: Namespace.ID
     
     @State var isFavorite = false
-
+    
     var body: some View {
-            HStack{
-                Button {
-                    withAnimation(.spring()){
-                        isShowing = false
-                    }
-                } label: {
-                    Image(systemName: ("arrow.uturn.left"))
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.clear)
-                        .clipShape(Circle())
+        HStack{
+            Button {
+                withAnimation(.spring()){
+                    isShowing = false
                 }
-                .frame(width: 50, height: 50, alignment: .center)
-                Spacer()
-                if !isInExpandeMode {
-                    Text(pokemon.name.capitalizingFirstLetter())
-                        .font(.system(size: 25))
-                        .fontWeight(.bold)
-                        .foregroundColor(pokemon.mainType.color.text)
-                        .background(Color.clear)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-                        .lineLimit(1)
-                        .matchedGeometryEffect(id: pokemon.name, in: namespace)
-                    Spacer()
-                }
-                AnimatedLikeButton(isFavorite: $isFavorite)
+            } label: {
+                Image(systemName: ("arrow.uturn.left"))
+                    .foregroundColor(.white)
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())
-                    .frame(width: 50, height: 50, alignment: .center)
             }
-            .padding(.top, UIDevice().hasNotch ? 44 : 8)
-            .padding(.horizontal)
+            .frame(width: 50, height: 50, alignment: .center)
+            Spacer()
+            if !isInExpandeMode {
+                CustomText(text: pokemon.name.capitalizingFirstLetter(),
+                           size: 25,
+                           weight: .bold,
+                           background: .clear,
+                           textColor: pokemon.mainType.color.text)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                    .lineLimit(1)
+                    .matchedGeometryEffect(id: pokemon.name, in: namespace)
+                Spacer()
+            }
+            AnimatedLikeButton(isFavorite: $isFavorite)
+                .padding()
+                .background(Color.clear)
+                .clipShape(Circle())
+                .frame(width: 50, height: 50, alignment: .center)
+        }
+        .padding(.top, UIDevice().hasNotch ? 44 : 8)
+        .padding(.horizontal)
     }
 }
 
 struct NameView: View {
     var pokemon: Pokemon
     var namespace: Namespace.ID
-
+    
     @Binding var opacity: Double
     
     var body: some View {
         HStack(alignment: .lastTextBaseline){
-            Text(pokemon.name.capitalizingFirstLetter())
-                .font(.system(size: 35))
-                .fontWeight(.bold)
-                .foregroundColor(pokemon.mainType.color.text)
-                .background(Color.clear)
+            CustomText(text: pokemon.name.capitalizingFirstLetter(),
+                       size: 25,
+                       weight: .bold,
+                       background: .clear,
+                       textColor: pokemon.mainType.color.text)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .lineLimit(1)
                 .matchedGeometryEffect(id: pokemon.name, in: namespace)
             Spacer()
-            Text(String(format: "#%03d", pokemon.pokeId))
-                .font(.system(size: 20))
-                .fontWeight(.bold)
-                .foregroundColor(pokemon.mainType.color.text)
-                .background(Color.clear)
+            CustomText(text: String(format: "#%03d", pokemon.pokeId),
+                       size: 15,
+                       weight: .bold,
+                       background: .clear,
+                       textColor: pokemon.mainType.color.text)
                 .frame(alignment: .topLeading)
                 .lineLimit(1)
                 .opacity(opacity)
@@ -259,10 +259,12 @@ struct TypeView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 30, content: {
             ForEach(pokemon.types.map({$0.type})) { type in
-                Text(type.name)
+                CustomText(text: type.name,
+                           size: 12,
+                           weight: .bold,
+                           background: .clear,
+                           textColor: pokemon.mainType.color.text)
                     .frame(alignment: .leading)
-                    .font(.system(size: 15))
-                    .foregroundColor(pokemon.mainType.color.text)
                     .background(Rectangle()
                                     .fill(pokemon.mainType.color.background.opacity(0.5))
                                     .cornerRadius(10)

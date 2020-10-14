@@ -48,8 +48,9 @@ struct TypeCardView: View {
                 .blur(radius: 1)
             
             CustomText(text: type.rawValue.uppercased(),
-                       size: 30,
-                       weight: .black, textColor: .white)
+                       size: 20,
+                       weight: .bold,
+                       textColor: .white)
                 .frame(width: size.width, height: size.height)
         }
         .frame(width: size.width, height: size.height)

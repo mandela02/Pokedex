@@ -95,9 +95,9 @@ struct LevelInformationView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
-            CustomText(text: stat.title, size: 12, weight: .bold, textColor: .gray)
+            CustomText(text: stat.title, size: 10, weight: .bold, textColor: .gray)
                 .frame(width: 80, alignment: .leading)
-            CustomText(text: "\(amount)", size: 12, weight: .bold, textColor: .black)
+            CustomText(text: "\(amount)", size: 10, weight: .bold, textColor: .black)
                 .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)
             LevelBar(level: amount,

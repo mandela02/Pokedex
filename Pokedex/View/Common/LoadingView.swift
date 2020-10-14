@@ -13,8 +13,7 @@ struct LoadingView: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.5)
-            Text("Loading")
-                .foregroundColor(.red)
+            CustomText(text: "Loading", textColor: Color.red)
                 .shadow(color: .red, radius: 5, x: 1, y: 1)
             
             Circle().stroke(lineWidth: 5)

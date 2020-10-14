@@ -51,9 +51,12 @@ struct TabItem: View {
     var tab: Tab
     
     var body: some View {
-        Text(tab.title)
-            .font(.system(size: 15))
-            .foregroundColor(.black)
+        CustomText(text: tab.title,
+                   size: 10,
+                   weight: .bold,
+                   background: .clear,
+                   textColor: .black)
+            .frame(alignment: .leading)
             .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
             .frame(height: 50, alignment: .center)
             .onTapGesture(count: 1, perform: {
