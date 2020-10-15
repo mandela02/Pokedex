@@ -128,7 +128,7 @@ struct PokemonCellView: View {
                                         needAnimated: false,
                                         image: $image)
                 }
-                Text(name.capitalizingFirstLetter())
+                Text(name.capitalized)
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }

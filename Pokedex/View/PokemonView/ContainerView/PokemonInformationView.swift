@@ -198,7 +198,7 @@ struct ButtonView: View {
                 .frame(width: 50, height: 50, alignment: .center)
                 Spacer()
                 if !isInExpandeMode {
-                    Text(pokemon.name.capitalizingFirstLetter())
+                    Text(pokemon.name.capitalized)
                         .font(Biotif.bold(size: 25).font)
                         .fontWeight(.bold)
                         .foregroundColor(pokemon.mainType.color.text)
@@ -227,7 +227,7 @@ struct NameView: View {
     
     var body: some View {
         HStack(alignment: .lastTextBaseline){
-            Text(pokemon.name.capitalizingFirstLetter())
+            Text(pokemon.name.capitalized)
                 .font(Biotif.bold(size: 35).font)
                 .fontWeight(.bold)
                 .foregroundColor(pokemon.mainType.color.text)
