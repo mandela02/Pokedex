@@ -18,7 +18,6 @@ struct AllTypeList: View {
             let columns = [gridItem, gridItem]
             ZStack {
                 ScrollView(.vertical, showsIndicators: false) {
-                    Color.clear.frame(height: 50)
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(updater.allTypes, id: \.self) { type in
                             TappableTypeCardView(type: type,
@@ -29,15 +28,6 @@ struct AllTypeList: View {
                     }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .top)
                     .animation(.linear)
                 }
-                VStack {
-                    Text("All Type Available")
-                        .font(Biotif.black(size: 30).font)
-                        .foregroundColor(.black)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
-                    Spacer()
-                }
-                
                 VStack {
                     Spacer()
                     LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),

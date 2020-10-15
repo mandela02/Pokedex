@@ -36,7 +36,7 @@ class ImageLoader: ObservableObject {
                 guard let image = image else { return }
                 self?.cache[url] = image
             })
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

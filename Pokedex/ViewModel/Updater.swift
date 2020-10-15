@@ -8,8 +8,8 @@
 import Foundation
 import Combine
 
-struct PokemonCell: Identifiable, Equatable {
-    static func == (lhs: PokemonCell, rhs: PokemonCell) -> Bool {
+struct PokemonCellModel: Identifiable, Equatable {
+    static func == (lhs: PokemonCellModel, rhs: PokemonCellModel) -> Bool {
         lhs.firstPokemon?.url == rhs.firstPokemon?.url
     }
     
@@ -20,7 +20,7 @@ struct PokemonCell: Identifiable, Equatable {
 
 class Updater: ObservableObject {
     @Published var pokemons: [NamedAPIResource] = []
-    @Published var pokemonsCells: [PokemonCell] = []
+    @Published var pokemonsCells: [PokemonCellModel] = []
 
     
     private var canLoadMore = true
@@ -48,7 +48,7 @@ class Updater: ObservableObject {
             url = nextURL
             result.enumerated().forEach { item in
                 if item.offset % 2 == 0 {
-                    let newPokemons = PokemonCell(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
+                    let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
                     pokemonsCells.append(newPokemons)
                 }
             }
@@ -60,7 +60,7 @@ class Updater: ObservableObject {
         cancellable?.cancel()
     }
         
-    func loadMorePokemonIfNeeded(current pokemonCell: PokemonCell) {
+    func loadMorePokemonIfNeeded(current pokemonCell: PokemonCellModel) {
         let thresholdIndex = pokemonsCells.index(pokemonsCells.endIndex, offsetBy: -5)
         if pokemonsCells.firstIndex(where: { $0 == pokemonCell }) == thresholdIndex {
             loadPokemonData()
@@ -78,7 +78,7 @@ class Updater: ObservableObject {
             .share
             .pokemons(from: url)
             .replaceError(with: PokemonResult())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemonResult, on: self)
     }

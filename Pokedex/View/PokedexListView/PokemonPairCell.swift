@@ -12,6 +12,8 @@ struct PokemonPairCell: View {
 
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
+    
+    @State var show: Bool = false
 
     var body: some View {
         GeometryReader(content: { geometry in
@@ -19,15 +21,28 @@ struct PokemonPairCell: View {
             let height = geometry.size.height
             HStack(alignment: .center, spacing: 10, content: {
                 if let first = firstPokemon {
-                    TappableCardView(updater: PokemonUpdater(url: first.url),
-                                     size: (width, height))
+                    let firstUpdater = PokemonUpdater(url: first.url)
+                    TappablePokemonCell(updater: firstUpdater, show: $show, size: CGSize(width: width, height: height))
                 }
                 if let second = secondPokemon {
-                    TappableCardView(updater: PokemonUpdater(url: second.url),
-                                    size: (width, height))
+                    let secondUpdater = PokemonUpdater(url: second.url)
+                    TappablePokemonCell(updater: secondUpdater, show: $show, size: CGSize(width: width, height: height))
                 }
             })
             .buttonStyle(PlainButtonStyle())
         })
+    }
+}
+
+struct TappablePokemonCell: View {
+    let updater: PokemonUpdater
+    @Binding var show: Bool
+    let size: CGSize
+    var body: some View {
+        TapToPushView(show: $show) {
+            PokedexCardView(updater: updater, size: (size.width, size.height))
+        } destination: {
+            PokemonInformationView(updater: updater, isShowing: $show)
+        }
     }
 }

@@ -13,6 +13,19 @@ enum SubViewKind: Int, CaseIterable {
     case region
     case favorite
     
+    var name: String {
+        switch self {
+        case .search:
+            return "Search"
+        case .type:
+            return "Type"
+        case .region:
+            return "Region"
+        case .favorite:
+            return "Favorite"
+        }
+    }
+    
     static func getKind(from index: Int) -> SubViewKind {
         return allCases[safe: index] ?? favorite
     }
@@ -30,17 +43,12 @@ struct SubView<Content: View>: View {
         return DragGesture()
             .onChanged({ gesture in
                 if gesture.translation.height > 0 {
-                    withAnimation(.linear) {
+                    withAnimation(.spring()) {
                         self.offset = gesture.translation
                     }
                 }
             }).onEnded({ _ in
-                withAnimation(.default) {
-                    if offset.height > collapseValue {
-                        self.offset = size
-                    }
-                }
-                withAnimation(Animation.linear(duration: 0.5)) {
+                if offset.height > collapseValue {
                     self.isShowing = false
                 }
             })

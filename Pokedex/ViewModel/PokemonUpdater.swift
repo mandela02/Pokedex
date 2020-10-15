@@ -43,7 +43,7 @@ class PokemonUpdater: ObservableObject {
             .share
             .pokemon(from: url)
             .replaceError(with: Pokemon())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.isFinishLoading = true
             })

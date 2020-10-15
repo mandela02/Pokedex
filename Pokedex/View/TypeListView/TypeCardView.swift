@@ -8,20 +8,15 @@
 import SwiftUI
 
 struct TappableTypeCardView: View {
-    
     var type: PokemonType
     var size: (width: CGFloat, height: CGFloat)
-    
     @State var show: Bool = false
     
     var body: some View {
-        Button {
-            show = true
-        } label: {
+        TapToPushView(show: $show) {
             TypeCardView(type: type, size: size)
-                .background(NavigationLink(destination: PokemonsOfTypeList(show: $show,
-                                                                            type: type),
-                                           isActive: $show) { EmptyView() })
+        } destination: {
+            PokemonsOfTypeList(show: $show, type: type)
         }
     }
 }

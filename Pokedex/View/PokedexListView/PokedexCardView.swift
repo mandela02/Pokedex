@@ -7,25 +7,6 @@
 
 import SwiftUI
 
-struct TappableCardView: View {
-    
-    @ObservedObject var updater: PokemonUpdater
-    var size: (width: CGFloat, height: CGFloat)
-    @State var show: Bool = false
-    @State var isTapable: Bool = false
-    
-    var body: some View {
-        Button {
-            show = true
-        } label: {
-            PokedexCardView(updater: updater, size: size)
-                .background(NavigationLink(destination: PokemonInformationView(updater: updater,
-                                                                    isShowing: $show),
-                                           isActive: $show) { EmptyView() })
-        }
-    }
-}
-
 struct PokedexCardView: View {
     @ObservedObject var updater: PokemonUpdater
     

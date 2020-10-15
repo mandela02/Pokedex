@@ -13,7 +13,7 @@ struct TypeCell: Identifiable {
         type.id
     }
     var type: PokeType
-    var cells: [PokemonCell]
+    var cells: [PokemonCellModel]
 }
 
 class TypeUpdater: ObservableObject {

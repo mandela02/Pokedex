@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-class TypePokemonsUpdater: ObservableObject {
+class TypeDetailUpdater: ObservableObject {
     init(type: PokemonType? = nil) {
         self.pokemonType = type
     }
@@ -31,28 +31,40 @@ class TypePokemonsUpdater: ObservableObject {
     @Published var type: PokeType = PokeType() {
         didSet {
             pokemons = getCells(from: type.pokemon.map({$0.pokemon}))
+            getDamageDetail(from: type.moveDamageClass.url)
         }
     }
 
-    @Published var pokemons: [PokemonCell] = []
+    @Published var damage: MoveDamageClass = MoveDamageClass()
+    @Published var pokemons: [PokemonCellModel] = []
+
 
     private var cancellables = Set<AnyCancellable>()
     
     private func getTypeDetail(from url: String) {
         Session.share.type(from: url)
         .replaceError(with: PokeType())
-        .receive(on: RunLoop.main)
+        .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
         .assign(to: \.type, on: self)
         .store(in: &cancellables)
     }
     
-    private func getCells(from result: [NamedAPIResource]) -> [PokemonCell] {
-        var cells: [PokemonCell] = []
+    private func getDamageDetail(from url: String) {
+        Session.share.moveDamageClass(from: url)
+        .replaceError(with: MoveDamageClass())
+        .receive(on: DispatchQueue.main)
+        .eraseToAnyPublisher()
+        .assign(to: \.damage, on: self)
+        .store(in: &cancellables)
+    }
+    
+    private func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
+        var cells: [PokemonCellModel] = []
         
         result.enumerated().forEach { item in
             if item.offset % 2 == 0 {
-                let newPokemons = PokemonCell(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
+                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
                 cells.append(newPokemons)
             }
         }

@@ -27,7 +27,7 @@ class StatUpdater: ObservableObject {
         didSet {
             if !characteristics.isEmpty {
                 descriptions = characteristics
-                    .map({StringHelper.getEnglishTexts(from: $0.descriptions)})
+                    .map({StringHelper.getEnglishText(from: $0.descriptions)})
             }
         }
     }
@@ -50,7 +50,7 @@ class StatUpdater: ObservableObject {
         if let statUrl = max?.statUrl.url {
             Session.share.stat(from: statUrl)
                 .replaceError(with: Stat())
-                .receive(on: RunLoop.main)
+                .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
                 .assign(to: \.stat, on: self)
                 .store(in: &cancellables)
@@ -65,7 +65,7 @@ class StatUpdater: ObservableObject {
             .flatMap({$0})
             .replaceError(with: Characteristic())
             .eraseToAnyPublisher()
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .collect()
             .assign(to: \.characteristics, on: self)
             .store(in: &cancellables)
