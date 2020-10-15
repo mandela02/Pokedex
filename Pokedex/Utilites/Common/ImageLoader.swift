@@ -11,11 +11,10 @@ import UIKit
 
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
-    private let cache = ImageCache()
     private var cancellable: AnyCancellable?
-
+    
     deinit {
-        cancellable?.cancel()
+        cancel()
     }
     
     init(url: String) {
@@ -25,16 +24,20 @@ class ImageLoader: ObservableObject {
         cancellable = loadImage(from: url).assign(to: \.displayImage, on: self)
     }
     
-    func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never> {
-        if let image = cache[url] {
+    func cancel() {
+        cancellable?.cancel()
+    }
+    
+    private func loadImage(from url: URL) -> AnyPublisher<UIImage?, Never> {
+        if let image = ImageCache.share[url] {
             return Just(image).eraseToAnyPublisher()
         }
         return URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .catch { error in return Just(nil) }
-            .handleEvents(receiveOutput: {[weak self] image in
+            .handleEvents(receiveOutput: { image in
                 guard let image = image else { return }
-                self?.cache[url] = image
+                ImageCache.share[url] = image
             })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()

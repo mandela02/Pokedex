@@ -77,14 +77,14 @@ struct PokemonInformationView: View {
             let detailViewHeight = size.height * 0.6 - offset.height
                         
             ZStack {
-                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
+                updater.pokemon.mainType.color.background.ignoresSafeArea()
                 
                 if isExpanded {
-                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                    RotatingPokeballView()
                         .ignoresSafeArea()
                         .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
                 } else {
-                    RotatingPokeballView(color: updater.pokemon.mainType.color.background.opacity(0.5))
+                    RotatingPokeballView()
                         .ignoresSafeArea()
                         .frame(width: geometry.size.width * 4/5,
                                height: geometry.size.height * 4/5,

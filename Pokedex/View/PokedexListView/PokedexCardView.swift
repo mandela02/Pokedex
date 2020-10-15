@@ -19,7 +19,7 @@ struct PokedexCardView: View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                updater.pokemon.mainType.color.background.ignoresSafeArea().saturation(5.0)
+                updater.pokemon.mainType.color.background.ignoresSafeArea()
                     .blur(radius: 1)
                 
                 Image("ic_pokeball")
@@ -27,7 +27,7 @@ struct PokedexCardView: View {
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(updater.pokemon.mainType.color.background.opacity(0.5))
+                    .foregroundColor(Color.white.opacity(0.3))
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                     .offset(x: size.width * 1/4, y: size.height * 1/3 )
                     .blur(radius: 1)
@@ -53,7 +53,7 @@ struct PokedexCardView: View {
                     ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
                         TypeBubbleCellView(text: type.name,
                                            foregroundColor: updater.pokemon.mainType.color.text,
-                                           backgroundColor: updater.pokemon.mainType.color.type.opacity(0.5),
+                                           backgroundColor: Color.white.opacity(0.3),
                                            font: Biotif.semiBold(size: 10).font)
                             .padding(.bottom, 15)
                             .padding(.leading, 15)
