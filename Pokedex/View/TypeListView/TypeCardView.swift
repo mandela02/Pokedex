@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TappableTypeCardView: View {
-
+    
     var type: PokemonType
     var size: (width: CGFloat, height: CGFloat)
     
@@ -19,7 +19,7 @@ struct TappableTypeCardView: View {
             show = true
         } label: {
             TypeCardView(type: type, size: size)
-                .background(NavigationLink(destination: TypePokemonListView(show: $show,
+                .background(NavigationLink(destination: PokemonsOfTypeList(show: $show,
                                                                             type: type),
                                            isActive: $show) { EmptyView() })
         }
@@ -37,18 +37,24 @@ struct TypeCardView: View {
                 .ignoresSafeArea().saturation(5.0)
                 .blur(radius: 1)
             
-            Image("ic_pokeball")
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(type.color.background.opacity(0.5))
-                .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
-                .offset(x: size.width * 1/4, y: size.height * 1/3 )
-                .blur(radius: 1)
+            HStack {
+                Spacer()
+                Image("ic_pokeball")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(type.color.background.opacity(0.5))
+                    .frame(width: size.height,
+                           height: size.height,
+                           alignment: .bottomTrailing)
+                    .offset(x: 5)
+                    .blur(radius: 1)
+                
+            }
             
             Text(type.rawValue.uppercased())
-                .font(Biotif.black(size: 12).font)
+                .font(Biotif.black(size: 15).font)
                 .foregroundColor(.white)
                 .frame(width: size.width, height: size.height)
         }

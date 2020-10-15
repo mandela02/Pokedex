@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct PokedexView: View {
-    @State var active = 0
-    
+    @State var active = 5
+    @State var showTypeView: Bool = false
+    @State var subViewOffset: CGSize = CGSize.zero
+
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
@@ -19,26 +21,45 @@ struct PokedexView: View {
     }
     
     var body: some View {
-        ZStack {
-            switch active {
-            case 0:
-                PokemonListView()
+        
+        GeometryReader (content: { geometry in
+            ZStack {
+                PokemonList()
                     .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
-            case 1:
-                TypeListView()
-                    .transition(AnyTransition.move(edge: .trailing).combined(with: .opacity))
-            case 2:
-                EmptyView()
-            default:
-                EmptyView()
-            }
-            VStack {
-                Spacer()
-                HStack {
+                    .blur(radius: showTypeView ? 3 : 0)
+                VStack {
                     Spacer()
-                    FloatingMenu(active: $active)
+                    HStack {
+                        Spacer()
+                        FloatingMenu(active: $active)
+                    }
+                }
+                
+                if showTypeView {
+                    Color.black.opacity(0.5)
+                    VStack {
+                        Spacer()
+                        TypeSubView(isShowing: $showTypeView,
+                                    offset: $subViewOffset,
+                                    kind: SubViewKind.getKind(from: active))
+                            .frame(height: geometry.size.height/2)
+                    }
+                    .offset(y: subViewOffset.height)
                 }
             }
-        }
+            .onChange(of: active, perform: { active in
+                withAnimation(.default) {
+                    if active < 5 {
+                        showTypeView = true
+                    }
+                }
+            })
+            .onChange(of: showTypeView, perform: { showTypeView in
+                if showTypeView == false {
+                    active = 5
+                    subViewOffset = CGSize.zero
+                }
+            })
+        })
     }
 }

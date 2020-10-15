@@ -132,7 +132,7 @@ struct PokemonCellView: View {
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }
-            .background(NavigationLink(destination: PokemonView(updater: updater,
+            .background(NavigationLink(destination: PokemonInformationView(updater: updater,
                                                                 isShowing: $show),
                                        isActive: $show) {
                 EmptyView()

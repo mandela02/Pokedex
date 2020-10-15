@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PokemonView: View {
+struct PokemonInformationView: View {
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     
     @ObservedObject var updater: PokemonUpdater
@@ -94,8 +94,7 @@ struct PokemonView: View {
                 
                 VStack(spacing: 0) {
                     Spacer()
-                    Rectangle()
-                        .fill(HexColor.white)
+                    HexColor.white
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)

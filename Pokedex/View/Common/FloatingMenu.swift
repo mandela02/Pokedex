@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct FloatingMenu: View {
-    @State var showMenuItem1 = false
-    @State var showMenuItem2 = false
-    @State var showMenuItem3 = false
-    
+    @State var showFirstMenu = false
+    @State var showSecondMenu = false
+    @State var showThirdMenu = false
+    @State var showFourthMenu = false
+
     @State var pressed = false
     @Binding var active: Int
     
@@ -19,29 +20,43 @@ struct FloatingMenu: View {
         VStack(alignment: .trailing, spacing: 30) {
             VStack(alignment: .trailing, spacing: 30) {
                 Spacer()
-                if showMenuItem1 {
-                    MenuItem(icon: "camera", text: "Nothing yet", tag: 2, selected: $active)
+                if showFourthMenu {
+                    MenuItem(icon: "car", text: "Favorite", tag: 3, selected: $active)
+                        .animation(Animation.default.delay(0.3))
+                        .onTapGesture {
+                            toggleMenu()
+                            withAnimation(Animation.spring().delay(0.4)) {
+                                active = 3
+                            }
+                        }
+                }
+
+                if showThirdMenu {
+                    MenuItem(icon: "camera", text: "All Type", tag: 2, selected: $active)
                         .animation(Animation.default.delay(0.2))
                         .onTapGesture {
-                            withAnimation(.spring()) {
+                            toggleMenu()
+                            withAnimation(Animation.spring().delay(0.4)) {
                                 active = 2
                             }
                         }
                 }
-                if showMenuItem2 {
-                    MenuItem(icon: "photo.on.rectangle", text: "Type", tag: 1, selected: $active)
+                if showSecondMenu {
+                    MenuItem(icon: "photo.on.rectangle", text: "All Gen", tag: 1, selected: $active)
                         .animation(Animation.default.delay(0.1))
                         .onTapGesture {
-                            withAnimation(.spring()) {
+                            toggleMenu()
+                            withAnimation(Animation.spring().delay(0.4)) {
                                 active = 1
                             }
                         }
                 }
-                if showMenuItem3 {
-                    MenuItem(icon: "square.and.arrow.up", text: "National Dex", tag: 0, selected: $active)
+                if showFirstMenu {
+                    MenuItem(icon: "square.and.arrow.up", text: "Search", tag: 0, selected: $active)
                         .animation(Animation.default.delay(0))
                         .onTapGesture {
-                            withAnimation(.spring()) {
+                            toggleMenu()
+                            withAnimation(Animation.spring().delay(0.4)) {
                                 active = 0
                             }
                         }
@@ -52,16 +67,17 @@ struct FloatingMenu: View {
                 .foregroundColor(.red)
                 .shadow(radius: 26)
                 .onChange(of: pressed, perform: { value in
-                    showMenuAnimated()
+                    toggleMenu()
                 })
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 30, trailing: 30))
         }
     }
     
-    func showMenuAnimated() {
-        showMenuItem3.toggle()
-        showMenuItem2.toggle()
-        showMenuItem1.toggle()
+    func toggleMenu() {
+        showFourthMenu.toggle()
+        showThirdMenu.toggle()
+        showSecondMenu.toggle()
+        showFirstMenu.toggle()
     }
 }
 
@@ -73,12 +89,12 @@ struct MenuItem: View {
     @Binding var selected: Int
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
+            Text(text)
+                .font(Biotif.semiBold(size: 12).font)
+                .foregroundColor(selected == tag ? .white : .red)
             Image(systemName: icon)
                 .renderingMode(.template)
                 .imageScale(.large)
-                .foregroundColor(selected == tag ? .white : .red)
-            Text(text)
-                .font(Biotif.semiBold(size: 12).font)
                 .foregroundColor(selected == tag ? .white : .red)
         }
         .frame(height: 20, alignment: .trailing)

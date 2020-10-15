@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TypeListView: View {
+struct AllTypeList: View {
     @StateObject var updater: TypeUpdater = TypeUpdater()
     
     var body: some View {
@@ -18,7 +18,7 @@ struct TypeListView: View {
             let columns = [gridItem, gridItem]
             ZStack {
                 ScrollView(.vertical, showsIndicators: false) {
-                    Color.clear.frame(height: 100)
+                    Color.clear.frame(height: 50)
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(updater.allTypes, id: \.self) { type in
                             TappableTypeCardView(type: type,
@@ -34,7 +34,7 @@ struct TypeListView: View {
                         .font(Biotif.black(size: 30).font)
                         .foregroundColor(.black)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(EdgeInsets(top: 50, leading: 20, bottom: 0, trailing: 20))
+                        .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                     Spacer()
                 }
                 
@@ -53,6 +53,6 @@ struct TypeListView: View {
 
 struct TypeListView_Previews: PreviewProvider {
     static var previews: some View {
-        TypeListView()
+        AllTypeList()
     }
 }
