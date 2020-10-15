@@ -167,7 +167,8 @@ struct TypeResult: Codable {
     var type: NamedAPIResource = NamedAPIResource()
 }
 
-struct PokemonMove: Codable {
+struct PokemonMove: Codable, Identifiable {
+    var id = UUID()
     var move: NamedAPIResource = NamedAPIResource()
     var versionGroupDetails: [PokemonMoveVersion] = []
 

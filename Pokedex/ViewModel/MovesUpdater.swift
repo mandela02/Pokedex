@@ -11,10 +11,8 @@ import Combine
 class MovesUpdater: ObservableObject {
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
-            print(pokemonMoves)
         }
     }
-    
     @Published var url: String = "" {
         didSet {
             getMoves(from: url)
@@ -23,12 +21,12 @@ class MovesUpdater: ObservableObject {
     
     @Published var move: Move = Move() {
         didSet {
-            print(move)
         }
     }
     
     private var cancellables = Set<AnyCancellable>()
-    
+    @Published var selected: String?
+
     private func getMoves(from url: String) {
         Session.share.move(from: url)
             .replaceError(with: Move())
