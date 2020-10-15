@@ -17,9 +17,9 @@ struct MovesView: View {
 
             List {
                 Section {
-                    ForEach(moveUpdater.moves) { move in
-                        TappableMoveCell(selected: $moveUpdater.selected, name: move.name)
-                                            .frame(height: move.name == moveUpdater.selected ? height + 220 : height)
+                    ForEach(moveUpdater.moveCellModels) { cell in
+                        TappableMoveCell(selectedMove: $moveUpdater.selected, pokemonMove: cell.pokemonMove, move: cell.move)
+                            .frame(height: cell.move.name == moveUpdater.selected ? height + 220 : height)
                     }
                 }
             }
@@ -35,17 +35,18 @@ struct MovesView: View {
 struct TappableMoveCell: View {
     var type: PokemonType = .bug
     @State var isExtensed = false
-    @Binding var selected: String?
-    var name: String?
+    @Binding var selectedMove: String?
+    var pokemonMove: PokemonMove
+    var move: Move
     
     var body: some View {
-        MoveCell(type: type, isExtensed: $isExtensed)
+        MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
             .onTapGesture {
                 isExtensed.toggle()
-                selected = isExtensed ? name : nil
+                selectedMove = isExtensed ? move.name : nil
             }
-            .onChange(of: selected, perform: { value in
-                //isExtensed = selected == name
+            .onChange(of: selectedMove, perform: { value in
+                isExtensed = selectedMove == move.name
             })
             .buttonStyle(PlainButtonStyle())
             .padding(.trailing, 10)
@@ -54,13 +55,16 @@ struct TappableMoveCell: View {
 }
 
 struct MoveCell: View {
-    var type: PokemonType = .bug
+    var pokemonMove: PokemonMove
+    var move: Move
     @Binding var isExtensed: Bool
+    
     
     var body: some View {
         GeometryReader(content: { geometry in
+            let type = PokemonType.type(from: move.type?.name ?? "")
             let width = geometry.size.width
-            let height = width * 0.2
+            let height = width * 0.2 + 10
             VStack {
                 ZStack {
                     HStack {
@@ -71,40 +75,47 @@ struct MoveCell: View {
                             .aspectRatio(contentMode: .fit)
                             .offset(x: height/3)
                             .scaleEffect(1.1)
-                            .foregroundColor(type.color.background)
+                            .foregroundColor(type.color.background.opacity(0.5))
                     }
                     VStack() {
-                        SkillNameView()
+                        SkillNameView(move: move, pokemonMove: pokemonMove)
                             .padding(.top, 30)
                         Spacer()
-                        SkillPowerView(type: type)
+                        SkillPowerView(move: move)
                             .padding(.bottom, 30)
                     }
                 }
                 .frame(height: height)
                 if isExtensed {
-                    MachineSubView()
+                    VStack(spacing: 5) {
+                        MachineSubView(move: move)
+                            .padding(.leading, 20)
+                        TextInformationView(move: move, pokemonMove: pokemonMove)
+                            .padding(.all, 5)
+                    }
                 }
             }
             .background(Color.white)
             .overlay(
                 RoundedRectangle(cornerRadius: 25)
-                    .stroke(type.color.background, lineWidth: 5)
+                    .stroke(type.color.background.opacity(0.5), lineWidth: 5)
             )
             .cornerRadius(25)
-            //.animation(Animation.default)
         })
     }
 }
 
 struct SkillNameView: View {
+    var move: Move
+    var pokemonMove: PokemonMove
+    
     var body: some View {
         HStack(alignment: .firstTextBaseline){
-            Text("Razor-wind")
+            Text(move.name?.capitalized ?? "")
                 .font(Biotif.bold(size: 30).font)
                 .foregroundColor(.black)
             Spacer()
-            Text("Lvl. 0")
+            Text("Lvl. \(pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 0)")
                 .font(Biotif.bold(size: 15).font)
                 .foregroundColor(Color(.darkGray))
         }
@@ -114,19 +125,20 @@ struct SkillNameView: View {
 }
 
 struct SkillPowerView: View {
-    var type: PokemonType = .bug
+    var move: Move
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
-            TypeBubbleCellView(text: type.rawValue.capitalizingFirstLetter(),
+            let type = PokemonType.type(from: move.type?.name ?? "")
+            TypeBubbleCellView(text: type.rawValue.capitalized,
                                foregroundColor: type.color.text,
                                backgroundColor: type.color.background,
                                font: Biotif.book(size: 12).font)
             Spacer()
             HStack(alignment: .center, spacing: 20) {
-                Text("Power: 20")
+                Text("Power: \(move.power ?? 0)")
                     .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(Color(.darkGray))
-                Text("PP: 20")
+                Text("PP: \(move.pp ?? 0)")
                     .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(Color(.darkGray))
             }
@@ -137,9 +149,12 @@ struct SkillPowerView: View {
 }
 
 struct TextInformationView: View {
+    var move: Move
+    var pokemonMove: PokemonMove
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text("How to learn: " + "Eggs")
+            Text("How to learn: \(pokemonMove.versionGroupDetails.first?.moveLearnMethod.name.capitalized ?? "")")
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(Color(.black))
             
@@ -147,7 +162,7 @@ struct TextInformationView: View {
                 .font(Biotif.book(size: 10).font)
                 .foregroundColor(Color(.darkGray))
             
-            Text("Inflicts regular damage.  User's critical hit rate is one level higher when using this move.  User charges for one turn before attacking.\n\nThis move cannot be selected by sleep talk.")
+            Text(StringHelper.getEnglishText(from: move.effectEntries ?? []))
                 .font(Biotif.book(size: 10).font)
                 .foregroundColor(Color(.darkGray))
                 .padding()
@@ -161,31 +176,27 @@ struct TextInformationView: View {
 }
 
 struct MachineSubView: View {
+    var move: Move
+    
     var body: some View {
-        VStack(spacing: 5) {
             HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text("Target")
-                        .font(Biotif.medium(size: 12).font)
+                        .font(Biotif.medium(size: 10).font)
                         .foregroundColor(Color(.darkGray))
                     Text("Machine")
-                        .font(Biotif.medium(size: 12).font)
+                        .font(Biotif.medium(size: 10).font)
                         .foregroundColor(Color(.darkGray))
                 }
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("All opposing Pokémon")
-                        .font(Biotif.medium(size: 12).font)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(move.target?.name.capitalized ?? "")
+                        .font(Biotif.medium(size: 10).font)
                         .foregroundColor(Color.black)
                     Text("tm02")
-                        .font(Biotif.medium(size: 12).font)
+                        .font(Biotif.medium(size: 10).font)
                         .foregroundColor(.black)
                 }
                 Spacer()
             }
-            .padding(.leading, 10)
-            
-            TextInformationView()
-                .padding(.all, 5)
-        }
     }
 }
