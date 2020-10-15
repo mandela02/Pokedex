@@ -87,7 +87,7 @@ struct PokemonOfTypeHeaderView: View {
                     Spacer()
                 }
                 HStack(alignment: .lastTextBaseline) {
-                    Text(typeName.capitalizingFirstLetter())
+                    Text(typeName.capitalized)
                         .font(Biotif.extraBold(size: 30).font)
                         .foregroundColor(.black)
                 

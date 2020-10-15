@@ -9,7 +9,7 @@ import Foundation
 
 
 struct AbilityEffectChange: Codable {
-    var effectEntries: EffectEntry
+    var effectEntries: [EffectEntry]
     var versionGroup: NamedAPIResource
     
     enum CodingKeys: String, CodingKey {

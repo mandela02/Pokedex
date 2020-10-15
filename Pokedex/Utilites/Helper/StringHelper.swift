@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class StringHelper {
     static func getEnglishTexts(from texts: [FlavorTextEntry]) -> String {
@@ -24,6 +25,10 @@ class StringHelper {
     
     static func getEnglishText(from texts: [Description]) -> String {
         return texts.filter({$0.language.name == "en"}).map({$0.description}).uniques.first ?? ""
+    }
+    
+    static func getEnglishText(from texts: [EffectEntry]) -> String {
+        return texts.filter({$0.language.name == "en"}).map({$0.effect}).uniques.first ?? ""
     }
     
     static func weightString(from hectogram: Int) -> String {
@@ -69,5 +74,12 @@ class StringHelper {
         }
         return Int(url.replacingOccurrences(of: base, with: "")
                     .replacingOccurrences(of: "/", with: "")) ?? 0
+    }
+    
+    static func getStringLength(text: String) -> CGSize {
+        let font = UIFont(name: "Biotif-Book", size: 10)
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let nsText = text as NSString
+        return nsText.size(withAttributes: fontAttributes)
     }
 }
