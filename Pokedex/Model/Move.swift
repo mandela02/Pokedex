@@ -8,26 +8,26 @@
 import Foundation
 
 struct Move: Codable {
-    var accuracy: Int
-    var contestCombos: ContestCombos
-    var contestEffect: APIResource
-    var contestType: NamedAPIResource
-    var damageClass: NamedAPIResource
+    var accuracy: Int?
+    var contestCombos: ContestCombos?
+    var contestEffect: APIResource?
+    var contestType: NamedAPIResource?
+    var damageClass: NamedAPIResource?
     var effectChance: Int?
-    var effectChanges: [AbilityEffectChange]
-    var effectEntries: [EffectEntry]
-    var flavorTextEntries: [FlavorTextEntry]
-    var generation: NamedAPIResource
-    var id: Int
-    var machines: [MachineVersionDetail]
-    var meta: Meta
-    var name: String
-    var names: [Name]
-    var pastValues: [PastMoveStatValue]
-    var power, pp, priority: Int
-    var statChanges: [MoveStartChange]
-    var superContestEffect: APIResource
-    var target, type: NamedAPIResource
+    var effectChanges: [AbilityEffectChange]?
+    var effectEntries: [EffectEntry]?
+    var flavorTextEntries: [FlavorTextEntry]?
+    var generation: NamedAPIResource?
+    var id: Int?
+    var machines: [MachineVersionDetail]?
+    var meta: Meta?
+    var name: String?
+    var names: [Name]?
+    var pastValues: [PastMoveStatValue]?
+    var power, pp, priority: Int?
+    var statChanges: [MoveStartChange]?
+    var superContestEffect: APIResource?
+    var target, type: NamedAPIResource?
 
     enum CodingKeys: String, CodingKey {
         case accuracy

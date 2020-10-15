@@ -80,7 +80,7 @@ struct BreedingView: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 30) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text("Gender")
                     .font(Biotif.bold(size: 12).font)
                     .foregroundColor(.gray)
@@ -91,7 +91,7 @@ struct BreedingView: View {
                     .font(Biotif.bold(size: 12).font)
                     .foregroundColor(.gray)
             }
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .center, spacing: 20) {
                     if rate > 0 {
                         GenderView(gender: .male, rate: rate)
@@ -102,10 +102,10 @@ struct BreedingView: View {
                 }
                 Text(group.capitalizingFirstLetter())
                     .font(Biotif.bold(size: 12).font)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
                 Text(habitat.capitalizingFirstLetter())
                     .font(Biotif.bold(size: 12).font)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
@@ -122,11 +122,11 @@ struct GenderView: View {
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 14, alignment: .center)
+                .frame(width: 10, alignment: .center)
                 .foregroundColor(gender.color)
             Text(StringHelper.getGenderRateString(gender: gender, rate: rate))
                 .font(Biotif.semiBold(size: 12).font)
-                .foregroundColor(.gray)
+                .foregroundColor(.black)
         }
     }
 }
@@ -143,7 +143,7 @@ struct SizeView: View {
                     .foregroundColor(.gray)
                 Text(StringHelper.heightString(from: height))
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Weight")
@@ -151,7 +151,7 @@ struct SizeView: View {
                     .foregroundColor(.gray)
                 Text(StringHelper.weightString(from: weight))
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }.padding()
     }

@@ -44,7 +44,7 @@ class PokemonUpdater: ObservableObject {
             .pokemon(from: url)
             .replaceError(with: Pokemon())
             .receive(on: DispatchQueue.main)
-            .handleEvents(receiveOutput: { [weak self] _ in
+            .handleEvents(receiveOutput: { [weak self] out in
                 self?.isFinishLoading = true
             })
             .eraseToAnyPublisher()

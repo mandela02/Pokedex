@@ -60,6 +60,7 @@ struct Pokemon: Codable, Identifiable {
     var abilities: [AbilitiesResult] = []
     var stats: [PokeStatUrl] = []
     var pokeId: Int = 0
+    var moves: [PokemonMove] = []
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -77,6 +78,7 @@ struct Pokemon: Codable, Identifiable {
         case abilities = "abilities"
         case stats
         case pokeId = "id"
+        case moves = "moves"
     }
 }
 
@@ -163,4 +165,26 @@ struct PokeStatUrl: Codable, Identifiable {
 struct TypeResult: Codable {
     var slot: Int = 0
     var type: NamedAPIResource = NamedAPIResource()
+}
+
+struct PokemonMove: Codable {
+    var move: NamedAPIResource = NamedAPIResource()
+    var versionGroupDetails: [PokemonMoveVersion] = []
+
+    enum CodingKeys: String, CodingKey {
+        case move
+        case versionGroupDetails = "version_group_details"
+    }
+}
+
+struct PokemonMoveVersion: Codable {
+    var levelLearnedAt: Int = 0
+    var moveLearnMethod: NamedAPIResource = NamedAPIResource()
+    var versionGroup: NamedAPIResource = NamedAPIResource()
+
+    enum CodingKeys: String, CodingKey {
+        case levelLearnedAt = "level_learned_at"
+        case moveLearnMethod = "move_learn_method"
+        case versionGroup = "version_group"
+    }
 }

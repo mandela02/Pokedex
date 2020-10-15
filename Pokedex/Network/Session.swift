@@ -76,6 +76,10 @@ class Session {
         return call(url)
     }
     
+    func move(from url: String) -> AnyPublisher<Move, Error> {
+        return call(url)
+    }
+    
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return PassthroughSubject<T, Error>().eraseToAnyPublisher()

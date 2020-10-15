@@ -51,14 +51,10 @@ struct PokedexCardView: View {
                         .lineLimit(1)
                         .padding(.bottom, 10)
                     ForEach(updater.pokemon.types.map({$0.type}).prefix(2)) { type in
-                        Text(type.name)
-                            .frame(alignment: .leading)
-                            .font(Biotif.semiBold(size: 10).font)
-                            .foregroundColor(updater.pokemon.mainType.color.text)
-                            .background(Rectangle()
-                                            .fill(updater.pokemon.mainType.color.background.opacity(0.5))
-                                            .cornerRadius(10)
-                                            .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
+                        TypeBubbleCellView(text: type.name,
+                                           foregroundColor: updater.pokemon.mainType.color.text,
+                                           backgroundColor: updater.pokemon.mainType.color.type.opacity(0.5),
+                                           font: Biotif.semiBold(size: 10).font)
                             .padding(.bottom, 15)
                             .padding(.leading, 15)
                     }
@@ -70,5 +66,23 @@ struct PokedexCardView: View {
             .frame(width: size.width, height: size.height)
             .background(Color.clear)
             .cornerRadius(25)
+    }
+}
+
+struct TypeBubbleCellView: View {
+    var text: String
+    var foregroundColor: Color
+    var backgroundColor: Color
+    var font: Font
+    
+    var body: some View {
+        Text(text)
+            .frame(alignment: .leading)
+            .font(font)
+            .foregroundColor(foregroundColor)
+            .background(Rectangle()
+                            .fill(backgroundColor)
+                            .cornerRadius(10)
+                            .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
     }
 }

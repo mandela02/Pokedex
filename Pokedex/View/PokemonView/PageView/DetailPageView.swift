@@ -102,7 +102,7 @@ struct PageContentView: View, Identifiable {
         case .evolution:
             EvolutionView(speciesUpdater: updater)
         case .moves:
-            EmptyView()
+            MovesView(pokemon: pokemon)
         }
     }
 }
