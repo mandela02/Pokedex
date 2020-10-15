@@ -8,18 +8,18 @@
 import Foundation
 
 struct Meta: Codable {
-    var ailment: NamedAPIResource
-    var ailmentChance: Int
-    var category: NamedAPIResource
-    var critRate: Int
-    var drain: Int
-    var flinchChance: Int
-    var healing: Int
-    var maxHits: Int
-    var maxTurns: Int
-    var minHits: Int
-    var minTurns: Int
-    var statChance: Int
+    var ailment: NamedAPIResource?
+    var ailmentChance: Int?
+    var category: NamedAPIResource?
+    var critRate: Int?
+    var drain: Int?
+    var flinchChance: Int?
+    var healing: Int?
+    var maxHits: Int?
+    var maxTurns: Int?
+    var minHits: Int?
+    var minTurns: Int?
+    var statChance: Int?
 
     enum CodingKeys: String, CodingKey {
         case ailment

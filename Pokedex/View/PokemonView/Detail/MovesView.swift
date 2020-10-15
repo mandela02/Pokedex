@@ -17,9 +17,9 @@ struct MovesView: View {
 
             List {
                 Section {
-                    ForEach(moveUpdater.pokemonMoves) { move in
-                        TappableMoveCell(selected: $moveUpdater.selected, name: move.move.name)
-                                            .frame(height: move.move.name == moveUpdater.selected ? height + 220 : height)
+                    ForEach(moveUpdater.moves) { move in
+                        TappableMoveCell(selected: $moveUpdater.selected, name: move.name)
+                                            .frame(height: move.name == moveUpdater.selected ? height + 220 : height)
                     }
                 }
             }

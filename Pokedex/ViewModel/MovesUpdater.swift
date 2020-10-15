@@ -11,28 +11,24 @@ import Combine
 class MovesUpdater: ObservableObject {
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
-        }
-    }
-    @Published var url: String = "" {
-        didSet {
-            getMoves(from: url)
+            getAllMoves()
         }
     }
     
-    @Published var move: Move = Move() {
-        didSet {
-        }
-    }
+    @Published var moves: [Move] = [] 
     
     private var cancellables = Set<AnyCancellable>()
     @Published var selected: String?
-
-    private func getMoves(from url: String) {
-        Session.share.move(from: url)
-            .replaceError(with: Move())
+    
+    private func getAllMoves() {
+        Publishers.Sequence(sequence: pokemonMoves.map({Session.share.move(from: $0.move.url)}))
+            .flatMap({$0})
+            .collect()
+            .replaceError(with: [])
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.move, on: self)
+            .assign(to: \.moves, on: self)
             .store(in: &cancellables)
     }
+
 }
