@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import Combine
 
 struct PokedexView: View {
     @State var active = -1
     @State var showSubView: Bool = false
     @State var subViewOffset: CGSize = CGSize.zero
+    @State private var keyboardHeight: CGFloat = 0
 
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
@@ -41,7 +43,12 @@ struct PokedexView: View {
                         TypeSubView(isShowing: $showSubView,
                                     offset: $subViewOffset,
                                     kind: SubViewKind.getKind(from: active))
+                            .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
+                            .padding(.bottom, self.keyboardHeight)
+                            .onReceive(Publishers.keyboardHeight) {
+                                self.keyboardHeight = $0
+                            }
                     }
                     .transition(.move(edge: .bottom))
                     .animation(Animation.default.delay(0.1))
