@@ -15,6 +15,13 @@ struct MoveCellModel: Identifiable {
     var move = Move()
 }
 
+struct GroupedMoveCellModel: Identifiable {
+    var id = UUID()
+    
+    var name: String = ""
+    var cells: [MoveCellModel] = []
+}
+
 class MovesUpdater: ObservableObject {
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
@@ -31,9 +38,13 @@ class MovesUpdater: ObservableObject {
             moveCellModels = cells
         }
     }
+    @Published var moveCellModels: [MoveCellModel] = [] {
+        didSet {
+            groupedMoveCellModels = Dictionary(grouping: moveCellModels, by: {($0.move.type?.name ?? "No Name")}).map({GroupedMoveCellModel(name: $0.key, cells: $0.value)})
+        }
+    }
+    @Published var groupedMoveCellModels: [GroupedMoveCellModel] = []
     @Published var selected: String?
-    @Published var moveCellModels: [MoveCellModel] = []
-
     private var cancellables = Set<AnyCancellable>()
     
     private func getAllMoves() {

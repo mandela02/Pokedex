@@ -12,15 +12,18 @@ struct MovesView: View {
     @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
     var body: some View {
         GeometryReader(content: { geometry in
-            let width = geometry.size.width - 100
+            let width = geometry.size.width - 80
             let height = width * 0.2
 
             List {
-                Section {
-                    ForEach(moveUpdater.moveCellModels) { cell in
-                        TappableMoveCell(selectedMove: $moveUpdater.selected, pokemonMove: cell.pokemonMove, move: cell.move)
-                            .frame(height: cell.move.name == moveUpdater.selected ? height + 220 : height)
+                ForEach(moveUpdater.groupedMoveCellModels) { section in
+                    Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
+                        ForEach(section.cells) { cell in
+                            TappableMoveCell(selectedMove: $moveUpdater.selected, pokemonMove: cell.pokemonMove, move: cell.move)
+                                .frame(height: cell.move.name == moveUpdater.selected ? height + 220 : height)
+                        }
                     }
+                    Color.clear.frame(height: 10)
                 }
             }
             .listStyle(SidebarListStyle())
@@ -112,7 +115,7 @@ struct SkillNameView: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline){
             Text(move.name?.capitalized ?? "")
-                .font(Biotif.bold(size: 30).font)
+                .font(Biotif.bold(size: 25).font)
                 .foregroundColor(.black)
             Spacer()
             Text("Lvl. \(pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 0)")
