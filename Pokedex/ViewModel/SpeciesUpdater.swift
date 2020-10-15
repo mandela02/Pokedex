@@ -35,7 +35,7 @@ class SpeciesUpdater: ObservableObject {
     private func initPokemonSpecies(from url: String) {
          Session.share.species(from: url)
             .replaceError(with: Species())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.species, on: self)
             .store(in: &cancellables)
@@ -49,7 +49,7 @@ class SpeciesUpdater: ObservableObject {
     private func initEvolution(of url: String) {
         Session.share.evolution(from: url)
             .replaceError(with: Evolution())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.evolution, on: self)
             .store(in: &cancellables)

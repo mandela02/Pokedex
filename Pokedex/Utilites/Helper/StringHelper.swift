@@ -22,7 +22,7 @@ class StringHelper {
             .randomElement() ?? ""
     }
     
-    static func getEnglishTexts(from texts: [Description]) -> String {
+    static func getEnglishText(from texts: [Description]) -> String {
         return texts.filter({$0.language.name == "en"}).map({$0.description}).uniques.first ?? ""
     }
     

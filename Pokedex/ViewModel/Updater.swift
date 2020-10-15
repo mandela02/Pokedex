@@ -78,7 +78,7 @@ class Updater: ObservableObject {
             .share
             .pokemons(from: url)
             .replaceError(with: PokemonResult())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemonResult, on: self)
     }

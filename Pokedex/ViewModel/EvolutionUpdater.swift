@@ -58,7 +58,7 @@ class EvolutionUpdater: ObservableObject {
     private func initEvolution(of url: String) {
         Session.share.evolution(from: url)
             .replaceError(with: Evolution())
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.evolution, on: self)
             .store(in: &cancellables)
