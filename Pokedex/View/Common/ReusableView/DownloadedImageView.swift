@@ -20,10 +20,14 @@ struct DownloadedImageView: View {
     }
     
     var body: some View {
-        if needAnimated {
-            AnimatedImageView(imageLoader: imageLoader, image: $image)
-        } else {
-            NormalImageView(imageLoader: imageLoader)
+        VStack {
+            if needAnimated {
+                AnimatedImageView(imageLoader: imageLoader, image: $image)
+            } else {
+                NormalImageView(imageLoader: imageLoader)
+            }
+        }.onDisappear {
+            imageLoader.cancel()
         }
     }
 }

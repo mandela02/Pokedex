@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct PokedexApp: App {
-    @State var show = false
+    @State var show = true
     var body: some Scene {
         WindowGroup {
             EmptyView()
@@ -20,10 +20,6 @@ struct PokedexApp: App {
                             .navigationTitle("")
                             .navigationBarHidden(true)
                     }
-                }
-                .statusBar(hidden: true)
-                .onAppear {
-                    show = true
                 }
         }
     }

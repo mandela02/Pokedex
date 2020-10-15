@@ -29,7 +29,7 @@ struct TypeCardView: View {
     var body: some View {
         ZStack {
             type.color.background
-                .ignoresSafeArea().saturation(5.0)
+                .ignoresSafeArea()
                 .blur(radius: 1)
             
             HStack {
@@ -39,7 +39,7 @@ struct TypeCardView: View {
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(type.color.background.opacity(0.5))
+                    .foregroundColor(Color.white.opacity(0.3))
                     .frame(width: size.height,
                            height: size.height,
                            alignment: .bottomTrailing)

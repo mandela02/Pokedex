@@ -10,7 +10,7 @@ import SwiftUI
 struct RotatingPokeballView: View {
     @State private var isAnimating = false
     
-    var color: Color
+    var color: Color = Color.white.opacity(0.3)
     
     var foreverAnimation: Animation {
         Animation.linear(duration: 2.0)
@@ -32,13 +32,10 @@ struct RotatingPokeballView: View {
                         .foregroundColor(color)
                         .frame(width: size.width * 2/3, height: size.width * 2/3, alignment: .center)
                         .rotationEffect(Angle(degrees: self.isAnimating ? 360 : 0.0))
-                        .animation(self.isAnimating ? foreverAnimation : .default)
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                                withAnimation(foreverAnimation) {
-                                    self.isAnimating = true
-                                }
-                            })
+                            withAnimation(foreverAnimation) {
+                                self.isAnimating = true
+                            }
                          }
                         .onDisappear {
                             withAnimation(.default) {
