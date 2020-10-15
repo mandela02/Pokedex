@@ -61,15 +61,16 @@ struct TappableMoveCell: View {
     var move: Move
     
     var body: some View {
-        MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
-            .onTapGesture {
-                isExtensed.toggle()
-                selectedMove = isExtensed ? move.name : nil
-            }
-            .onChange(of: selectedMove, perform: { value in
-                isExtensed = selectedMove == move.name
-            })
-            .buttonStyle(PlainButtonStyle())
+        Button {
+            isExtensed.toggle()
+            selectedMove = isExtensed ? move.name : nil
+        } label: {
+            MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
+        }
+        .onChange(of: selectedMove, perform: { value in
+            isExtensed = selectedMove == move.name
+        })
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

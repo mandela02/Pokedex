@@ -376,6 +376,7 @@
 		901E63472537E6AD00F75BF3 /* ReusableView */ = {
 			isa = PBXGroup;
 			children = (
+				847A127F2533696200146D24 /* FlexibleGridView.swift */,
 				8407B853252CB88300341270 /* DownloadedImageView.swift */,
 				901E633E2537E5D600F75BF3 /* PokemonList.swift */,
 				9086780D2537F8FB0064B02C /* TapToPushView.swift */,
@@ -396,7 +397,6 @@
 		90454D1C252E9DB1000F5B79 /* PokemonView */ = {
 			isa = PBXGroup;
 			children = (
-				847A127F2533696200146D24 /* FlexibleGridView.swift */,
 				84B40AA825348AC700E31921 /* ContainerView */,
 				84B40AA725348ABE00E31921 /* PageView */,
 				90DF66EE252F0EBE000284A6 /* Detail */,
