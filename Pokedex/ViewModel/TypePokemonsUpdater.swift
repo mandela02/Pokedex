@@ -34,7 +34,7 @@ class TypePokemonsUpdater: ObservableObject {
         }
     }
 
-    @Published var pokemons: [PokemonCell] = []
+    @Published var pokemons: [PokemonCellModel] = []
 
     private var cancellables = Set<AnyCancellable>()
     
@@ -47,12 +47,12 @@ class TypePokemonsUpdater: ObservableObject {
         .store(in: &cancellables)
     }
     
-    private func getCells(from result: [NamedAPIResource]) -> [PokemonCell] {
-        var cells: [PokemonCell] = []
+    private func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
+        var cells: [PokemonCellModel] = []
         
         result.enumerated().forEach { item in
             if item.offset % 2 == 0 {
-                let newPokemons = PokemonCell(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
+                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
                 cells.append(newPokemons)
             }
         }

@@ -5,6 +5,13 @@
 //  Created by TriBQ on 09/10/2020.
 //
 
+enum EvolutionTrigger {
+    case level
+    case trade
+    case item
+    case shed
+}
+
 protocol EvolutionVending {
     var items: [EvolutionChain] { get }
 }

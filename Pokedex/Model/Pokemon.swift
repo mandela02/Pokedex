@@ -8,6 +8,44 @@
 import Foundation
 import SwiftUI
 
+enum PokeStat: Int, CaseIterable {
+    case hp
+    case attack
+    case defense
+    case spAtk
+    case spDef
+    case speed
+    case total
+    
+    var title: String {
+        switch self {
+        case .hp:
+            return "HP"
+        case .attack:
+            return "Attack"
+        case .defense:
+            return "Defense"
+        case .spAtk:
+            return "Sp.Atk"
+        case .spDef:
+            return "Sp.Def"
+        case .speed:
+            return "Speed"
+        case .total:
+            return "Total"
+        }
+    }
+    
+    var maxValue: Int {
+        switch self {
+        case .total:
+            return (PokeStat.allCases.count - 1) * 100
+        default:
+            return 100
+        }
+    }
+}
+
 struct Pokemon: Codable, Identifiable {
     var id = UUID().uuidString
     
@@ -120,4 +158,9 @@ struct PokeStatUrl: Codable, Identifiable {
         case effort
         case statUrl = "stat"
     }
+}
+
+struct TypeResult: Codable {
+    var slot: Int = 0
+    var type: NamedAPIResource = NamedAPIResource()
 }

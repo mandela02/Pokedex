@@ -73,15 +73,13 @@ struct DetailPageView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            if updater.evolution.allChains.isEmpty && !updater.species.havingMega {
-                let views = [Tab.about, Tab.stats, Tab.moves]
-                    .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
-                PagerView(index: $selected, pages: views, tabs: [Tab.about, Tab.stats, Tab.moves])
-            } else {
-                let views = Tab.allCases
-                    .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
-                PagerView(index: $selected, pages: views, tabs: Tab.allCases)
+            let views = Tab.allCases
+                .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
+
+            PagerView(index: $selected, tabs: Tab.allCases) {
+                views
             }
+        
         }
     }
 }

@@ -7,44 +7,6 @@
 
 import SwiftUI
 
-enum PokeStat: Int, CaseIterable {
-    case hp
-    case attack
-    case defense
-    case spAtk
-    case spDef
-    case speed
-    case total
-    
-    var title: String {
-        switch self {
-        case .hp:
-            return "HP"
-        case .attack:
-            return "Attack"
-        case .defense:
-            return "Defense"
-        case .spAtk:
-            return "Sp.Atk"
-        case .spDef:
-            return "Sp.Def"
-        case .speed:
-            return "Speed"
-        case .total:
-            return "Total"
-        }
-    }
-    
-    var maxValue: Int {
-        switch self {
-        case .total:
-            return (PokeStat.allCases.count - 1) * 100
-        default:
-            return 100
-        }
-    }
-}
-
 struct StatsView: View {
     @ObservedObject var updater: StatUpdater
     @Binding var selectedIndex: Int

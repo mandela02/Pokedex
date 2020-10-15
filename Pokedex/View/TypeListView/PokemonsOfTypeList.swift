@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct PokemonsOfTypeList: View {
-
     @State var isLoading = false
     @State var isFirstTimeLoading = true
-
+    
     @Binding var show: Bool
     var type : PokemonType
+    @State var isFinal: Bool = false
     
     @StateObject var updater: TypePokemonsUpdater = TypePokemonsUpdater()
     
@@ -21,36 +21,11 @@ struct PokemonsOfTypeList: View {
         GeometryReader(content: { geometry in
             let height: CGFloat = geometry.size.height / 6
             ZStack {
-                VStack {
-                    List {
-                        ForEach(updater.pokemons) { cell in
-                            PokemonPairCell(firstPokemon: cell.firstPokemon,
-                                                secondPokemon: cell.secondPokemon)
-                                .listRowInsets(EdgeInsets())
-                                .frame(width: geometry.size.width, height: height)
-                                .padding(.bottom, 10)
-                                .listRowBackground(Color.clear)
-                        }
-                    }
-                    .animation(.linear)
-                    .listStyle(SidebarListStyle())
-                    .blur(radius: isLoading ? 3.0 : 0)
+                PokemonList(cells: $updater.pokemons,
+                            isLoading: $isLoading,
+                            isFinal: $isFinal,
+                            cellSize: CGSize(width: geometry.size.width, height: height)) { cell in
                 }
-                
-                VStack {
-                    Spacer()
-                    LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
-                                                               Color.white.opacity(1)]),
-                                   startPoint: .top, endPoint: .bottom)
-                        .frame(height: 100, alignment: .center)
-                        .blur(radius: 3.0)
-                }
-                
-                if isLoading {
-                    LoadingView()
-                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-                }
-                
                 VStack {
                     HStack {
                         BackButtonView(isShowing: $show)
@@ -58,7 +33,6 @@ struct PokemonsOfTypeList: View {
                     }
                     Spacer()
                 }
-                                
             }
             .ignoresSafeArea()
             .onAppear(perform: {
@@ -80,23 +54,23 @@ struct PokemonsOfTypeList: View {
 struct BackButtonView: View {
     @Binding var isShowing: Bool
     var body: some View {
-            HStack{
-                Button {
-                    withAnimation(.spring()){
-                        isShowing = false
-                    }
-                } label: {
-                    Image(systemName: ("arrow.uturn.left"))
-                        .renderingMode(.template)
-                        .foregroundColor(.red)
-                        .padding()
-                        .background(Color.clear)
-                        .clipShape(Circle())
+        HStack{
+            Button {
+                withAnimation(.spring()){
+                    isShowing = false
                 }
-                .frame(width: 50, height: 50, alignment: .center)
-                Spacer()
+            } label: {
+                Image(systemName: ("arrow.uturn.left"))
+                    .renderingMode(.template)
+                    .foregroundColor(.red)
+                    .padding()
+                    .background(Color.clear)
+                    .clipShape(Circle())
             }
-            .padding(.top, UIDevice().hasNotch ? 44 : 8)
-            .padding(.horizontal)
+            .frame(width: 50, height: 50, alignment: .center)
+            Spacer()
+        }
+        .padding(.top, UIDevice().hasNotch ? 44 : 8)
+        .padding(.horizontal)
     }
 }

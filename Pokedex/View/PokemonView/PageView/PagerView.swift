@@ -35,8 +35,8 @@ enum Direction {
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
-    var pages: [Content]
     var tabs: [Tab]
+    var pages: () -> [Content]
 
     @State private var isGestureActive: Bool = false
     
@@ -51,7 +51,7 @@ struct PagerView<Content: View & Identifiable>: View {
             }
         }).onEnded({ value in
             withAnimation(.spring()) {
-                if -value.predictedEndTranslation.width > size.width / 2, self.index < self.pages.endIndex - 1 {
+                if -value.predictedEndTranslation.width > size.width / 2, self.index < self.pages().endIndex - 1 {
                     self.index += 1
                 }
                 if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
@@ -71,7 +71,7 @@ struct PagerView<Content: View & Identifiable>: View {
                 TabControlView(tabs: tabs, selected: $index, offset: $offset)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 0) {
-                        ForEach(self.pages) { page in
+                        ForEach(self.pages()) { page in
                             page
                                 .frame(width: geometry.size.width, height: geometry.size.height)
                                 .background(HexColor.white)

@@ -8,13 +8,6 @@
 import Foundation
 import Combine
 
-enum EvolutionTrigger {
-    case level
-    case trade
-    case item
-    case shed
-}
-
 struct EvoLink: Identifiable {
     var id = UUID().uuidString
     var from: NamedAPIResource

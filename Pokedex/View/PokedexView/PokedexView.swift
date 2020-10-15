@@ -24,7 +24,7 @@ struct PokedexView: View {
         
         GeometryReader (content: { geometry in
             ZStack {
-                PokemonList()
+                AllPokemonList()
                     .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
                     .blur(radius: showTypeView ? 3 : 0)
                 VStack {
