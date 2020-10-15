@@ -14,17 +14,23 @@ struct MovesView: View {
         GeometryReader(content: { geometry in
             let width = geometry.size.width - 80
             let height = width * 0.2
-
+            
             List {
                 ForEach(moveUpdater.groupedMoveCellModels) { section in
                     Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
                         ForEach(section.cells) { cell in
+                            let isSelected = cell.move.name == moveUpdater.selected
                             TappableMoveCell(selectedMove: $moveUpdater.selected, pokemonMove: cell.pokemonMove, move: cell.move)
-                                .frame(height: cell.move.name == moveUpdater.selected ? height + 220 : height)
+                                .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
+                                .onDisappear {
+                                    if isSelected {
+                                        moveUpdater.selected = nil
+                                    }
+                                }
                         }
                     }
-                    Color.clear.frame(height: 10)
                 }
+                Color.clear.frame(height: 100)
             }
             .listStyle(SidebarListStyle())
             .animation(.spring())
@@ -32,6 +38,18 @@ struct MovesView: View {
                 moveUpdater.pokemonMoves = pokemon.moves
             }
         })
+    }
+    
+    private func getExtraHeight(of cell: MoveCellModel, width: CGFloat) -> CGFloat {
+        let isSelected = cell.move.name == moveUpdater.selected
+        var extraHeight: CGFloat = 0
+        if isSelected {
+            let textSize = StringHelper
+                .getStringLength(text: cell.move.effectEntries?.first?.effect ?? "")
+            extraHeight = textSize.height + textSize.width/(width - 180) * 10
+        }
+        return extraHeight + 200
+        //48
     }
 }
 
@@ -52,8 +70,6 @@ struct TappableMoveCell: View {
                 isExtensed = selectedMove == move.name
             })
             .buttonStyle(PlainButtonStyle())
-            .padding(.trailing, 10)
-            .padding(.leading, 10)
     }
 }
 
@@ -69,26 +85,9 @@ struct MoveCell: View {
             let width = geometry.size.width
             let height = width * 0.2 + 10
             VStack {
-                ZStack {
-                    HStack {
-                        Spacer()
-                        Image("ic_pokeball")
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .offset(x: height/3)
-                            .scaleEffect(1.1)
-                            .foregroundColor(type.color.background.opacity(0.5))
-                    }
-                    VStack() {
-                        SkillNameView(move: move, pokemonMove: pokemonMove)
-                            .padding(.top, 30)
-                        Spacer()
-                        SkillPowerView(move: move)
-                            .padding(.bottom, 30)
-                    }
-                }
-                .frame(height: height)
+                SmallMoveCellView(height: height,
+                                  move: move,
+                                  level: pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00)
                 if isExtensed {
                     VStack(spacing: 5) {
                         MachineSubView(move: move)
@@ -110,17 +109,19 @@ struct MoveCell: View {
 
 struct SkillNameView: View {
     var move: Move
-    var pokemonMove: PokemonMove
+    var level: Int?
     
     var body: some View {
-        HStack(alignment: .firstTextBaseline){
+        HStack(alignment: .lastTextBaseline){
             Text(move.name?.capitalized ?? "")
                 .font(Biotif.bold(size: 25).font)
                 .foregroundColor(.black)
             Spacer()
-            Text("Lvl. \(pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 0)")
-                .font(Biotif.bold(size: 15).font)
-                .foregroundColor(Color(.darkGray))
+            if let level = level {
+                Text("Lvl. \(level)")
+                    .font(Biotif.bold(size: 15).font)
+                    .foregroundColor(Color(.darkGray))
+            }
         }
         .padding(.leading, 20)
         .padding(.trailing, 30)
@@ -154,7 +155,7 @@ struct SkillPowerView: View {
 struct TextInformationView: View {
     var move: Move
     var pokemonMove: PokemonMove
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("How to learn: \(pokemonMove.versionGroupDetails.first?.moveLearnMethod.name.capitalized ?? "")")
@@ -164,7 +165,6 @@ struct TextInformationView: View {
             Text("Appears on a newly-hatched Pokémon, if the father had the same move.")
                 .font(Biotif.book(size: 10).font)
                 .foregroundColor(Color(.darkGray))
-            
             Text(StringHelper.getEnglishText(from: move.effectEntries ?? []))
                 .font(Biotif.book(size: 10).font)
                 .foregroundColor(Color(.darkGray))
@@ -182,24 +182,58 @@ struct MachineSubView: View {
     var move: Move
     
     var body: some View {
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Target")
-                        .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color(.darkGray))
-                    Text("Machine")
-                        .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color(.darkGray))
-                }
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(move.target?.name.capitalized ?? "")
-                        .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color.black)
-                    Text("tm02")
-                        .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(.black)
-                }
-                Spacer()
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Target")
+                    .font(Biotif.medium(size: 10).font)
+                    .foregroundColor(Color(.darkGray))
+                Text("Machine")
+                    .font(Biotif.medium(size: 10).font)
+                    .foregroundColor(Color(.darkGray))
             }
+            VStack(alignment: .leading, spacing: 5) {
+                Text(move.target?.name.capitalized ?? "")
+                    .font(Biotif.medium(size: 10).font)
+                    .foregroundColor(Color.black)
+                Text("tm02")
+                    .font(Biotif.medium(size: 10).font)
+                    .foregroundColor(.black)
+            }
+            Spacer()
+        }
+    }
+}
+
+struct MovesView_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+struct SmallMoveCellView: View {
+    var height: CGFloat
+    var move: Move
+    var level: Int?
+    var body: some View {
+        ZStack {
+            HStack {
+                Spacer()
+                Image("ic_pokeball")
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .offset(x: height/3)
+                    .scaleEffect(1.1)
+                    .foregroundColor(PokemonType.type(from: move.type?.name ?? "").color.background.opacity(0.5))
+            }
+            VStack() {
+                SkillNameView(move: move, level: level)
+                    .padding(.top, 30)
+                Spacer()
+                SkillPowerView(move: move)
+                    .padding(.bottom, 30)
+            }
+        }
+        .frame(height: height)
     }
 }

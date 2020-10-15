@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class StringHelper {
     static func getEnglishTexts(from texts: [FlavorTextEntry]) -> String {
@@ -73,5 +74,12 @@ class StringHelper {
         }
         return Int(url.replacingOccurrences(of: base, with: "")
                     .replacingOccurrences(of: "/", with: "")) ?? 0
+    }
+    
+    static func getStringLength(text: String) -> CGSize {
+        let font = UIFont(name: "Biotif-Book", size: 10)
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let nsText = text as NSString
+        return nsText.size(withAttributes: fontAttributes)
     }
 }
