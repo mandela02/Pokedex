@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct FloatingMenu: View {
-    @State var showFirstMenu = false
-    @State var showSecondMenu = false
-    @State var showThirdMenu = false
-    @State var showFourthMenu = false
+    @State var showSubButton = false
 
     @State var pressed = false
     @Binding var active: Int
@@ -20,46 +17,17 @@ struct FloatingMenu: View {
         VStack(alignment: .trailing, spacing: 30) {
             VStack(alignment: .trailing, spacing: 30) {
                 Spacer()
-                if showFourthMenu {
-                    MenuItem(icon: "car", text: "Favorite", tag: 3, selected: $active)
-                        .animation(Animation.default.delay(0.3))
-                        .onTapGesture {
-                            toggleMenu()
-                            withAnimation(Animation.spring().delay(0.4)) {
-                                active = 3
+                if showSubButton {
+                    ForEach(SubViewKind.allCases.reversed(), id: \.self) { kind in
+                        MenuItem(icon: "car", text: kind.name, tag: kind.rawValue, selected: $active)
+                            .animation(Animation.default.delay(Double(kind.rawValue)/10))
+                            .onTapGesture {
+                                toggleMenu()
+                                withAnimation(Animation.spring().delay(0.4)) {
+                                    active = kind.rawValue
+                                }
                             }
-                        }
-                }
-
-                if showThirdMenu {
-                    MenuItem(icon: "camera", text: "All Type", tag: 2, selected: $active)
-                        .animation(Animation.default.delay(0.2))
-                        .onTapGesture {
-                            toggleMenu()
-                            withAnimation(Animation.spring().delay(0.4)) {
-                                active = 2
-                            }
-                        }
-                }
-                if showSecondMenu {
-                    MenuItem(icon: "photo.on.rectangle", text: "All Gen", tag: 1, selected: $active)
-                        .animation(Animation.default.delay(0.1))
-                        .onTapGesture {
-                            toggleMenu()
-                            withAnimation(Animation.spring().delay(0.4)) {
-                                active = 1
-                            }
-                        }
-                }
-                if showFirstMenu {
-                    MenuItem(icon: "square.and.arrow.up", text: "Search", tag: 0, selected: $active)
-                        .animation(Animation.default.delay(0))
-                        .onTapGesture {
-                            toggleMenu()
-                            withAnimation(Animation.spring().delay(0.4)) {
-                                active = 0
-                            }
-                        }
+                    }
                 }
             }
             HamburgerButtonView(pressed: $pressed)
@@ -74,10 +42,7 @@ struct FloatingMenu: View {
     }
     
     func toggleMenu() {
-        showFourthMenu.toggle()
-        showThirdMenu.toggle()
-        showSecondMenu.toggle()
-        showFirstMenu.toggle()
+        showSubButton.toggle()
     }
 }
 

@@ -13,6 +13,19 @@ enum SubViewKind: Int, CaseIterable {
     case region
     case favorite
     
+    var name: String {
+        switch self {
+        case .search:
+            return "Search"
+        case .type:
+            return "Type"
+        case .region:
+            return "Region"
+        case .favorite:
+            return "Favorite"
+        }
+    }
+    
     static func getKind(from index: Int) -> SubViewKind {
         return allCases[safe: index] ?? favorite
     }
