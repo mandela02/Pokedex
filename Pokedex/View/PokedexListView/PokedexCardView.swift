@@ -18,15 +18,20 @@ struct PokedexCardView: View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                updater.pokemon.mainType.color.background.ignoresSafeArea()
-                    .blur(radius: 1)
+                if updater.pokemon.mainType == .non {
+                    Color.white
+                        .blur(radius: 1)
+                } else {
+                    updater.pokemon.mainType.color.background
+                        .blur(radius: 1)
+                }
                 
                 Image("ic_pokeball")
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.white.opacity(0.3))
+                    .foregroundColor(updater.pokemon.mainType == .non ? updater.pokemon.mainType.color.background : Color.white.opacity(0.3))
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                     .offset(x: size.width * 1/4, y: size.height * 1/3 )
                     .blur(radius: 1)
@@ -62,8 +67,11 @@ struct PokedexCardView: View {
                 .padding(.top, 35)
                })
             .frame(width: size.width, height: size.height)
-            .background(Color.clear)
             .cornerRadius(25)
+            .overlay(
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(updater.pokemon.mainType.color.background, lineWidth: 5)
+            )
     }
 }
 

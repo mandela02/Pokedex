@@ -35,6 +35,7 @@ enum Direction {
 struct PagerView<Content: View & Identifiable>: View {
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
+    var color: Color
     var tabs: [Tab]
     var pages: () -> [Content]
 
@@ -68,7 +69,7 @@ struct PagerView<Content: View & Identifiable>: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                TabControlView(tabs: tabs, selected: $index, offset: $offset)
+                TabControlView(tabs: tabs, color: color,selected: $index, offset: $offset)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 0) {
                         ForEach(self.pages()) { page in
@@ -94,6 +95,7 @@ struct PagerView<Content: View & Identifiable>: View {
 
 struct TabControlView: View {
     var tabs: [Tab]
+    var color: Color
     @Binding var selected: Int
     @Binding var offset: CGFloat
     
@@ -105,7 +107,7 @@ struct TabControlView: View {
                     TabItem(selected: $selected, tab: tab)
                 }
             })
-            SelectedSegmentScrollView(numberOfSegment: tabs.count, offset: $offset)
+            SelectedSegmentScrollView(numberOfSegment: tabs.count, color: color, offset: $offset)
                 .frame(height: 3, alignment: .center)
         }
     }

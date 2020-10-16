@@ -29,7 +29,7 @@ enum Tab: Int, CaseIterable {
 
 struct SelectedSegmentScrollView: View {
     var numberOfSegment: Int
-    
+    var color: Color
     @Binding var offset: CGFloat
     
     var body: some View {
@@ -38,7 +38,7 @@ struct SelectedSegmentScrollView: View {
             
             ScrollView(.horizontal,
                        showsIndicators: false) {
-                Rectangle().fill(Color.blue)
+                Rectangle().fill(color)
                     .frame(width: width, height: 3, alignment: .center)
             }
             .offset(x: -offset / CGFloat(numberOfSegment))
@@ -76,7 +76,7 @@ struct DetailPageView: View {
             let views = Tab.allCases
                 .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
 
-            PagerView(index: $selected, tabs: Tab.allCases) {
+            PagerView(index: $selected, color: pokemon.mainType.color.background, tabs: Tab.allCases) {
                 views
             }
         }

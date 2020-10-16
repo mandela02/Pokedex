@@ -149,9 +149,9 @@ enum PokemonType: String, CaseIterable {
                                 text: .white,
                                 type: Color(hex: "551A8B"))
         case .non:
-            return PokemonColor(background: Color(hex: "FFFFFF"),
+            return PokemonColor(background: Color(.systemGray4),
                                 text: .white,
-                                type: Color(hex: "FFFFFF"))
+                                type: Color(.systemGray4))
         }
     }
     
