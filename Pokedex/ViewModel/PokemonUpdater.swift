@@ -65,10 +65,13 @@ class PokemonUpdater: ObservableObject {
     }
     
     func moveForward() {
+        //TO-DO: Check max
         pokemonUrl = UrlType.getPokemonUrl(of: nextId)
     }
     
     func moveBack() {
-        pokemonUrl = UrlType.getPokemonUrl(of: previousId)
+        if previousId > 0 {
+            pokemonUrl = UrlType.getPokemonUrl(of: previousId)
+        }
     }
 }

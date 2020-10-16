@@ -53,10 +53,8 @@ struct PokemonInformationView: View {
                     }
                 } else if direction == .right {
                     updater.moveBack()
-                    resetImage()
                 } else {
                     updater.moveForward()
-                    resetImage()
                 }
             })
     }
@@ -102,8 +100,6 @@ struct PokemonInformationView: View {
             .gesture(drag(in: size))
     }
     
-    private func f() {
-    }
     var body: some View {
         GeometryReader(content: { geometry in
             let size = geometry.size
@@ -131,13 +127,13 @@ struct PokemonInformationView: View {
                           style: .silhoutte,
                           offset: -size.width * 4/5 + 50)
                         .scaleEffect(0.6)
-                        .padding(.bottom, 50)
+                        .padding(.bottom, 100)
                     image(from: UrlType.getImageUrlString(of: updater.nextId),
                           size: size,
                           style: .silhoutte,
                           offset: size.width * 4/5 - 50)
                         .scaleEffect(0.6)
-                        .padding(.bottom, 50)
+                        .padding(.bottom, 100)
                 }
                 
                 VStack(spacing: 0) {
@@ -189,23 +185,24 @@ struct PokemonInformationView: View {
             }
             .ignoresSafeArea()
             .onChange(of: currentImage) { image in
-                if isFirstTimeLoadView {
-                    if isFirstTimeLoadImage {
-                        voiceUpdater.isFirstTime = true
-                        voiceUpdater.isSpeaking = true
-                        isFirstTimeLoadImage = false
-                    }
-                    isFirstTimeLoadView = false
-                }
+//                if isFirstTimeLoadView {
+//                    if isFirstTimeLoadImage {
+//                        voiceUpdater.isFirstTime = true
+//                        voiceUpdater.isSpeaking = true
+//                        isFirstTimeLoadImage = false
+//                    }
+//                    isFirstTimeLoadView = false
+//                }
             }
             .onReceive(updater.$currentId, perform: { pokemon in
                 speciesUpdater.speciesUrl = updater.pokemon.species.url
+                resetImage()
                 isFirstTimeLoadImage = true
                 voiceUpdater.pokemon = updater.pokemon
-                if !isFirstTimeLoadView {
-                    voiceUpdater.isFirstTime = true
-                    voiceUpdater.isSpeaking = true
-                }
+//                if !isFirstTimeLoadView {
+//                    voiceUpdater.isFirstTime = true
+//                    voiceUpdater.isSpeaking = true
+//                }
             })
             .onReceive(speciesUpdater.$species, perform: { species in
                 if !species.name.isEmpty {

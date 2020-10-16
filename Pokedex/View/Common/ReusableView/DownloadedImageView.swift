@@ -106,6 +106,7 @@ struct AnimatedImageView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                            print(imageLoader.url)
                                 if displayImage != nil {
                                     self.image = displayImage
                                     self.showStrokeBorder = true
