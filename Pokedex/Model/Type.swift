@@ -206,10 +206,10 @@ enum PokemonType: String, CaseIterable {
     }
     
     static func type(from string: String?) -> PokemonType {
-        guard let string = string else { return .normal }
+        guard let string = string else { return .non }
         if let index = allCases.map({$0.rawValue}).firstIndex(of: string) {
             return allCases[index]
         }
-        return .normal
+        return .non
     }
 }
