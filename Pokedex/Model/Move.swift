@@ -39,3 +39,24 @@ class MoveFlavorTextEntry: Codable {
         case version = "version_group"
     }
 }
+
+struct MoveLearnMethod: Codable {
+    var descriptions: [Description] = []
+    var id: Int = 0
+    var name: String = ""
+    var names: [Name] = []
+    var versionGroups: [NamedAPIResource] = []
+
+    enum CodingKeys: String, CodingKey {
+        case descriptions, id, name, names
+        case versionGroups = "version_groups"
+    }
+}
+
+struct MoveTarget: Codable {
+    var descriptions: [Description] = []
+    var id: Int = 0
+    var moves: [NamedAPIResource] = []
+    var name: String = ""
+    var names: [Name] = []
+}

@@ -18,10 +18,10 @@ struct MachineVersionDetail: Codable {
 }
 
 struct Machine: Codable {
-    var id: Int
-    var item: NamedAPIResource
-    var move: NamedAPIResource
-    var versionGroup: NamedAPIResource
+    var id: Int = 0
+    var item: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var move: NamedAPIResource = NamedAPIResource(name: "", url: "")
+    var versionGroup: NamedAPIResource = NamedAPIResource(name: "", url: "")
     
     enum CodingKeys: String, CodingKey {
         case id

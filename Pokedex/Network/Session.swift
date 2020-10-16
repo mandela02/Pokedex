@@ -84,6 +84,14 @@ class Session {
         return call(url)
     }
     
+    func moveLearnMethod(from url: String) -> AnyPublisher<MoveLearnMethod, Error> {
+        return call(url)
+    }
+    
+    func moveTarget(from url: String) -> AnyPublisher<MoveTarget, Error> {
+        return call(url)
+    }
+
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return PassthroughSubject<T, Error>().eraseToAnyPublisher()
