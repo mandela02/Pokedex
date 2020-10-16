@@ -97,8 +97,6 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
-    
-    @State var image: UIImage?
     @State var show: Bool = false
     
     var updater: PokemonUpdater
@@ -125,8 +123,7 @@ struct PokemonCellView: View {
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
                     DownloadedImageView(withURL: url,
-                                        needAnimated: false,
-                                        image: $image)
+                                        style: .normal)
                 }
                 Text(name.capitalized)
                     .font(Biotif.semiBold(size: 15).font)

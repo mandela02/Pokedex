@@ -19,10 +19,11 @@ struct PokemonInformationView: View {
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
-    @State private var image: UIImage?
     @State private var isFirstTimeLoadImage = true
     @State private var isFirstTimeLoadView = true
     
+    @State private var currentImage: UIImage?
+
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
@@ -71,6 +72,22 @@ struct PokemonInformationView: View {
         }
     }
     
+    private func image(from url: String,
+                       size: CGSize,
+                       style: LoadStyle,
+                       image: Binding<UIImage?> = .constant(nil),
+                       offset: CGFloat) -> some View {
+        DownloadedImageView(withURL: url,
+                            image: image,
+                            style: style)
+            .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
+            .offset(x: offset, y: -size.width/2 + 30)
+            .opacity(opacity)
+            .gesture(drag(in: size))
+    }
+    
+    private func f() {
+    }
     var body: some View {
         GeometryReader(content: { geometry in
             let size = geometry.size
@@ -90,6 +107,21 @@ struct PokemonInformationView: View {
                                height: geometry.size.height * 4/5,
                                alignment: .center)
                         .offset(x: size.width * 2/5, y: -size.height * 2/5 - 25 )
+                }
+                
+                if isShowingImage {
+                    HStack {
+                        image(from: UrlType.getImageUrlString(of: updater.previousId),
+                              size: size,
+                              style: .silhoutte,
+                              offset: -50)
+                            .scaleEffect(0.6)
+                        image(from: UrlType.getImageUrlString(of: updater.nextId),
+                              size: size,
+                              style: .silhoutte,
+                              offset: 50)
+                            .scaleEffect(0.6)
+                    }
                 }
                 
                 VStack(spacing: 0) {
@@ -116,18 +148,16 @@ struct PokemonInformationView: View {
                         TypeView(pokemon: updater.pokemon)
                             .opacity(opacity)
                     }
+                    
                     Spacer()
                 }
-                
+                                
                 if isShowingImage {
-                    DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
-                                        needAnimated: true,
-                                        image: $image)
-                        .frame(width: size.width * 2/3, height: size.height * 1/3, alignment: .center)
-                        .offset(y: -size.width/2 + 30)
-                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-                        .opacity(opacity)
-                        .gesture(drag(in: size))
+                    image(from: updater.pokemon.sprites.other.artwork.front ?? "",
+                          size: size,
+                          style: .animated,
+                          image: $currentImage,
+                          offset: 0)
                 }
                 
                 VStack() {
@@ -142,7 +172,7 @@ struct PokemonInformationView: View {
                 }
             }
             .ignoresSafeArea()
-            .onChange(of: image) { image in
+            .onChange(of: currentImage) { image in
                 if isFirstTimeLoadImage {
                     withAnimation(.spring()) {
                         voiceUpdater.isFirstTime = true

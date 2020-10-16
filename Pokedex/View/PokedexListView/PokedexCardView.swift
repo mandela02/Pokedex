@@ -13,7 +13,6 @@ struct PokedexCardView: View {
     var size: (width: CGFloat, height: CGFloat)
     
     @State var loaded: Bool = false
-    @State var image: UIImage?
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
@@ -35,8 +34,7 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     DownloadedImageView(withURL: updater.pokemon.sprites.other.artwork.front ?? "",
-                                        needAnimated: false,
-                                        image: $image)
+                                        style: .normal)
                         .frame(width: size.width/2,
                                height: size.height,
                                alignment: .bottomTrailing)

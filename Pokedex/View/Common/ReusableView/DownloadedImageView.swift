@@ -6,29 +6,52 @@
 //
 
 import SwiftUI
+import Combine
+
+enum LoadStyle {
+    case animated
+    case normal
+    case silhoutte
+}
 
 struct DownloadedImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
     @Binding private var image: UIImage?
-        
-    var needAnimated: Bool
+    var style: LoadStyle
     
-    init(withURL url: String, needAnimated: Bool, image: Binding<UIImage?>) {
+    init(withURL url: String, image: Binding<UIImage?> = .constant(nil), style: LoadStyle) {
         self.imageLoader = ImageLoader(url: url)
-        self.needAnimated = needAnimated
         self._image = image
+        self.style = style
     }
     
     var body: some View {
         VStack {
-            if needAnimated {
-                AnimatedImageView(imageLoader: imageLoader, image: $image)
-            } else {
+            switch style {
+            case .normal:
                 NormalImageView(imageLoader: imageLoader)
+            case .animated:
+                AnimatedImageView(imageLoader: imageLoader, image: $image)
+            case .silhoutte:
+                SilhoutteImageView(imageLoader: imageLoader)
             }
         }.onDisappear {
             imageLoader.cancel()
         }
+    }
+}
+
+struct SilhoutteImageView: View {
+    @ObservedObject var imageLoader: ImageLoader
+    @State private var image: UIImage?
+    
+    var body: some View {
+        Image(uiImage: imageLoader.displayImage ?? UIImage())
+            .renderingMode(.template)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .foregroundColor(.black)
+        
     }
 }
 
@@ -61,7 +84,7 @@ struct AnimatedImageView: View {
     @State private var showSplashTilted: Bool = false
     @State private var showStrokeBorder: Bool  = false
     @State private var needHidden: Bool  = false
-
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -113,7 +136,7 @@ struct AnimatedImageView: View {
                         .animation(Animation.easeInOut(duration: 0.5))
                         .scaleEffect(7)
                         .isRemove(needHidden)
-
+                    
                     Image("splash")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -123,7 +146,7 @@ struct AnimatedImageView: View {
                         .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
                         .scaleEffect(7)
                         .isRemove(needHidden)
-
+                    
                     Image("splash_tilted")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -144,10 +167,10 @@ struct Shake: GeometryEffect {
     var amount: CGFloat = 10
     var shakesPerUnit = 3
     var animatableData: CGFloat
-
+    
     func effectValue(size: CGSize) -> ProjectionTransform {
         ProjectionTransform(CGAffineTransform(translationX:
-            amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)),
-            y: 0))
+                                                amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)),
+                                              y: 0))
     }
 }
