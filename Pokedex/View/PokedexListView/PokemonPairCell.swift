@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonPairCell: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
     
@@ -20,10 +22,16 @@ struct PokemonPairCell: View {
             let height = geometry.size.height
             HStack(alignment: .center, spacing: 10, content: {
                 if let first = firstPokemon {
-                    TappablePokemonCell(updater: PokemonUpdater(url: first.url), show: $showFirst, size: CGSize(width: width, height: height))
+                    TappablePokemonCell(updater: PokemonUpdater(url: first.url),
+                                        show: $showFirst,
+                                        size: CGSize(width: width, height: height))
+                        .environmentObject(environment)
                 }
                 if let second = secondPokemon {
-                    TappablePokemonCell(updater: PokemonUpdater(url: second.url), show: $showSecond, size: CGSize(width: width, height: height))
+                    TappablePokemonCell(updater: PokemonUpdater(url: second.url),
+                                        show: $showSecond,
+                                        size: CGSize(width: width, height: height))
+                        .environmentObject(environment)
                 }
             })
             .buttonStyle(PlainButtonStyle())
@@ -32,17 +40,16 @@ struct PokemonPairCell: View {
 }
 
 struct TappablePokemonCell: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+
     let updater: PokemonUpdater
     @Binding var show: Bool
     let size: CGSize
     var body: some View {
-        TapToPushView(show: $show) {
+        Button {
+            environment.selectedPokemon = updater.pokemonUrl ?? ""
+        } label: {
             PokedexCardView(updater: updater, size: (size.width, size.height))
-        } destination: {
-            PokemonInformationView(updater: updater, isShowing: $show)
-        }
-        .onChange(of: show) { _ in
-            print(updater.pokemon.name)
         }
     }
 }

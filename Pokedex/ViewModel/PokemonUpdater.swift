@@ -17,31 +17,32 @@ class PokemonUpdater: ObservableObject {
         cancellables.removeAll()
     }
     
+    private var cancellables = Set<AnyCancellable>()
+    
     @Published var pokemonUrl: String? {
         didSet {
             initPokemon()
         }
     }
     
-    @Published var pokemon: Pokemon = Pokemon()
-    
-    @Published var isFinishLoading = false
-    @Published var isSelected = false {
+    @Published var pokemon: Pokemon = Pokemon() {
         didSet {
             if isSelected {
-                currentId = pokemon.pokeId
+                updateCurrentId(of: pokemon)
             }
         }
     }
     
-    private var cancellables = Set<AnyCancellable>()
+    @Published var isSelected = false {
+        didSet {
+            updateCurrentId(of: pokemon)
+        }
+    }
     
     @Published var images: [UIImage?] = []
     @Published var ids: [Int] = [] {
         didSet {
-            if isSelected {
-                loadAlotOfImage()
-            }
+            loadAlotOfImage()
         }
     }
     
@@ -52,17 +53,14 @@ class PokemonUpdater: ObservableObject {
             }
         }
     }
-
+    
     private func initPokemon() {
         guard let url = pokemonUrl else { return }
         Session
             .share
             .pokemon(from: url)
             .replaceError(with: Pokemon())
-            .receive(on: RunLoop.main)
-            .handleEvents(receiveOutput: { [weak self] out in
-                self?.isFinishLoading = true
-            })
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
             .store(in: &cancellables)
@@ -78,6 +76,11 @@ class PokemonUpdater: ObservableObject {
 }
 
 extension PokemonUpdater {
+    private func updateCurrentId(of pokemon: Pokemon) {
+        if currentId != pokemon.pokeId && isSelected{
+            currentId = pokemon.pokeId
+        }
+    }
     private func loadAlotOfImage() {
         Publishers.Sequence(sequence: ids.map({UrlType.getImageUrlString(of: $0)}).map({loadImage(from: $0)}))
             .flatMap({$0})

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AllTypeList: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
     @StateObject var updater: TypeUpdater = TypeUpdater()
     
     var body: some View {
@@ -22,6 +23,7 @@ struct AllTypeList: View {
                         ForEach(updater.allTypes, id: \.self) { type in
                             TappableTypeCardView(type: type,
                                                  size: (width, height))
+                                .environmentObject(environment)
                         }
                         .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                         Color.clear.frame(height: 150)

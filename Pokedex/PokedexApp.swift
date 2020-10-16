@@ -35,10 +35,8 @@ struct HomeView: View {
                     .ignoresSafeArea()
                     .frame(width: size.width, height: size.height, alignment: .center)
                     .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
-                PokedexView()
-                    .ignoresSafeArea()
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-
+                NavigationPokedexView()
+                    .environmentObject(EnvironmentUpdater())
             }
         }
     }

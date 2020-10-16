@@ -20,9 +20,7 @@ struct PokemonContainerHeaderView_Previews: PreviewProvider {
 }
 
 
-struct ButtonView: View {
-    @Environment(\.presentationMode) var presentationMode
-    
+struct ButtonView: View {    
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon

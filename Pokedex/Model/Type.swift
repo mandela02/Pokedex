@@ -64,6 +64,7 @@ enum PokemonType: String, CaseIterable {
     case fairy
     case unknown
     case shadow
+    case non
     
     var color: PokemonColor {
         switch self {
@@ -153,6 +154,10 @@ enum PokemonType: String, CaseIterable {
             return PokemonColor(background: Color(hex: "A8A878"),
                                 text: .white,
                                 type: Color(hex: "A8A878"))
+        case .non:
+            return PokemonColor(background: Color(hex: "FFFFFF"),
+                                text: .white,
+                                type: Color(hex: "FFFFFF"))
         }
     }
     
@@ -200,6 +205,8 @@ enum PokemonType: String, CaseIterable {
             id = 10001
         case .shadow:
             id = 10002
+        case .non:
+            id = 0
         }
         return baseURL + "\(id)"
     }

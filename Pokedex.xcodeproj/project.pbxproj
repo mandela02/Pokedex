@@ -37,6 +37,7 @@
 		8440592B253743E1009D4385 /* Biotif-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440591B253743E1009D4385 /* Biotif-Light.ttf */; };
 		84405930253745A9009D4385 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8440592F253745A9009D4385 /* Test.storyboard */; };
 		8440593525374B69009D4385 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440593425374B69009D4385 /* Font.swift */; };
+		8440C0812539FAFC00DABFBB /* EnvironmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440C0802539FAFC00DABFBB /* EnvironmentUpdater.swift */; };
 		84707A982530CB0400DEA772 /* Evolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84707A972530CB0400DEA772 /* Evolution.swift */; };
 		847A12312531584F00146D24 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12302531584F00146D24 /* Move.swift */; };
 		847A12362531586D00146D24 /* Ability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12352531586D00146D24 /* Ability.swift */; };
@@ -150,6 +151,7 @@
 		8440591B253743E1009D4385 /* Biotif-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-Light.ttf"; sourceTree = "<group>"; };
 		8440592F253745A9009D4385 /* Test.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		8440593425374B69009D4385 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
+		8440C0802539FAFC00DABFBB /* EnvironmentUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentUpdater.swift; sourceTree = "<group>"; };
 		84707A972530CB0400DEA772 /* Evolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evolution.swift; sourceTree = "<group>"; };
 		847A12302531584F00146D24 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
 		847A12352531586D00146D24 /* Ability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ability.swift; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				847A124E25315C0600146D24 /* EvolutionUpdater.swift */,
 				90F942B82536D381003C23FF /* TypeDetailUpdater.swift */,
 				908678322538439A0064B02C /* MovesUpdater.swift */,
+				8440C0802539FAFC00DABFBB /* EnvironmentUpdater.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -747,6 +750,7 @@
 				8407B83E252C5E2000341270 /* PokemonInformationView.swift in Sources */,
 				90BC1EC7252FF6AC00A39177 /* Species.swift in Sources */,
 				907D5F5A252B186E00E30748 /* Color.swift in Sources */,
+				8440C0812539FAFC00DABFBB /* EnvironmentUpdater.swift in Sources */,
 				90F9426D2536A4E4003C23FF /* HamburgerButtonView.swift in Sources */,
 				8422CFCC252E0E9D006F4535 /* NamedAPIResource.swift in Sources */,
 				9086782A2538239F0064B02C /* MovesView.swift in Sources */,

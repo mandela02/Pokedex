@@ -23,3 +23,14 @@ struct TapToPushView<Content: View, Destination: View>: View {
         }
     }
 }
+
+struct PushOnSigalView<Destination: View>: View {
+    @Binding var show: Bool
+
+    let destination: () -> Destination
+
+    var body: some View {
+        NavigationLink(destination: destination(),
+                                       isActive: $show) { EmptyView() }
+    }
+}
