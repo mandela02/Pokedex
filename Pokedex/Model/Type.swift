@@ -69,91 +69,85 @@ enum PokemonType: String, CaseIterable {
     var color: PokemonColor {
         switch self {
         case .normal:
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "6D6D4E"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "C6C6A7"))
         case .fighting:
-            return PokemonColor(background: Color(hex: "C03028"),
+            return PokemonColor(background: Color(hex: "7D1F1A"),
                                 text: .white,
-                                type: Color(hex: "C03028"))
+                                type: Color(hex: "D67873"))
         case .flying:
-            //chua có
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "6D5E9C"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "C6B7F5"))
         case .poison:
-            return PokemonColor(background: Color(hex: "A040A0"),
+            return PokemonColor(background: Color(hex: "682A68"),
                                 text: .white,
-                                type: Color(hex: "A040A0"))
+                                type: Color(hex: "C183C1"))
         case .ground:
-            return PokemonColor(background: Color(hex: "E0C068"),
+            return PokemonColor(background: Color(hex: "927D44"),
                                 text: .white,
-                                type: Color(hex: "E0C068"))
+                                type: Color(hex: "EBD69D"))
         case .rock:
-            return PokemonColor(background: Color(hex: "B8A038"),
+            return PokemonColor(background: Color(hex: "786824"),
                                 text: .white,
-                                type: Color(hex: "B8A038"))
+                                type: Color(hex: "D1C17D"))
         case .bug:
-            return PokemonColor(background: Color(hex: "A8B820"),
+            return PokemonColor(background: Color(hex: "6D7815"),
                                 text: .white,
-                                type: Color(hex: "A8B820"))
+                                type: Color(hex: "C6D16E"))
         case .ghost:
-            return PokemonColor(background: Color(hex: "705890"),
+            return PokemonColor(background: Color(hex: "493963"),
                                 text: .white,
-                                type: Color(hex: "705890"))
+                                type: Color(hex: "A292BC"))
         case .steel:
-            //CHUACO
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "787887"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "D1D1E0"))
         case .fire:
-            return PokemonColor(background: Color(hex: "F08030"),
+            return PokemonColor(background: Color(hex: "9C531F"),
                                 text: .white,
-                                type: Color(hex: "F08030"))
+                                type: Color(hex: "F5AC78"))
         case .water:
-            return PokemonColor(background: Color(hex: "6890F0"),
+            return PokemonColor(background: Color(hex: "445E9C"),
                                 text: .white,
-                                type: Color(hex: "6890F0"))
+                                type: Color(hex: "9DB7F5"))
         case .grass:
-            return PokemonColor(background: Color(hex: "78C850"),
+            return PokemonColor(background: Color(hex: "4E8234"),
                                 text: .white,
-                                type: Color(hex: "78C850"))
+                                type: Color(hex: "A7DB8D"))
         case .electric:
-            return PokemonColor(background: Color(hex: "F8D030"),
+            return PokemonColor(background: Color(hex: "A1871F"),
                                 text: .white,
-                                type: Color(hex: "F8D030"))
-
+                                type: Color(hex: "FAE078"))
         case .psychic:
-            return PokemonColor(background: Color(hex: "F85888"),
+            return PokemonColor(background: Color(hex: "A13959"),
                                 text: .white,
-                                type: Color(hex: "F85888"))
+                                type: Color(hex: "FA92B2"))
         case .ice:
-            return PokemonColor(background: Color(hex: "98D8D8"),
+            return PokemonColor(background: Color(hex: "638D8D"),
                                 text: .white,
-                                type: Color(hex: "98D8D8"))
+                                type: Color(hex: "BCE6E6"))
         case .dragon:
-            return PokemonColor(background: Color(hex: "7038F8"),
+            return PokemonColor(background: Color(hex: "4924A1"),
                                 text: .white,
-                                type: Color(hex: "7038F8"))
+                                type: Color(hex: "A27DFA"))
         case .dark:
-            //CHUACO
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "49392F"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "A29288"))
         case .fairy:
-            return PokemonColor(background: Color(hex: "EE99AC"),
+            return PokemonColor(background: Color(hex: "9B6470"),
                                 text: .white,
-                                type: Color(hex: "EE99AC"))
+                                type: Color(hex: "F4BDC9"))
         case .unknown:
-            //CHUACO
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "44685E"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "9DC1B7"))
         case .shadow:
-            //CHUACO
-            return PokemonColor(background: Color(hex: "A8A878"),
+            return PokemonColor(background: Color(hex: "9966cc"),
                                 text: .white,
-                                type: Color(hex: "A8A878"))
+                                type: Color(hex: "551A8B"))
         case .non:
             return PokemonColor(background: Color(hex: "FFFFFF"),
                                 text: .white,
