@@ -35,7 +35,11 @@ struct MovesView: View {
             .listStyle(SidebarListStyle())
             .animation(.spring())
             .onAppear {
-                moveUpdater.pokemonMoves = pokemon.moves
+                print(moveUpdater.pokemon.pokeId)
+                print(pokemon.pokeId)
+                if moveUpdater.pokemon.pokeId != pokemon.pokeId {
+                    moveUpdater.pokemon = pokemon
+                }
             }
         })
     }

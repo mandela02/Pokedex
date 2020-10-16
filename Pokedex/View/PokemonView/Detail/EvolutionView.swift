@@ -99,17 +99,17 @@ struct ArrowView: View {
 struct PokemonCellView: View {
     @State var show: Bool = false
     
-    var updater: PokemonUpdater
-    var url: String
+    var imageURL: String
     var name: String
+    var pokemonUrl: String
     
     var canTap: Bool = true
     
     init(pokemon: NamedAPIResource) {
         let pokeId = StringHelper.getPokemonId(from: pokemon.url)
+        pokemonUrl = UrlType.getPokemonUrl(of: pokeId)
         self.name = pokemon.name
-        self.url = UrlType.getImageUrlString(of: pokeId)
-        self.updater = PokemonUpdater(url: UrlType.getPokemonUrl(of: pokeId))
+        self.imageURL = UrlType.getImageUrlString(of: pokeId)
     }
     var body: some View {
         Button {
@@ -122,15 +122,15 @@ struct PokemonCellView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
-                    DownloadedImageView(withURL: url,
+                    DownloadedImageView(withURL: imageURL,
                                         style: .normal)
                 }
                 Text(name.capitalized)
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }
-            .background(NavigationLink(destination: PokemonInformationView(updater: updater,
-                                                                isShowing: $show),
+            .background(NavigationLink(destination: PokemonInformationView(pokemonUrl: pokemonUrl,
+                                                                           isShowing: $show),
                                        isActive: $show) {
                 EmptyView()
             })

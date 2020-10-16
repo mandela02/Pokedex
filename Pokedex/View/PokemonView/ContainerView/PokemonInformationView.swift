@@ -26,6 +26,15 @@ struct PokemonInformationView: View {
     
     @Namespace private var namespace
     
+    init(updater: PokemonUpdater? = nil, pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
+        if let updater = updater {
+            self.updater = updater
+        } else {
+            self.updater = PokemonUpdater(url: pokemonUrl ?? "")
+        }
+        self._isShowing = isShowing
+    }
+    
     private var safeAreaOffset: CGFloat {
         return UIDevice().hasNotch ? 0 : 120
     }
@@ -125,14 +134,16 @@ struct PokemonInformationView: View {
                     image(from: UrlType.getImageUrlString(of: updater.previousId),
                           size: size,
                           style: .silhoutte,
-                          offset: -size.width * 4/5 + 50)
+                          offset: -size.width * 4/5 + 30)
                         .scaleEffect(0.6)
                         .padding(.bottom, 100)
+                        .blur(radius: 2.0)
                     image(from: UrlType.getImageUrlString(of: updater.nextId),
                           size: size,
                           style: .silhoutte,
-                          offset: size.width * 4/5 - 50)
+                          offset: size.width * 4/5 - 30)
                         .scaleEffect(0.6)
+                        .blur(radius: 2.0)
                         .padding(.bottom, 100)
                 }
                 
@@ -195,10 +206,12 @@ struct PokemonInformationView: View {
 //                }
             }
             .onReceive(updater.$currentId, perform: { pokemon in
-                speciesUpdater.speciesUrl = updater.pokemon.species.url
-                resetImage()
-                isFirstTimeLoadImage = true
-                voiceUpdater.pokemon = updater.pokemon
+                if speciesUpdater.speciesUrl != updater.pokemon.species.url {
+                    speciesUpdater.speciesUrl = updater.pokemon.species.url
+                    resetImage()
+                    voiceUpdater.pokemon = updater.pokemon
+                    //isFirstTimeLoadImage = true
+                }
 //                if !isFirstTimeLoadView {
 //                    voiceUpdater.isFirstTime = true
 //                    voiceUpdater.isSpeaking = true
@@ -209,7 +222,11 @@ struct PokemonInformationView: View {
                     voiceUpdater.species = species
                 }
             })
+            .onAppear {
+                hideImage(in: size)
+            }
             .onWillDisappear {
+                isShowingImage = false
                 voiceUpdater.refresh()
             }
             .navigationBarTitle("")
@@ -309,7 +326,7 @@ struct TypeView: View {
                     .font(.system(size: 15))
                     .foregroundColor(pokemon.mainType.color.text)
                     .background(Rectangle()
-                                    .fill(pokemon.mainType.color.background.opacity(0.5))
+                                    .fill(Color.white.opacity(0.5))
                                     .cornerRadius(10)
                                     .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
             }

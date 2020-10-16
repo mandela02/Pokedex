@@ -79,7 +79,6 @@ struct DetailPageView: View {
             PagerView(index: $selected, tabs: Tab.allCases) {
                 views
             }
-        
         }
     }
 }
