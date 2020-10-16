@@ -8,7 +8,7 @@
 import Foundation
 
 struct Species: Codable {
-    var id: Int = 1
+    var id: Int = 0
     var name: String = ""
     var baseHappiness: Int = 0
     var flavorTextEntries: [FlavorTextEntry] = []
