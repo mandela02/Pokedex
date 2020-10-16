@@ -10,14 +10,26 @@ import Combine
 import AVFoundation
 
 class PokemonUpdater: ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon()
-    
+    init(url: String) {
+        self.pokemonUrl = url
+    }
+   
+    deinit {
+        cancellable?.cancel()
+    }
+        
     @Published var pokemonUrl: String? {
         didSet {
             initPokemon()
         }
     }
-        
+
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            generateId(from: pokemon)
+        }
+    }
+            
     @Published var isFinishLoading = false
     @Published var isSelected = false {
         didSet {
@@ -28,15 +40,10 @@ class PokemonUpdater: ObservableObject {
     }
 
     private var cancellable: AnyCancellable?
-    
-    deinit {
-        cancellable?.cancel()
-    }
-    
-    init(url: String) {
-        self.pokemonUrl = url
-    }
-    
+    @Published var currentId: Int = 0
+    @Published var nextId: Int = 0
+    @Published var previousId: Int = 0
+
     private func initPokemon() {
         guard let url = pokemonUrl else { return }
         self.cancellable = Session
@@ -49,5 +56,22 @@ class PokemonUpdater: ObservableObject {
             })
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
+    }
+    
+    private func generateId(from pokemon: Pokemon) {
+        currentId = pokemon.pokeId
+        nextId = currentId + 1
+        previousId = currentId - 1
+    }
+    
+    func moveForward() {
+        //TO-DO: Check max
+        pokemonUrl = UrlType.getPokemonUrl(of: nextId)
+    }
+    
+    func moveBack() {
+        if previousId > 0 {
+            pokemonUrl = UrlType.getPokemonUrl(of: previousId)
+        }
     }
 }

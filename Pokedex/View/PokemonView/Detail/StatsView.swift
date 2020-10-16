@@ -10,6 +10,7 @@ import SwiftUI
 struct StatsView: View {
     @ObservedObject var updater: StatUpdater
     @Binding var selectedIndex: Int
+    @State var isLoading: Bool = false
 
     init(pokemon: Pokemon, selectedIndex: Binding<Int>) {
         self.updater = StatUpdater(of: pokemon)
@@ -24,7 +25,8 @@ struct StatsView: View {
                         if let stat = pokeStat.stat {
                             LevelInformationView(stat: stat,
                                                  amount: pokeStat.baseStat,
-                                                 selectedIndex: $selectedIndex)
+                                                 selectedIndex: $selectedIndex,
+                                                 isLoading: $isLoading)
                         }
                     }
                 }
@@ -48,6 +50,10 @@ struct StatsView: View {
             Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
+        .onReceive(updater.$pokemon, perform: { _ in
+            isLoading = true
+
+        })
     }
 }
 
@@ -55,7 +61,7 @@ struct LevelInformationView: View {
     let stat: PokeStat
     let amount: Int
     @Binding var selectedIndex: Int
-    @State var isLoading: Bool = false
+    @Binding var isLoading: Bool
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {

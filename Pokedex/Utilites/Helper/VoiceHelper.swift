@@ -10,22 +10,18 @@ import AVFoundation
 import SwiftUI
 
 class VoiceHelper: NSObject, ObservableObject {
-    @Published var pokemon: Pokemon = Pokemon()
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            speech  = pokemon.name + ", pokemon no \(pokemon.pokeId)"
+        }
+    }
     @Published var species: Species = Species()
-
-    var isFirstTime = true
-    
+        
     @Published var isSpeaking = false {
         didSet {
             if isSpeaking {
-                if isFirstTime {
-                    let text = pokemon.name + ", pokemon no \(pokemon.pokeId)"
-                    speak(text: text)
-                    isFirstTime = false
-                } else {
-                    let text = StringHelper.getRandomEnglishText(from: species.flavorTextEntries)
-                    speak(text: text)
-                }
+                speak(text: speech)
+                speech = StringHelper.getRandomEnglishText(from: species.flavorTextEntries)
             } else {
                 if speechSynthesizer.isSpeaking {
                     speechSynthesizer.stopSpeaking(at: .immediate)
@@ -33,6 +29,8 @@ class VoiceHelper: NSObject, ObservableObject {
             }
         }
     }
+    
+    var speech = ""
     
     private var speechSynthesizer = AVSpeechSynthesizer()
     
@@ -45,7 +43,7 @@ class VoiceHelper: NSObject, ObservableObject {
         if speechSynthesizer.isSpeaking {
             speechSynthesizer.stopSpeaking(at: .immediate)
         }
-
+        
         let voice = AVSpeechSynthesisVoice(language: "en-US")
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voice
@@ -53,8 +51,7 @@ class VoiceHelper: NSObject, ObservableObject {
     }
     
     func refresh() {
-        isFirstTime = true
-        isSpeaking = false
+         isSpeaking = false
     }
 }
 

@@ -23,6 +23,12 @@ struct GroupedMoveCellModel: Identifiable {
 }
 
 class MovesUpdater: ObservableObject {
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            pokemonMoves = pokemon.moves
+        }
+    }
+
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
             getAllMoves()

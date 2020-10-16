@@ -303,13 +303,6 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		848312812538B138006FBCD6 /* ViewModifier */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModifier;
-			sourceTree = "<group>";
-		};
 		84B40AA725348ABE00E31921 /* PageView */ = {
 			isa = PBXGroup;
 			children = (
@@ -535,7 +528,6 @@
 		90C1E48D252DC32D009FD50D /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				848312812538B138006FBCD6 /* ViewModifier */,
 				90F942CC2536DC4E003C23FF /* UIViewConfigurator */,
 				901E63472537E6AD00F75BF3 /* ReusableView */,
 				901E63432537E60100F75BF3 /* AnimatedView */,

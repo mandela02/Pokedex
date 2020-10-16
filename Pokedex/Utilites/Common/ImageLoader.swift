@@ -12,12 +12,14 @@ import UIKit
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
     private var cancellable: AnyCancellable?
-    
+    var url: String
+
     deinit {
         cancel()
     }
     
     init(url: String) {
+        self.url = url
         guard let url = URL(string: url) else {
             return
         }
