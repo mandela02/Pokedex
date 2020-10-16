@@ -19,7 +19,6 @@ struct PokemonInformationView: View {
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
-    @State private var isFirstTimeLoadImage = true
     @State private var isFirstTimeLoadView = true
     
     @State private var currentImage: UIImage?
@@ -116,6 +115,8 @@ struct PokemonInformationView: View {
             
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea()
+                    .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
+                    .animation(Animation.linear)
                 
                 if isExpanded {
                     RotatingPokeballView()
@@ -191,6 +192,8 @@ struct PokemonInformationView: View {
                                             about: $updater.pokemon)
                             .padding(.trailing, 30)
                             .padding(.bottom, 30)
+                            .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
+                            .animation(.default)
                     }
                 }
             }
