@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonList: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+
     @Binding var cells: [PokemonCellModel]
     @Binding var isLoading: Bool
     @Binding var isFinal: Bool
@@ -29,6 +31,7 @@ struct PokemonList: View {
                             .onAppear(perform: {
                                 onCellAppear(cell)
                             })
+                            .environmentObject(environment)
                     }
                     
                     if isFinal {

@@ -8,12 +8,59 @@
 import SwiftUI
 import Combine
 
+struct NavigationPokedexView: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+    @State var showDetail: Bool = false
+    @State var showTypeList: Bool = false
+    @State var pokemonUrl: String = ""
+    @State var pokemonType: PokemonType = .non
+    @State var isViewDisplayed = false
+    
+    var body: some View {
+        VStack {
+            PokedexView()
+                .ignoresSafeArea()
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                .environmentObject(environment)
+            PushOnSigalView(show: $showDetail, destination: {
+                PokemonInformationView(pokemonUrl: pokemonUrl,
+                                       isShowing: $showDetail)
+            })
+            PushOnSigalView(show: $showTypeList, destination: {
+                PokemonsOfTypeList(show: $showTypeList,
+                                   type: pokemonType)
+                    .environmentObject(environment)
+            })
+        }
+        .onReceive(environment.$selectedPokemon) { url in
+            if !url.isEmpty && isViewDisplayed {
+                pokemonUrl = url
+                showDetail = true
+            }
+        }
+        .onReceive(environment.$selectedType) { type in
+            if type != .non {
+                showTypeList = true
+                pokemonType = type
+            }
+        }
+        .onAppear {
+            isViewDisplayed = true
+        }
+        .onDisappear {
+            isViewDisplayed = false
+        }
+    }
+}
+
 struct PokedexView: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+    
     @State var active = -1
     @State var showSubView: Bool = false
     @State var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
-
+    
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
@@ -28,6 +75,7 @@ struct PokedexView: View {
                 AllPokemonList()
                     .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
                     .blur(radius: showSubView ? 3 : 0)
+                    .environmentObject(environment)
                 VStack {
                     Spacer()
                     HStack {
@@ -43,6 +91,7 @@ struct PokedexView: View {
                         TypeSubView(isShowing: $showSubView,
                                     offset: $subViewOffset,
                                     kind: SubViewKind.getKind(from: active))
+                            .environmentObject(environment)
                             .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
                             .padding(.bottom, self.keyboardHeight)

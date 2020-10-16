@@ -8,15 +8,17 @@
 import SwiftUI
 
 struct TappableTypeCardView: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+
     var type: PokemonType
     var size: (width: CGFloat, height: CGFloat)
     @State var show: Bool = false
     
     var body: some View {
-        TapToPushView(show: $show) {
+        Button {
+            environment.selectedType = type
+        } label: {
             TypeCardView(type: type, size: size)
-        } destination: {
-            PokemonsOfTypeList(show: $show, type: type)
         }
     }
 }
