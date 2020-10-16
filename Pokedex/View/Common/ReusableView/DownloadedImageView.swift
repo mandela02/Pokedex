@@ -106,14 +106,12 @@ struct AnimatedImageView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                                 if displayImage != nil {
                                     self.image = displayImage
                                     self.showStrokeBorder = true
                                     self.showSplash = true
                                     self.showSplashTilted = true
-                                }
-                            })
+                            }
                         })
                         .rotationEffect(.degrees(isStartWigle ? 0 : 2.5), anchor: .bottom)
                         .onAppear() {

@@ -23,31 +23,47 @@ struct PokemonInformationView: View {
     @State private var isFirstTimeLoadView = true
     
     @State private var currentImage: UIImage?
-
+    
     @Namespace private var namespace
     
     private var safeAreaOffset: CGFloat {
         return UIDevice().hasNotch ? 0 : 120
     }
-        
+    
     private func drag(in size: CGSize) -> some Gesture {
         let collapseValue = size.height / 4 - 100
         
         return DragGesture()
             .onChanged({ gesture in
                 if abs(gesture.translation.height) > 50 {
-                    withAnimation(.spring()) {
-                        self.offset = gesture.translation
-                        opacity = 1 + Double(offset.height/collapseValue)
-                        hideImage(in: size)
+                    let direction = Direction.getDirection(value: gesture)
+                    if direction == .down || direction == .up {
+                        withAnimation(.spring()) {
+                            self.offset = gesture.translation
+                            opacity = 1 + Double(offset.height/collapseValue)
+                            hideImage(in: size)
+                        }
                     }
                 }
-            }).onEnded({ _ in
-                withAnimation(.spring()) {
-                    updateView(with: size)
+            }).onEnded({ gesture in
+                let direction = Direction.getDirection(value: gesture)
+                if direction == .down || direction == .up {
+                    withAnimation(.spring()) {
+                        updateView(with: size)
+                    }
+                } else if direction == .right {
+                    updater.moveBack()
+                    resetImage()
+                } else {
+                    updater.moveForward()
+                    resetImage()
                 }
             })
-        }
+    }
+    
+    private func resetImage() {
+        currentImage = nil
+    }
     
     private func hideImage(in size: CGSize) {
         let collapseValue = size.height / 4 - 100
@@ -57,7 +73,7 @@ struct PokemonInformationView: View {
     
     private func updateView(with size: CGSize) {
         let collapseValue = size.height / 4 - 100
-
+        
         if offset.height < 0 && abs(offset.height) > collapseValue {
             withAnimation(.spring()) {
                 isExpanded = false
@@ -92,7 +108,7 @@ struct PokemonInformationView: View {
         GeometryReader(content: { geometry in
             let size = geometry.size
             let detailViewHeight = size.height * 0.6 - offset.height
-                        
+            
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea()
                 
@@ -110,18 +126,18 @@ struct PokemonInformationView: View {
                 }
                 
                 if isShowingImage {
-                    HStack {
-                        image(from: UrlType.getImageUrlString(of: updater.previousId),
-                              size: size,
-                              style: .silhoutte,
-                              offset: -50)
-                            .scaleEffect(0.6)
-                        image(from: UrlType.getImageUrlString(of: updater.nextId),
-                              size: size,
-                              style: .silhoutte,
-                              offset: 50)
-                            .scaleEffect(0.6)
-                    }
+                    image(from: UrlType.getImageUrlString(of: updater.previousId),
+                          size: size,
+                          style: .silhoutte,
+                          offset: -size.width * 4/5 + 50)
+                        .scaleEffect(0.6)
+                        .padding(.bottom, 50)
+                    image(from: UrlType.getImageUrlString(of: updater.nextId),
+                          size: size,
+                          style: .silhoutte,
+                          offset: size.width * 4/5 - 50)
+                        .scaleEffect(0.6)
+                        .padding(.bottom, 50)
                 }
                 
                 VStack(spacing: 0) {
@@ -151,7 +167,7 @@ struct PokemonInformationView: View {
                     
                     Spacer()
                 }
-                                
+                
                 if isShowingImage {
                     image(from: updater.pokemon.sprites.other.artwork.front ?? "",
                           size: size,
@@ -173,24 +189,27 @@ struct PokemonInformationView: View {
             }
             .ignoresSafeArea()
             .onChange(of: currentImage) { image in
-                if isFirstTimeLoadImage {
-                    withAnimation(.spring()) {
+                if isFirstTimeLoadView {
+                    if isFirstTimeLoadImage {
                         voiceUpdater.isFirstTime = true
                         voiceUpdater.isSpeaking = true
+                        isFirstTimeLoadImage = false
                     }
-                    isFirstTimeLoadImage = false
-                }
-            }
-            .onAppear {
-                if isFirstTimeLoadView {
-                    speciesUpdater.speciesUrl = updater.pokemon.species.url
                     isFirstTimeLoadView = false
                 }
             }
+            .onReceive(updater.$currentId, perform: { pokemon in
+                speciesUpdater.speciesUrl = updater.pokemon.species.url
+                isFirstTimeLoadImage = true
+                voiceUpdater.pokemon = updater.pokemon
+                if !isFirstTimeLoadView {
+                    voiceUpdater.isFirstTime = true
+                    voiceUpdater.isSpeaking = true
+                }
+            })
             .onReceive(speciesUpdater.$species, perform: { species in
                 if !species.name.isEmpty {
                     voiceUpdater.species = species
-                    voiceUpdater.pokemon = updater.pokemon
                 }
             })
             .onWillDisappear {
@@ -204,55 +223,55 @@ struct PokemonInformationView: View {
 
 struct ButtonView: View {
     @Environment(\.presentationMode) var presentationMode
-
+    
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
     var namespace: Namespace.ID
     
     @State var isFavorite = false
-
+    
     var body: some View {
-            HStack{
-                Button {
-                    withAnimation(.spring()){
-                        isShowing = false
-                    }
-                } label: {
-                    Image(systemName: ("arrow.uturn.left"))
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.clear)
-                        .clipShape(Circle())
+        HStack{
+            Button {
+                withAnimation(.spring()){
+                    isShowing = false
                 }
-                .frame(width: 50, height: 50, alignment: .center)
-                Spacer()
-                if !isInExpandeMode {
-                    Text(pokemon.name.capitalized)
-                        .font(Biotif.bold(size: 25).font)
-                        .fontWeight(.bold)
-                        .foregroundColor(pokemon.mainType.color.text)
-                        .background(Color.clear)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-                        .lineLimit(1)
-                        .matchedGeometryEffect(id: pokemon.name, in: namespace)
-                    Spacer()
-                }
-                AnimatedLikeButton(isFavorite: $isFavorite)
+            } label: {
+                Image(systemName: ("arrow.uturn.left"))
+                    .foregroundColor(.white)
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())
-                    .frame(width: 50, height: 50, alignment: .center)
             }
-            .padding(.top, UIDevice().hasNotch ? 44 : 8)
-            .padding(.horizontal)
+            .frame(width: 50, height: 50, alignment: .center)
+            Spacer()
+            if !isInExpandeMode {
+                Text(pokemon.name.capitalized)
+                    .font(Biotif.bold(size: 25).font)
+                    .fontWeight(.bold)
+                    .foregroundColor(pokemon.mainType.color.text)
+                    .background(Color.clear)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                    .lineLimit(1)
+                    .matchedGeometryEffect(id: pokemon.name, in: namespace)
+                Spacer()
+            }
+            AnimatedLikeButton(isFavorite: $isFavorite)
+                .padding()
+                .background(Color.clear)
+                .clipShape(Circle())
+                .frame(width: 50, height: 50, alignment: .center)
+        }
+        .padding(.top, UIDevice().hasNotch ? 44 : 8)
+        .padding(.horizontal)
     }
 }
 
 struct NameView: View {
     var pokemon: Pokemon
     var namespace: Namespace.ID
-
+    
     @Binding var opacity: Double
     
     var body: some View {

@@ -63,4 +63,12 @@ class PokemonUpdater: ObservableObject {
         nextId = currentId + 1
         previousId = currentId - 1
     }
+    
+    func moveForward() {
+        pokemonUrl = UrlType.getPokemonUrl(of: nextId)
+    }
+    
+    func moveBack() {
+        pokemonUrl = UrlType.getPokemonUrl(of: previousId)
+    }
 }
