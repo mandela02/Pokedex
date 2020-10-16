@@ -196,26 +196,19 @@ struct PokemonInformationView: View {
             }
             .ignoresSafeArea()
             .onChange(of: currentImage) { image in
-//                if isFirstTimeLoadView {
-//                    if isFirstTimeLoadImage {
-//                        voiceUpdater.isFirstTime = true
-//                        voiceUpdater.isSpeaking = true
-//                        isFirstTimeLoadImage = false
-//                    }
-//                    isFirstTimeLoadView = false
-//                }
+
+                if isFirstTimeLoadView {
+                    voiceUpdater.isSpeaking = true
+                    isFirstTimeLoadView = false
+                }
             }
             .onReceive(updater.$currentId, perform: { pokemon in
                 if speciesUpdater.speciesUrl != updater.pokemon.species.url {
                     speciesUpdater.speciesUrl = updater.pokemon.species.url
                     resetImage()
                     voiceUpdater.pokemon = updater.pokemon
-                    //isFirstTimeLoadImage = true
+                    isFirstTimeLoadView = true
                 }
-//                if !isFirstTimeLoadView {
-//                    voiceUpdater.isFirstTime = true
-//                    voiceUpdater.isSpeaking = true
-//                }
             })
             .onReceive(speciesUpdater.$species, perform: { species in
                 if !species.name.isEmpty {
