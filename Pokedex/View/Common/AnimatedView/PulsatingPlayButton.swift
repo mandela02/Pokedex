@@ -58,7 +58,7 @@ struct PulsatingPlayButton: View {
             }
         }
         .onChange(of: isSpeaking, perform: { value in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                 withAnimation(pulstateAnimation) {
                     self.pulstate = value
                 }

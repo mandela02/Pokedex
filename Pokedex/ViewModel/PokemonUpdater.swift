@@ -17,6 +17,7 @@ class PokemonUpdater: ObservableObject {
         cancellables.removeAll()
     }
     
+    var imageCache = ImageCache.getImageCache()
     private var cancellables = Set<AnyCancellable>()
     
     @Published var pokemonUrl: String? {
@@ -92,19 +93,23 @@ extension PokemonUpdater {
             .store(in: &cancellables)
     }
     
-    private func loadImage(from url: String) -> AnyPublisher<UIImage?, Never> {
-        guard let url = URL(string: url) else {
-            return PassthroughSubject<UIImage?, Never>().eraseToAnyPublisher()
-        }
-        
-        if let image = ImageCache.share[url] {
+    private func loadImage(from urlString: String) -> AnyPublisher<UIImage?, Never> {
+        if let image = imageCache.get(forKey: urlString) {
             return Just(image).eraseToAnyPublisher()
         }
         
+        guard let url = URL(string: urlString) else {
+            return PassthroughSubject<UIImage?, Never>().eraseToAnyPublisher()
+        }
+                
         return URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .catch { error in return Just(nil) }
             .receive(on: DispatchQueue.main)
+            .handleEvents(receiveOutput: { [weak self] image in
+                guard let image = image else { return }
+                self?.imageCache.set(forKey: urlString, image: image)
+            })
             .eraseToAnyPublisher()
     }
 }
