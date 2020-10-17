@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AnimatedLikeButton: View {
     @Binding var isFavorite: Bool
-    
+    var onTap: () -> Void
+
     var body: some View {
-        HeartView(isFavorite: $isFavorite)
+        HeartView(isFavorite: $isFavorite, onTapButton: onTap)
     }
 }
 
@@ -21,11 +22,14 @@ struct HeartView: View {
     @Binding private var showSplashTilted: Bool
     @Binding var showHeart: Bool
     
-    init(isFavorite: Binding<Bool>) {
+    var onTap: () -> Void
+    
+    init(isFavorite: Binding<Bool>, onTapButton: @escaping () -> Void) {
         _showHeart = isFavorite
         _showSplashTilted = isFavorite
         _showSplash = isFavorite
         _showStrokeBorder = isFavorite
+        onTap = onTapButton
     }
     
     var body: some View {
@@ -70,6 +74,7 @@ struct HeartView: View {
             
         }.onTapGesture() {
             self.showHeart.toggle()
+            onTap()
         }
     }
 }
