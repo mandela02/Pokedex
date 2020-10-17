@@ -48,9 +48,9 @@ struct ButtonView: View {
             }
             AnimatedLikeButton(isFavorite: $isFavorite, onTap: {
                 if isFavorite {
-                    dislike(pokemon: pokemon)
-                } else {
                     like(pokemon: pokemon)
+                } else {
+                    dislike(pokemon: pokemon)
                 }
             })
                 .padding()
@@ -70,12 +70,7 @@ struct ButtonView: View {
     private func like(pokemon: Pokemon) {
         let favorite = Favorite(context: viewContext)
         favorite.url = UrlType.getPokemonUrl(of: pokemon.pokeId)
-        do {
-            try viewContext.save()
-            print("Order saved.")
-        } catch {
-            print(error.localizedDescription)
-        }
+        save()
     }
     
     private func dislike(pokemon: Pokemon) {
@@ -83,6 +78,15 @@ struct ButtonView: View {
             return
         }
         viewContext.delete(item)
+        save()
+    }
+    
+    private func save() {
+        do {
+            try viewContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }
 

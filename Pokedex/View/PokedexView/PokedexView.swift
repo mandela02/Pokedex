@@ -56,11 +56,12 @@ struct NavigationPokedexView: View {
 struct PokedexView: View {
     @EnvironmentObject var environment: EnvironmentUpdater
     
-    @State var active = -1
-    @State var showSubView: Bool = false
-    @State var subViewOffset: CGSize = CGSize.zero
+    @State private var active = -1
+    @State private var showSubView: Bool = false
+    @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
-    
+    @State private var showFavorite: Bool = false
+
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
@@ -103,10 +104,21 @@ struct PokedexView: View {
                     .animation(Animation.default.delay(0.1))
                     .offset(y: subViewOffset.height)
                 }
+                PushOnSigalView(show: $showFavorite,
+                                destination:  {
+                                    FavoriteView(show: $showFavorite)
+                                        .environmentObject(environment)
+                                        .navigationTitle("")
+                                        .navigationBarHidden(true)
+                                })
             }
             .onChange(of: active, perform: { active in
                 withAnimation(.default) {
-                    if active >= 0 {
+                    if active == 3 {
+                        showFavorite = true
+                        self.active = -1
+                        showSubView = false
+                    } else if active >= 0 {
                         showSubView = true
                     }
                 }

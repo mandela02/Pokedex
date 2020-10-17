@@ -25,6 +25,7 @@ struct FloatingMenu: View {
                                 toggleMenu()
                                 withAnimation(Animation.spring().delay(0.4)) {
                                     active = kind.rawValue
+                                    pressed = false
                                 }
                             }
                     }

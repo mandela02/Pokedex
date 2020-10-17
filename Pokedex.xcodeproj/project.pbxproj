@@ -21,6 +21,7 @@
 		843325F12539DD7E007E1AEA /* HeaderImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843325F02539DD7E007E1AEA /* HeaderImageScrollView.swift */; };
 		84382D75253B5E3500F0B4AB /* Favorite+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84382D73253B5E3500F0B4AB /* Favorite+CoreDataClass.swift */; };
 		84382D76253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84382D74253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift */; };
+		84382D7C253B665300F0B4AB /* FavoriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84382D7B253B665200F0B4AB /* FavoriteView.swift */; };
 		8440590325374129009D4385 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440590225374129009D4385 /* SearchBar.swift */; };
 		8440591C253743E1009D4385 /* Biotif-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440590C253743E0009D4385 /* Biotif-BoldItalic.ttf */; };
 		8440591D253743E1009D4385 /* Biotif-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440590D253743E0009D4385 /* Biotif-ExtraBold.ttf */; };
@@ -138,6 +139,7 @@
 		843325F02539DD7E007E1AEA /* HeaderImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderImageScrollView.swift; sourceTree = "<group>"; };
 		84382D73253B5E3500F0B4AB /* Favorite+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Favorite+CoreDataClass.swift"; path = "Pokedex/Utilites/Favorite+CoreDataClass.swift"; sourceTree = "<group>"; };
 		84382D74253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Favorite+CoreDataProperties.swift"; path = "Pokedex/Utilites/Favorite+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		84382D7B253B665200F0B4AB /* FavoriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteView.swift; sourceTree = "<group>"; };
 		8440590225374129009D4385 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		8440590C253743E0009D4385 /* Biotif-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-BoldItalic.ttf"; sourceTree = "<group>"; };
 		8440590D253743E0009D4385 /* Biotif-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -265,6 +267,14 @@
 			path = TypeListView;
 			sourceTree = "<group>";
 		};
+		84382D7A253B663F00F0B4AB /* FavoriteView */ = {
+			isa = PBXGroup;
+			children = (
+				84382D7B253B665200F0B4AB /* FavoriteView.swift */,
+			);
+			path = FavoriteView;
+			sourceTree = "<group>";
+		};
 		8440590A253743BF009D4385 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -382,6 +392,8 @@
 		901E63472537E6AD00F75BF3 /* ReusableView */ = {
 			isa = PBXGroup;
 			children = (
+				907D5F47252B12E200E30748 /* PokedexCardView.swift */,
+				90AD3BE6252C10F0009EECEE /* PokemonPairCell.swift */,
 				847A127F2533696200146D24 /* FlexibleGridView.swift */,
 				8407B853252CB88300341270 /* DownloadedImageView.swift */,
 				901E633E2537E5D600F75BF3 /* PokemonList.swift */,
@@ -393,9 +405,7 @@
 		90454D1B252E9DA0000F5B79 /* PokedexListView */ = {
 			isa = PBXGroup;
 			children = (
-				907D5F47252B12E200E30748 /* PokedexCardView.swift */,
 				907D5F73252B272600E30748 /* AllPokemonList.swift */,
-				90AD3BE6252C10F0009EECEE /* PokemonPairCell.swift */,
 			);
 			path = PokedexListView;
 			sourceTree = "<group>";
@@ -481,6 +491,7 @@
 		907D5F46252B12D000E30748 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				84382D7A253B663F00F0B4AB /* FavoriteView */,
 				84BD488E25367D5800D3D634 /* PokedexView */,
 				841E96862536363F00FAD664 /* TypeListView */,
 				90454D1C252E9DB1000F5B79 /* PokemonView */,
@@ -735,6 +746,7 @@
 				847A128B25337ABC00146D24 /* VoiceHelper.swift in Sources */,
 				84CE255F2539EA8D00E8874D /* PokemonContainerHeaderView.swift in Sources */,
 				84707A982530CB0400DEA772 /* Evolution.swift in Sources */,
+				84382D7C253B665300F0B4AB /* FavoriteView.swift in Sources */,
 				90400AAC2530160000659CD1 /* UnitHelper.swift in Sources */,
 				90454D2A252E9E1F000F5B79 /* DetailPageView.swift in Sources */,
 				90BC1ECC2530081500A39177 /* StringHelper.swift in Sources */,
