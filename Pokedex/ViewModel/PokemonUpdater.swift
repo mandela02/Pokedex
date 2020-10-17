@@ -28,9 +28,7 @@ class PokemonUpdater: ObservableObject {
     
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
-            if isSelected {
-                updateCurrentId(of: pokemon)
-            }
+            updateCurrentId(of: pokemon)
         }
     }
     
@@ -77,7 +75,7 @@ class PokemonUpdater: ObservableObject {
 
 extension PokemonUpdater {
     private func updateCurrentId(of pokemon: Pokemon) {
-        if currentId != pokemon.pokeId && isSelected{
+        if currentId != pokemon.pokeId {
             currentId = pokemon.pokeId
         }
     }
