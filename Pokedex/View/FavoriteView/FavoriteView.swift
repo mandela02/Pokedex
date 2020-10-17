@@ -9,13 +9,43 @@ import SwiftUI
 
 struct FavoriteView: View {
     @EnvironmentObject var environment: EnvironmentUpdater
-    @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
-    @Binding var show: Bool
     @State var showDetail: Bool = false
     @State var pokemonUrl: String = ""
     @State var isViewDisplayed = false
+    @Binding var show: Bool
+    
+    var body: some View {
+        VStack {
+            FavoriteListView(show: $show)
+                .environmentObject(environment)
+            PushOnSigalView(show: $showDetail, destination: {
+                PokemonInformationView(pokemonUrl: pokemonUrl,
+                                       isShowing: $showDetail)
+                    .environmentObject(environment)
+            })
+        }
+        .onReceive(environment.$selectedPokemon) { url in
+            if !url.isEmpty && isViewDisplayed {
+                pokemonUrl = url
+                showDetail = true
+            }
+        }
+        .onAppear {
+            isViewDisplayed = true
+        }
+        .onDisappear {
+            isViewDisplayed = false
+        }
+    }
+}
 
+struct FavoriteListView: View {
+    @EnvironmentObject var environment: EnvironmentUpdater
+
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
+    @Binding var show: Bool
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
@@ -29,22 +59,6 @@ struct FavoriteView: View {
                             isFinal: .constant(false),
                             cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
                     .environmentObject(environment)
-                PushOnSigalView(show: $showDetail, destination: {
-                    PokemonInformationView(pokemonUrl: pokemonUrl,
-                                           isShowing: $showDetail)
-                })
-            }
-            .onReceive(environment.$selectedPokemon) { url in
-                if !url.isEmpty && isViewDisplayed {
-                    pokemonUrl = url
-                    showDetail = true
-                }
-            }
-            .onAppear {
-                isViewDisplayed = true
-            }
-            .onDisappear {
-                isViewDisplayed = false
             }
         })
     }
