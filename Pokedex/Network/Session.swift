@@ -17,7 +17,7 @@ enum UrlType: String, CaseIterable {
         switch self {
         case .pokemons:
             //return Constants.baseUrl + "pokemon?offset=900&limit=50"
-            return Constants.baseUrl + "pokemon?limit=200"
+            return Constants.baseUrl + "pokemon?limit=50"
         case .trigger:
             return Constants.baseUrl + "evolution-trigger/"
         case .type:

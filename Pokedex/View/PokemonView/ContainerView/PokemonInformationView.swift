@@ -181,7 +181,6 @@ struct PokemonInformationView: View {
                             .padding(.trailing, 30)
                             .padding(.bottom, 30)
                             .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
-                            .animation(.default)
                     }
                 }
                 
