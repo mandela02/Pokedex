@@ -25,7 +25,7 @@ struct PokemonList: View {
                         PokemonPairCell(firstPokemon: cell.firstPokemon,
                                         secondPokemon: cell.secondPokemon)
                             .listRowInsets(EdgeInsets())
-                            .frame(width: cellSize.width, height: cellSize.height)
+                            .frame(width: cellSize.width, height: cell.firstPokemon == nil ? 0 : cellSize.height)
                             .padding(.bottom, 10)
                             .listRowBackground(Color.clear)
                             .onAppear(perform: {

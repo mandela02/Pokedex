@@ -10,9 +10,11 @@ import SwiftUI
 struct HeaderImageScrollView: View {
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
-    @Binding var items: [UIImage?]
+    @Binding var items: [String]
     @Binding var isScrollable: Bool
 
+    @State var image: UIImage?
+    
     @State private var isGestureActive: Bool = false
     var onScrolling: (DragGesture.Value) -> ()
     var onEndScrolling: (DragGesture.Value) -> ()
@@ -45,16 +47,13 @@ struct HeaderImageScrollView: View {
         })
     }
     
-    func ImageView(image: UIImage?, tag: Int, size: CGSize) -> some View {
-        Image(uiImage: image ?? UIImage())
-            .resizable()
-            .renderingMode(index == tag ? .original : .template)
-            .aspectRatio(contentMode: .fit)
+    func ImageView(image: String, tag: Int, size: CGSize) -> some View {
+        DownloadedImageView(withURL: image,
+                            style: index == tag ? .animated : .silhoutte)
             .foregroundColor(.black)
             .blur(radius: index == tag ? 0 : 3.0)
             .scaleEffect(index == tag ? 1.4 : 0.6)
             .frame(width: size.width, height: size.height)
-            .animation(.default)
     }
     
     var body: some View {

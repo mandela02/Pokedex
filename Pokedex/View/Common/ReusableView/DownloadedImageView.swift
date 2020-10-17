@@ -16,12 +16,10 @@ enum LoadStyle {
 
 struct DownloadedImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
-    @Binding private var image: UIImage?
     var style: LoadStyle
     
-    init(withURL url: String, image: Binding<UIImage?> = .constant(nil), style: LoadStyle) {
+    init(withURL url: String, style: LoadStyle) {
         self.imageLoader = ImageLoader(url: url)
-        self._image = image
         self.style = style
     }
     
@@ -31,7 +29,7 @@ struct DownloadedImageView: View {
             case .normal:
                 NormalImageView(imageLoader: imageLoader)
             case .animated:
-                AnimatedImageView(imageLoader: imageLoader, image: $image)
+                AnimatedImageView(imageLoader: imageLoader)
             case .silhoutte:
                 SilhoutteImageView(imageLoader: imageLoader)
             }
@@ -77,41 +75,41 @@ struct NormalImageView: View {
 
 struct AnimatedImageView: View {
     @ObservedObject var imageLoader: ImageLoader
-    @Binding var image: UIImage?
+    @State var image: UIImage?
     @State private var trigger: Bool = false
     @State private var needHidden: Bool  = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                if let image = image {
-                    ZoomOutImageView(image: $image)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                                needHidden = true
-                            })
-                        }
-                } else {
-                    WigglePokeBallView(image: $image, imageLoader: imageLoader)
-                        .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                            print(imageLoader.url)
-                            if displayImage != nil {
-                                self.image = displayImage
-                                self.trigger = true
-                            }
+            if let image = image {
+                ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            needHidden = true
                         })
-
-                }
-                ExposionView(trigger: $trigger, needHidden: $needHidden)
+                    }
+            } else {
+                WigglePokeBallView(image: $image, imageLoader: imageLoader)
+                    .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                        print(imageLoader.url)
+                        if displayImage != nil {
+                            self.image = displayImage
+                            self.trigger = true
+                        }
+                    })
+                
             }
+            ExposionView(trigger: $trigger, needHidden: $needHidden)
         }
     }
+}
 }
 
 struct ExposionView: View {
     @Binding var trigger: Bool
     @Binding var needHidden: Bool
-
+    
     var body: some View {
         ZStack {
             Circle()
@@ -154,7 +152,7 @@ struct WigglePokeBallView: View {
     @ObservedObject var imageLoader: ImageLoader
     
     @State private var isStartWigle: Bool = false
-
+    
     var body: some View {
         Image("pokeball")
             .resizable()
@@ -172,9 +170,9 @@ struct WigglePokeBallView: View {
 }
 
 struct ZoomOutImageView: View {
-    @Binding var image: UIImage?
+    var image: UIImage?
     @State private var isComplete: Bool = false
-
+    
     var body: some View {
         if let image = image {
             Image(uiImage: image)

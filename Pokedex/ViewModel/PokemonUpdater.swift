@@ -34,16 +34,15 @@ class PokemonUpdater: ObservableObject {
         }
     }
     
-    @Published var isSelected = false {
-        didSet {
-            updateCurrentId(of: pokemon)
-        }
-    }
+    @Published var isSelected = false
     
-    @Published var images: [UIImage?] = []
+    @Published var preLoadImages: [UIImage?] = []
+    
+    @Published var images: [String] = []
     @Published var ids: [Int] = [] {
         didSet {
-            loadAlotOfImage()
+            //loadAlotOfImage()
+            images = ids.map({UrlType.getImageUrlString(of: $0)})
         }
     }
     
@@ -89,7 +88,7 @@ extension PokemonUpdater {
             .replaceError(with: [])
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.images, on: self)
+            .assign(to: \.preLoadImages, on: self)
             .store(in: &cancellables)
     }
     
