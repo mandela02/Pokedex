@@ -208,7 +208,9 @@ struct PokemonInformationView: View {
                 }
             })
             .onAppear {
-                isLoadingData = true
+                if isFirstTimeLoadView {
+                    isLoadingData = true
+                }
                 hideImage(in: size)
                 if isFirstTimeLoadView {
                     updater.isSelected = true
