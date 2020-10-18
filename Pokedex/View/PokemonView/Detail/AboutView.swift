@@ -37,18 +37,12 @@ struct AboutContentView: View {
     var id = UUID()
     var pokemon: Pokemon
     @ObservedObject var updater: SpeciesUpdater
-    
-    @State var description: String = ""
-    
+        
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
-            Text(description)
-                .font(Biotif.medium(size: 15).font)
-                .foregroundColor(.black)
+            GeneralDetailView(pokemon: pokemon, species: updater.species)
+                .frame(height: 120, alignment: .center)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
-                .onReceive(updater.$description) { text in
-                    description = text
-                }
             
             SizeView(height: pokemon.height, weight: pokemon.weight)
                 .background(HexColor.white)
@@ -58,7 +52,7 @@ struct AboutContentView: View {
                 .padding(.bottom, 20)
             
             Text("Breeding")
-                .font(Biotif.semiBold(size: 20).font)
+                .font(Biotif.extraBold(size: 20).font)
                 .foregroundColor(.black)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
@@ -101,10 +95,10 @@ struct BreedingView: View {
                     }
                 }
                 Text(group.capitalized)
-                    .font(Biotif.bold(size: 12).font)
+                    .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
                 Text(habitat.capitalized)
-                    .font(Biotif.bold(size: 12).font)
+                    .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -170,5 +164,93 @@ struct CustomText: View {
             .fontWeight(weight)
             .foregroundColor(textColor)
             .background(background)
+    }
+}
+
+struct GeneralDetailView: View {
+    var pokemon: Pokemon
+    var species: Species
+    @State var selectedString: String?
+
+    @State var showGif = false
+
+    var body: some View {
+        GeometryReader(content: { geometry in
+            HStack(alignment: .center, spacing: 10) {
+                VStack(alignment: .leading, spacing: 20) {
+                    SpeciesNameView(species: species)
+                    AbilitesView(pokemon: pokemon)
+                        .frame(width: abs(geometry.size.width - 100))
+                }
+
+                if showGif {
+                    GIFView(gifName: pokemon.sprites.versions?.generationV?.blackWhite?.animated?.front ?? "")
+                        .frame(width: 80, height: 80, alignment: .center)
+                        .padding(.trailing, 10)
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.linear) {
+                        showGif = true
+                    }
+                }
+            }
+        })
+    }
+}
+
+
+
+struct AbilitesView: View {
+    var pokemon: Pokemon
+    @State var selectedString: String?
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Text("Abilities")
+                .font(Biotif.extraBold(size: 20).font)
+                .foregroundColor(.black)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 10)
+            HStack(alignment: .center, spacing: 30) {
+                ForEach(pokemon.abilities.map({$0.ability.name.capitalized}), content: { text in
+                    TypeBubbleCellView(text: text,
+                                       foregroundColor: text == selectedString ? .white : .gray,
+                                       backgroundColor: text == selectedString ? .gray : .white,
+                                       font: Biotif.semiBold(size: 15).font)
+                        .onTapGesture {
+                            if text == selectedString {
+                                selectedString = nil
+                            } else {
+                                selectedString = text
+                            }
+                        }
+                })
+                Spacer()
+            }
+            .padding(.leading, 40)
+            .transition(.opacity)
+            .animation(.easeIn)
+        }
+    }
+}
+
+struct SpeciesNameView: View {
+    var species: Species
+
+    var body: some View {
+        HStack {
+            Text("Species")
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.gray)
+                .frame(width: 50, alignment: .leading)
+            Text(StringHelper.getEnglishText(from: species.genera))
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.black)
+                .padding(.leading, 5)
+            Spacer()
+        }
+        .frame(height: 30, alignment: .center)
     }
 }

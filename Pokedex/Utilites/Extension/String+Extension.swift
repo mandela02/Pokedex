@@ -16,3 +16,9 @@ extension String {
         self = self.capitalizingFirstLetter()
     }
 }
+
+extension String: Identifiable {
+    public var id: String {
+        return self
+    }
+}

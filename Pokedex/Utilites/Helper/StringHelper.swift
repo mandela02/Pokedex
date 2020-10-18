@@ -31,6 +31,10 @@ class StringHelper {
         return texts.filter({$0.language.name == "en"}).map({$0.effect}).uniques.first ?? ""
     }
     
+    static func getEnglishText(from texts: [Genus]) -> String {
+        return texts.filter({$0.language.name == "en"}).map({$0.genus}).uniques.first ?? ""
+    }
+    
     static func weightString(from hectogram: Int) -> String {
         let weight = "%@kg (%@lbs)"
         let kilogramString = String(format: "%.1f", UnitHelper.weightInKg(from: hectogram))

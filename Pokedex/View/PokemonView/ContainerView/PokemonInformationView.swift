@@ -202,8 +202,11 @@ struct PokemonInformationView: View {
                 if species.id != 0 {
                     voiceUpdater.species = species
                     isScrollable = true
-                    isLoadingData = false
-                    voiceUpdater.isSpeaking = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        voiceUpdater.isSpeaking = true
+                        isLoadingData = false
+                    }
                 }
             })
             .onAppear {

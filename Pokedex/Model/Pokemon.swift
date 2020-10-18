@@ -82,7 +82,7 @@ struct Pokemon: Codable, Identifiable {
     }
 }
 
-struct PokemonImage: Codable {
+class PokemonImage: Codable {
     var back: String?
     var backFemale: String?
     var backShiny: String?
@@ -91,7 +91,9 @@ struct PokemonImage: Codable {
     var frontFemale: String?
     var frontShiny: String?
     var frontShinyFemale: String?
-    var other: OtherImageResult = OtherImageResult()
+    var other: OtherImageResult?
+    var versions: Versions?
+    var animated: PokemonImage?
 
     enum CodingKeys: String, CodingKey {
         case back = "back_default"
@@ -103,6 +105,24 @@ struct PokemonImage: Codable {
         case frontShiny = "front_shiny"
         case frontShinyFemale = "front_shiny_female"
         case other
+        case animated
+        case versions
+    }
+}
+
+struct Versions: Codable {
+    var generationV: GenerationV?
+    
+    enum CodingKeys: String, CodingKey {
+        case generationV = "generation-v"
+    }
+}
+
+struct GenerationV: Codable {
+    var blackWhite: PokemonImage?
+
+    enum CodingKeys: String, CodingKey {
+        case blackWhite = "black-white"
     }
 }
 

@@ -99,7 +99,6 @@ struct AnimatedImageView: View {
                 } else {
                     WigglePokeBallView(image: $image, imageLoader: imageLoader)
                         .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                            print(imageLoader.url)
                             if displayImage != nil {
                                 self.image = displayImage
                                 self.trigger = true

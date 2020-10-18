@@ -11,8 +11,8 @@ struct FlexibleGridView: View {
     @Binding var characteristics: [String]
 
     @State private var totalHeight
-          = CGFloat.zero       // << variant for ScrollView/List
-    //    = CGFloat.infinity   // << variant for VStack
+    //      = CGFloat.zero       // << variant for ScrollView/List
+        = CGFloat.infinity   // << variant for VStack
 
     var body: some View {
         VStack {
@@ -20,8 +20,8 @@ struct FlexibleGridView: View {
                 self.generateContent(in: geometry)
             }
         }
-        .frame(height: totalHeight)// << variant for ScrollView/List
-        //.frame(maxHeight: totalHeight) // << variant for VStack
+        //.frame(height: totalHeight)// << variant for ScrollView/List
+        .frame(maxHeight: totalHeight) // << variant for VStack
     }
 
     private func generateContent(in geometry: GeometryProxy) -> some View {

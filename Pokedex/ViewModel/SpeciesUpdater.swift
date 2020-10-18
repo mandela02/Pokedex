@@ -22,12 +22,10 @@ class SpeciesUpdater: ObservableObject {
 
     @Published var species: Species = Species() {
         didSet {
-            description = createText()
             initEvolution(of: species.evolutionChain.url)
         }
     }
 
-    @Published var description: String = ""
     @Published var evolution: Evolution = Evolution()
 
     private var cancellables = Set<AnyCancellable>()
