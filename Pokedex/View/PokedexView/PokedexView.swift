@@ -108,8 +108,6 @@ struct PokedexView: View {
                                 destination:  {
                                     FavoriteView(show: $showFavorite)
                                         .environmentObject(environment)
-                                        .navigationTitle("")
-                                        .navigationBarHidden(true)
                                 })
             }
             .onChange(of: selectedMenu, perform: { active in

@@ -12,4 +12,5 @@ import Combine
 class EnvironmentUpdater: ObservableObject {
     @Published var selectedPokemon: String = ""
     @Published var selectedType: PokemonType = .non
+    @Published var allPokemonCount: Int = 0
 }

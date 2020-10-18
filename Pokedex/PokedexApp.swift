@@ -22,6 +22,7 @@ struct PokedexApp: App {
                             .navigationBarHidden(true)
                     }
                 }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
+                .statusBar(hidden: true)
         }
     }
 }

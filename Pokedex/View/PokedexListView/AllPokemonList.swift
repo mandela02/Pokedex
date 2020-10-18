@@ -21,6 +21,8 @@ struct AllPokemonList: View {
             PokemonList(cells: $updater.pokemonsCells,
                         isLoading: $isLoading,
                         isFinal: $updater.isFinal,
+                        paddingHeader: 50,
+                        paddingFooter: 50,
                         cellSize: CGSize(width: geometry.size.width, height: height)) { item in
                 updater.loadMorePokemonIfNeeded(current: item)
             }
@@ -42,6 +44,9 @@ struct AllPokemonList: View {
                         self.isFinal = isFinal
                     }
                 }
+            })
+            .onReceive(updater.$pokemonResult, perform: { result in
+                environment.allPokemonCount = result.count
             })
             .onAppear {
                 if isFirstTimeLoadView {

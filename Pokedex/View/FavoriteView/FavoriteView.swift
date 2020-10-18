@@ -15,12 +15,7 @@ struct FavoriteView: View {
     @Binding var show: Bool
     
     var body: some View {
-        VStack {
-            HStack {
-                BackButtonView(isShowing: $show)
-                Spacer()
-            }
-
+        ZStack {
             FavoriteListView(show: $show)
                 .environmentObject(environment)
             PushOnSigalView(show: $showDetail, destination: {
@@ -28,6 +23,16 @@ struct FavoriteView: View {
                                        isShowing: $showDetail)
                     .environmentObject(environment)
             })
+            VStack {
+                HStack {
+                    BackButtonView(isShowing: $show)
+                    Spacer()
+                }
+                .padding(.top, 25)
+                .padding(.leading, 20)
+                .background(Color.white.opacity(0.5))
+                Spacer()
+            }
         }
         .onReceive(environment.$selectedPokemon) { url in
             if !url.isEmpty && isViewDisplayed {
@@ -41,42 +46,33 @@ struct FavoriteView: View {
         .onDisappear {
             isViewDisplayed = false
         }
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
     }
 }
 
 struct FavoriteListView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    
-    @Environment(\.managedObjectContext) private var viewContext
+    // FetchRequest only available in SwiftUI View
     @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
+    
+    @EnvironmentObject var environment: EnvironmentUpdater
+    @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
     @Binding var show: Bool
     
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
-            PokemonList(cells: .constant(prepare()),
+            PokemonList(cells: $favoriteUpdater.cells,
                         isLoading: .constant(false),
                         isFinal: .constant(false),
+                        paddingHeader: 50,
+                        paddingFooter: 50,
                         cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
                 .environmentObject(environment)
+                .onAppear {
+                    favoriteUpdater.favorites = favorites.map({$0})
+                }
         })
-    }
-    
-    private func prepare() -> [PokemonCellModel]{
-        let re = favorites.map({NamedAPIResource(name: "", url: $0.url ?? "")})
-        return getCells(from: re)
-    }
-    
-    private func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
-        var cells: [PokemonCellModel] = []
-        
-        result.enumerated().forEach { item in
-            if item.offset % 2 == 0 {
-                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
-                cells.append(newPokemons)
-            }
-        }
-        
-        return cells
     }
 }

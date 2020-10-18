@@ -16,10 +16,23 @@ struct PokemonCellModel: Identifiable, Equatable {
     var id = UUID().uuidString
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
+    
+    static func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
+        var cells: [PokemonCellModel] = []
+        
+        result.enumerated().forEach { item in
+            if item.offset % 2 == 0 {
+                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
+                cells.append(newPokemons)
+            }
+        }
+        
+        return cells
+    }
 }
 
 class Updater: ObservableObject {
-    @Published var pokemons: [NamedAPIResource] = []
+    @Published private var pokemons: [NamedAPIResource] = []
     @Published var pokemonsCells: [PokemonCellModel] = [PokemonCellModel()]
 
     
@@ -35,7 +48,7 @@ class Updater: ObservableObject {
     
     private var cancellable: AnyCancellable?
     
-    private var pokemonResult: PokemonResult = PokemonResult() {
+    @Published var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
             guard let nextURL = pokemonResult.next else {
                 canLoadMore = false
@@ -67,7 +80,7 @@ class Updater: ObservableObject {
         }
     }
     
-    func loadPokemonData() {
+    private func loadPokemonData() {
         guard !isLoadingPage && canLoadMore else {
             return
         }
