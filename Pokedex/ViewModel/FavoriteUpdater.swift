@@ -11,15 +11,12 @@ import Combine
 import CoreData
 
 class FavoriteUpdater: ObservableObject {
-    @Published var favorites: [Favorite] = [] {
-        didSet {
-            prepare(from: favorites)
-        }
-    }
+    @State private var refreshing = false
+    @Published var favorites: [Favorite] = []
     @Published var cells: [PokemonCellModel] = []
         
     init() {
-        //fetchEntries()
+        fetchEntries()
     }
     
     func prepare(from favorites: [Favorite]) {

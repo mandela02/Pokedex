@@ -12,7 +12,7 @@ struct PokemonsOfTypeList: View {
     @State var selectedPokemonUrl: String = ""
     @State var isViewDisplayed = false
     @State var showDetail: Bool = false
-
+    
     @State var isLoading = false
     @State var isFirstTimeLoading = true
     

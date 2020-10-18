@@ -22,15 +22,13 @@ struct NavigationPokedexView: View {
                 .ignoresSafeArea()
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
                 .environmentObject(environment)
-            PushOnSigalView(show: $showDetail, destination: {
-                PokemonInformationView(pokemonUrl: pokemonUrl,
-                                       isShowing: $showDetail)
-            })
-            PushOnSigalView(show: $showTypeList, destination: {
-                PokemonsOfTypeList(show: $showTypeList,
-                                   type: pokemonType)
-                    .environmentObject(environment)
-            })
+                .background(PushOnSigalView(show: $showDetail, destination: {
+                                                PokemonInformationView(pokemonUrl: pokemonUrl,
+                                                                       isShowing: $showDetail)}))
+                .background(PushOnSigalView(show: $showTypeList, destination: {
+                                                PokemonsOfTypeList(show: $showTypeList,
+                                                                   type: pokemonType)
+                                                    .environmentObject(environment)}))
         }
         .onReceive(environment.$selectedPokemon) { url in
             if !url.isEmpty && isViewDisplayed {
@@ -61,7 +59,7 @@ struct PokedexView: View {
     @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
     @State private var showFavorite: Bool = false
-
+    
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
