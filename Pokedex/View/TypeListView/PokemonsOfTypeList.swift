@@ -24,7 +24,7 @@ struct PokemonsOfTypeList: View {
     
     var body: some View {
         GeometryReader(content: { geometry in
-            let height: CGFloat = geometry.size.height / 6
+            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
             VStack(spacing: 0) {
                 PokemonOfTypeHeaderView(isLoading: $isLoading,
                                         show: $show,
@@ -66,30 +66,6 @@ struct PokemonsOfTypeList: View {
             .navigationTitle("")
             .navigationBarHidden(true)
         })
-    }
-}
-
-struct BackButtonView: View {
-    @Binding var isShowing: Bool
-    var body: some View {
-        HStack{
-            Button {
-                withAnimation(.spring()){
-                    isShowing = false
-                }
-            } label: {
-                Image(systemName: ("arrow.uturn.left"))
-                    .renderingMode(.template)
-                    .foregroundColor(.red)
-                    .padding()
-                    .background(Color.clear)
-                    .clipShape(Circle())
-            }
-            .frame(width: 50, height: 50, alignment: .center)
-            Spacer()
-        }
-        .padding(.top, UIDevice().hasNotch ? 44 : 8)
-        .padding(.horizontal)
     }
 }
 

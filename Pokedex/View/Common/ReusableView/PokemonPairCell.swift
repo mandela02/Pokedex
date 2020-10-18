@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokemonPairCell: View {
     @EnvironmentObject var environment: EnvironmentUpdater
-
+    
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
     
@@ -21,27 +21,27 @@ struct PokemonPairCell: View {
             let width = (geometry.size.width - 45) / 2
             let height = geometry.size.height
             HStack(alignment: .center, spacing: 10, content: {
-                if let first = firstPokemon {
-                    TappablePokemonCell(updater: PokemonUpdater(url: first.url),
-                                        show: $showFirst,
-                                        size: CGSize(width: width, height: height))
-                        .environmentObject(environment)
-                }
-                if let second = secondPokemon {
-                    TappablePokemonCell(updater: PokemonUpdater(url: second.url),
-                                        show: $showSecond,
-                                        size: CGSize(width: width, height: height))
-                        .environmentObject(environment)
-                }
+                TappablePokemonCell(updater: PokemonUpdater(url: firstPokemon?.url ?? ""),
+                                    show: $showFirst,
+                                    size: CGSize(width: width - 10, height: height))
+                    .environmentObject(environment)
+                    .isHidden(firstPokemon == nil)
+                TappablePokemonCell(updater: PokemonUpdater(url: secondPokemon?.url ?? ""),
+                                    show: $showSecond,
+                                    size: CGSize(width: width - 10, height: height))
+                    .environmentObject(environment)
+                    .isHidden(secondPokemon == nil)
             })
             .buttonStyle(PlainButtonStyle())
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
         })
     }
 }
 
 struct TappablePokemonCell: View {
     @EnvironmentObject var environment: EnvironmentUpdater
-
+    
     let updater: PokemonUpdater
     @Binding var show: Bool
     let size: CGSize

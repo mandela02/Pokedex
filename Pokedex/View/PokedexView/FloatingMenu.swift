@@ -11,7 +11,7 @@ struct FloatingMenu: View {
     @State var showSubButton = false
 
     @State var pressed = false
-    @Binding var active: Int
+    @Binding var selectedMenu: Int
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 30) {
@@ -19,12 +19,12 @@ struct FloatingMenu: View {
                 Spacer()
                 if showSubButton {
                     ForEach(SubViewKind.allCases.reversed(), id: \.self) { kind in
-                        MenuItem(icon: "car", text: kind.name, tag: kind.rawValue, selected: $active)
+                        MenuItem(icon: "car", text: kind.name, tag: kind.rawValue, selected: $selectedMenu)
                             .animation(Animation.default.delay(Double(kind.rawValue)/10))
                             .onTapGesture {
-                                toggleMenu()
                                 withAnimation(Animation.spring().delay(0.4)) {
-                                    active = kind.rawValue
+                                    selectedMenu = kind.rawValue
+                                    pressed = false
                                 }
                             }
                     }

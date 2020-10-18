@@ -56,11 +56,12 @@ struct NavigationPokedexView: View {
 struct PokedexView: View {
     @EnvironmentObject var environment: EnvironmentUpdater
     
-    @State var active = -1
-    @State var showSubView: Bool = false
-    @State var subViewOffset: CGSize = CGSize.zero
+    @State private var selectedMenu = -1
+    @State private var showSubView: Bool = false
+    @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
-    
+    @State private var showFavorite: Bool = false
+
     init() {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
@@ -80,7 +81,7 @@ struct PokedexView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        FloatingMenu(active: $active)
+                        FloatingMenu(selectedMenu: $selectedMenu)
                     }
                 }
                 
@@ -90,7 +91,7 @@ struct PokedexView: View {
                         Spacer()
                         TypeSubView(isShowing: $showSubView,
                                     offset: $subViewOffset,
-                                    kind: SubViewKind.getKind(from: active))
+                                    kind: SubViewKind.getKind(from: selectedMenu))
                             .environmentObject(environment)
                             .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
@@ -103,17 +104,28 @@ struct PokedexView: View {
                     .animation(Animation.default.delay(0.1))
                     .offset(y: subViewOffset.height)
                 }
+                PushOnSigalView(show: $showFavorite,
+                                destination:  {
+                                    FavoriteView(show: $showFavorite)
+                                        .environmentObject(environment)
+                                        .navigationTitle("")
+                                        .navigationBarHidden(true)
+                                })
             }
-            .onChange(of: active, perform: { active in
+            .onChange(of: selectedMenu, perform: { active in
                 withAnimation(.default) {
-                    if active >= 0 {
+                    if active == 3 {
+                        showFavorite = true
+                        self.selectedMenu = -1
+                        showSubView = false
+                    } else if active >= 0 {
                         showSubView = true
                     }
                 }
             })
             .onChange(of: showSubView, perform: { showTypeView in
                 if showTypeView == false {
-                    active = -1
+                    selectedMenu = -1
                     subViewOffset = CGSize.zero
                 }
             })

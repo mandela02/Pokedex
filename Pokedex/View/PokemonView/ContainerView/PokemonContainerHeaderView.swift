@@ -6,21 +6,13 @@
 //
 
 import SwiftUI
+import CoreData
 
-struct PokemonContainerHeaderView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct PokemonContainerHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonContainerHeaderView()
-    }
-}
+struct ButtonView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
 
 
-struct ButtonView: View {    
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
@@ -54,7 +46,13 @@ struct ButtonView: View {
                     .matchedGeometryEffect(id: pokemon.name, in: namespace)
                 Spacer()
             }
-            AnimatedLikeButton(isFavorite: $isFavorite)
+            AnimatedLikeButton(isFavorite: $isFavorite, onTap: {
+                if isFavorite {
+                    like(pokemon: pokemon)
+                } else {
+                    dislike(pokemon: pokemon)
+                }
+            })
                 .padding()
                 .background(Color.clear)
                 .clipShape(Circle())
@@ -62,6 +60,33 @@ struct ButtonView: View {
         }
         .padding(.top, UIDevice().hasNotch ? 44 : 8)
         .padding(.horizontal)
+        .onChange(of: pokemon.pokeId, perform: { id in
+            if id != 0 {
+                isFavorite = favorites.map({$0.url}).contains(UrlType.getPokemonUrl(of: id))
+            }
+        })
+    }
+    
+    private func like(pokemon: Pokemon) {
+        let favorite = Favorite(context: viewContext)
+        favorite.url = UrlType.getPokemonUrl(of: pokemon.pokeId)
+        save()
+    }
+    
+    private func dislike(pokemon: Pokemon) {
+        guard let item = favorites.first(where: {$0.url == UrlType.getPokemonUrl(of: pokemon.pokeId)}) else {
+            return
+        }
+        viewContext.delete(item)
+        save()
+    }
+    
+    private func save() {
+        do {
+            try viewContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }
 
