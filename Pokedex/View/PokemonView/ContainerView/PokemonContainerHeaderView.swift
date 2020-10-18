@@ -12,7 +12,6 @@ struct ButtonView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
 
-
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     var pokemon: Pokemon
@@ -65,6 +64,11 @@ struct ButtonView: View {
                 isFavorite = favorites.map({$0.url}).contains(UrlType.getPokemonUrl(of: id))
             }
         })
+        .onAppear {
+            if pokemon.pokeId != 0 {
+                isFavorite = favorites.map({$0.url}).contains(UrlType.getPokemonUrl(of: pokemon.pokeId))
+            }
+        }
     }
     
     private func like(pokemon: Pokemon) {

@@ -11,53 +11,39 @@ struct FavoriteView: View {
     @Binding var show: Bool
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            //            let size = geometry.size
+        ZStack {
+            RotatingPokeballView(color: Color(.systemGray4))
+                .scaleEffect(1.2)
             
-            ZStack {
-                //                Image("ic_pokeball")
-                //                    .resizable()
-                //                    .renderingMode(.template)
-                //                    .aspectRatio(contentMode: .fit)
-                //                    .foregroundColor(Color(.systemGray4))
-                //                    .scaleEffect(0.8)
-                //                    .blur(radius: 3)
-                
-                RotatingPokeballView(color: Color(.systemGray4))
-                    .scaleEffect(1.2)
-                //                    .frame(width: size.width, height: size.height, alignment: .center)
-                //                    .offset(x: -(size.width * 1/4 + 25), y: size.height * 3/5)
-                
-                FavoriteListView(show: $show)
+            FavoriteListView(show: $show)
+            VStack {
                 VStack {
-                    VStack {
-                        HStack(alignment: .center) {
-                            BackButtonView(isShowing: $show)
-                            Spacer()
-                        }
-                        Text("Your Favorite Pokemon")
-                            .font(Biotif.extraBold(size: 30).font)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 5)
+                    HStack(alignment: .center) {
+                        BackButtonView(isShowing: $show)
+                        Spacer()
                     }
-                    .padding(.top, 25)
-                    .padding(.leading, 20)
-                    .background(Color.white.opacity(0.5))
-                    Spacer()
+                    Text("Your Favorite Pokemon")
+                        .font(Biotif.extraBold(size: 30).font)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 5)
                 }
+                .padding(.top, 25)
+                .padding(.leading, 20)
+                .background(Color.white.opacity(0.5))
+                Spacer()
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
-            .ignoresSafeArea()
-        })
+        }
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
     }
 }
 
 struct FavoriteListView: View {
     @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
     @Binding var show: Bool
-        
+    
     var didChange =  NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange)
     
     var body: some View {

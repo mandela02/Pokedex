@@ -152,12 +152,12 @@ struct PokemonInformationView: View {
                                           onScrolling: { gesture in
                                             onGestureScrolling(gesture: gesture, size: size)
                                           }, onEndScrolling: { gesture in
-                                            if index == 1 && updater.currentId == 1 {
-                                                updater.currentId = 2
-                                            } else if index == updater.ids.endIndex - 1 {
+                                            if index == updater.ids.endIndex - 1 {
                                                 updater.currentId = updater.ids.last ?? 0
                                             } else if index == 0 {
-                                                updater.currentId = updater.ids.first ?? 0
+                                                if updater.currentId != 1 {
+                                                    updater.currentId = updater.ids.first ?? 0
+                                                }
                                             }
                                             index = 1
                                             onGestureEnd(gesture: gesture, size: size)
@@ -191,9 +191,6 @@ struct PokemonInformationView: View {
             }
             .ignoresSafeArea()
             .onReceive(updater.$pokemon, perform: { pokemon in
-                if pokemon.pokeId == 1 {
-                    index = 0
-                }
                 if speciesUpdater.speciesUrl != pokemon.species.url {
                     speciesUpdater.speciesUrl = pokemon.species.url
                     voiceUpdater.pokemon = pokemon
