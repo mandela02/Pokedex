@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct PokemonPairCell: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    
     var firstPokemon: NamedAPIResource?
     var secondPokemon: NamedAPIResource?
     
@@ -24,12 +22,10 @@ struct PokemonPairCell: View {
                 TappablePokemonCell(updater: PokemonUpdater(url: firstPokemon?.url ?? ""),
                                     show: $showFirst,
                                     size: CGSize(width: width - 10, height: height))
-                    .environmentObject(environment)
                     .isHidden(firstPokemon == nil)
                 TappablePokemonCell(updater: PokemonUpdater(url: secondPokemon?.url ?? ""),
                                     show: $showSecond,
                                     size: CGSize(width: width - 10, height: height))
-                    .environmentObject(environment)
                     .isHidden(secondPokemon == nil)
             })
             .buttonStyle(PlainButtonStyle())
@@ -39,17 +35,15 @@ struct PokemonPairCell: View {
     }
 }
 
-struct TappablePokemonCell: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    
+struct TappablePokemonCell: View {    
     let updater: PokemonUpdater
     @Binding var show: Bool
     let size: CGSize
     var body: some View {
-        Button {
-            environment.selectedPokemon = updater.pokemonUrl ?? ""
-        } label: {
+        TapToPushView(show: $show) {
             PokedexCardView(updater: updater, size: (size.width, size.height))
+        } destination: {
+            PokemonInformationView(updater: updater, isShowing: $show)
         }
     }
 }

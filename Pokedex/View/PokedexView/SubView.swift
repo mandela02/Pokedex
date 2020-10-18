@@ -77,7 +77,6 @@ struct SubView<Content: View>: View {
 }
 
 struct TypeSubView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
     @Binding var isShowing: Bool
     @Binding var offset: CGSize
     var kind: SubViewKind
@@ -87,7 +86,6 @@ struct TypeSubView: View {
                 offset: $offset, view: {
                     getView()
                 })
-            .environmentObject(environment)
             .transition(AnyTransition
                             .move(edge: .bottom))
     }

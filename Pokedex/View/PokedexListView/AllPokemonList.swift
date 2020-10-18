@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-struct AllPokemonList: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    
+struct AllPokemonList: View {    
     @StateObject var updater: Updater = Updater()
     @State var isLoading = false
     @State var isFinal = false
@@ -21,10 +19,11 @@ struct AllPokemonList: View {
             PokemonList(cells: $updater.pokemonsCells,
                         isLoading: $isLoading,
                         isFinal: $updater.isFinal,
+                        paddingHeader: 50,
+                        paddingFooter: 50,
                         cellSize: CGSize(width: geometry.size.width, height: height)) { item in
                 updater.loadMorePokemonIfNeeded(current: item)
             }
-            .environmentObject(environment)
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
                 withAnimation(Animation.spring()) {
                     if isLoading {

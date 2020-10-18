@@ -8,19 +8,22 @@
 import SwiftUI
 
 struct PokemonList: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-
     @Binding var cells: [PokemonCellModel]
     @Binding var isLoading: Bool
     @Binding var isFinal: Bool
-    var cellSize: CGSize
     
+    var paddingHeader: CGFloat
+    var paddingFooter: CGFloat
+    var cellSize: CGSize
+
     let onCellAppear: (PokemonCellModel) -> ()
     
     var body: some View {
         ZStack {
             VStack {
                 List {
+                    Color.clear.frame(height: paddingHeader, alignment: .center)
+
                     ForEach(cells) { cell in
                         PokemonPairCell(firstPokemon: cell.firstPokemon,
                                         secondPokemon: cell.secondPokemon)
@@ -31,12 +34,13 @@ struct PokemonList: View {
                             .onAppear(perform: {
                                 onCellAppear(cell)
                             })
-                            .environmentObject(environment)
                     }
                     
                     if isFinal {
                         CompleteView().frame(height: 200)
                     }
+                    
+                    Color.clear.frame(height: paddingFooter, alignment: .center)
                 }
                 .animation(.linear)
                 .listStyle(SidebarListStyle())

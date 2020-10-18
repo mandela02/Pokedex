@@ -26,7 +26,5 @@ struct BackButtonView: View {
             .frame(width: 50, height: 50, alignment: .center)
             Spacer()
         }
-        .padding(.top, UIDevice().hasNotch ? 44 : 8)
-        .padding(.horizontal)
     }
 }

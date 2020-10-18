@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct PokemonsOfTypeList: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
     @State var selectedPokemonUrl: String = ""
     @State var isViewDisplayed = false
     @State var showDetail: Bool = false
-
+    
     @State var isLoading = false
     @State var isFirstTimeLoading = true
     
@@ -25,22 +24,27 @@ struct PokemonsOfTypeList: View {
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
-            VStack(spacing: 0) {
-                PokemonOfTypeHeaderView(isLoading: $isLoading,
-                                        show: $show,
-                                        typeName: updater.name,
-                                        damage: updater.damage)
-                                
+            ZStack {
                 PokemonList(cells: $updater.pokemons,
                             isLoading: $isLoading,
                             isFinal: $isFinal,
+                            paddingHeader: 110,
+                            paddingFooter: 50,
                             cellSize: CGSize(width: geometry.size.width, height: height)) { cell in
-                }.environmentObject(environment)
+                }
                 
                 PushOnSigalView(show: $showDetail, destination: {
                     PokemonInformationView(pokemonUrl: selectedPokemonUrl,
                                            isShowing: $showDetail)
                 })
+                VStack {
+                    PokemonOfTypeHeaderView(isLoading: $isLoading,
+                                            show: $show,
+                                            typeName: updater.name,
+                                            damage: updater.damage)
+                        .background(Color.white.opacity(0.5))
+                    Spacer()
+                }
             }
             .ignoresSafeArea()
             .onAppear(perform: {
@@ -54,12 +58,6 @@ struct PokemonsOfTypeList: View {
                 }
                 isFirstTimeLoading = false
             })
-            .onReceive(environment.$selectedPokemon) { url in
-                if !url.isEmpty && isViewDisplayed {
-                    selectedPokemonUrl = url
-                    showDetail = true
-                }
-            }
             .onDisappear {
                 isViewDisplayed = false
             }
@@ -92,7 +90,7 @@ struct PokemonOfTypeHeaderView: View {
                     if !damage.name.isEmpty {
                         Text("Damage type: " + damage.name)
                             .font(Biotif.extraBold(size: 20).font)
-                            .foregroundColor(Color(.systemGray3))
+                            .foregroundColor(Color(.darkGray))
                             .animation(.linear)
                     }
                 }
