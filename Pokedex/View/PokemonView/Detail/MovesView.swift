@@ -35,8 +35,6 @@ struct MovesView: View {
             .listStyle(SidebarListStyle())
             .animation(.spring())
             .onAppear {
-                print(moveUpdater.pokemon.pokeId)
-                print(pokemon.pokeId)
                 if moveUpdater.pokemon.pokeId != pokemon.pokeId {
                     moveUpdater.pokemon = pokemon
                 }
@@ -231,12 +229,6 @@ struct MachineSubView: View {
             }
             Spacer()
         }
-    }
-}
-
-struct MovesView_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }
 

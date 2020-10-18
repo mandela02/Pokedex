@@ -23,12 +23,26 @@ class StringHelper {
             .randomElement() ?? ""
     }
     
+    static func getEnglishText(from texts: [FlavorTextEntry]) -> String {
+        let englishText = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.first
+        return englishText ?? ""
+    }
+    
+    static func getEnglishText(from texts: [FlavorTextEntryVersionGroup]) -> String {
+        let englishText = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.first
+        return englishText?.replacingOccurrences(of: "\n", with: " ") ?? ""
+    }
+    
     static func getEnglishText(from texts: [Description]) -> String {
         return texts.filter({$0.language.name == "en"}).map({$0.description}).uniques.first ?? ""
     }
     
     static func getEnglishText(from texts: [EffectEntry]) -> String {
         return texts.filter({$0.language.name == "en"}).map({$0.effect}).uniques.first ?? ""
+    }
+    
+    static func getEnglishText(from texts: [Genus]) -> String {
+        return texts.filter({$0.language.name == "en"}).map({$0.genus}).uniques.first ?? ""
     }
     
     static func weightString(from hectogram: Int) -> String {

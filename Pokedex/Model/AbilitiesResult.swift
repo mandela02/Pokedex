@@ -15,5 +15,6 @@ struct AbilitiesResult: Codable {
     enum CodingKeys: String, CodingKey {
         case isHidden = "is_hidden"
         case slot = "slot"
+        case ability = "ability"
     }
 }

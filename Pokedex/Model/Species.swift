@@ -17,6 +17,8 @@ struct Species: Codable {
     var habitat: NamedAPIResource?
     var evolutionChain: APIResource = APIResource(url: "")
     var varieties: [PokemonSpeciesVariety] = []
+    var genera: [Genus] = []
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -27,6 +29,7 @@ struct Species: Codable {
         case habitat
         case evolutionChain = "evolution_chain"
         case varieties
+        case genera
     }
     
     var havingMega: Bool {
@@ -61,5 +64,15 @@ struct PokemonSpeciesVariety: Codable {
     enum CodingKeys: String, CodingKey {
         case isDefault = "is_default"
         case pokemon
+    }
+}
+
+struct Genus: Codable {
+    var genus: String = ""
+    var language: NamedAPIResource = NamedAPIResource()
+    
+    enum CodingKeys: String, CodingKey {
+        case genus
+        case language
     }
 }

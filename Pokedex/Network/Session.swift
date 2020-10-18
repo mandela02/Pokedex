@@ -32,6 +32,10 @@ enum UrlType: String, CaseIterable {
     static func getPokemonUrl(of order: Int) -> String {
         return Constants.baseUrl + "pokemon/\(order)/"
     }
+    
+    static func getAbilityUrl(of name: String) -> String {
+        return Constants.baseAbilityUrl + name.lowercased()
+    }
 }
 
 class Session {
@@ -89,6 +93,10 @@ class Session {
     }
     
     func moveTarget(from url: String) -> AnyPublisher<MoveTarget, Error> {
+        return call(url)
+    }
+    
+    func ability(from url: String) -> AnyPublisher<Ability, Error> {
         return call(url)
     }
 

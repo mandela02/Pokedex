@@ -1,8 +1,8 @@
 //
-//  AboutView.swift
+//  SpeciesDetailView.swift
 //  Pokedex
 //
-//  Created by Bui Quang Tri on 10/8/20.
+//  Created by TriBQ on 19/10/2020.
 //
 
 import SwiftUI
@@ -18,58 +18,6 @@ enum Gender: String {
         case .male: return .blue
         case .non: return .purple
         }
-    }
-}
-
-struct AboutView: View {
-    var pokemon: Pokemon
-    @ObservedObject var updater: SpeciesUpdater
-    
-    var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            AboutContentView(pokemon: pokemon, updater: updater)
-            Color.clear.frame(height: 150, alignment: .center)
-        }.background(Color.clear)
-    }
-}
-
-struct AboutContentView: View {
-    var id = UUID()
-    var pokemon: Pokemon
-    @ObservedObject var updater: SpeciesUpdater
-    
-    @State var description: String = ""
-    
-    var body: some View {
-        VStack(alignment: .center, spacing: 5) {
-            Text(description)
-                .font(Biotif.medium(size: 15).font)
-                .foregroundColor(.black)
-                .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
-                .onReceive(updater.$description) { text in
-                    description = text
-                }
-            
-            SizeView(height: pokemon.height, weight: pokemon.weight)
-                .background(HexColor.white)
-                .cornerRadius(8)
-                .shadow(color: .gray, radius: 8, x: -10, y: 10)
-                .padding()
-                .padding(.bottom, 20)
-            
-            Text("Breeding")
-                .font(Biotif.semiBold(size: 20).font)
-                .foregroundColor(.black)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 20)
-            
-            BreedingView(rate: updater.species.genderRate,
-                         group: updater.species.eggGroup.first?.name ?? "",
-                         habitat: updater.species.habitat?.name ?? "")
-                .padding(.leading, 20)
-                .padding(.top, 10)
-            Spacer()
-        }.background(Color.clear)
     }
 }
 
@@ -101,10 +49,10 @@ struct BreedingView: View {
                     }
                 }
                 Text(group.capitalized)
-                    .font(Biotif.bold(size: 12).font)
+                    .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
                 Text(habitat.capitalized)
-                    .font(Biotif.bold(size: 12).font)
+                    .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -157,18 +105,22 @@ struct SizeView: View {
     }
 }
 
-struct CustomText: View {
-    var text: String = ""
-    var size: CGFloat = 0.0
-    var weight: Font.Weight = .bold
-    var background: Color = .clear
-    var textColor: Color = .black
-    
+struct SpeciesNameView: View {
+    var species: Species
+
     var body: some View {
-        Text(text)
-            .font(.system(size: size))
-            .fontWeight(weight)
-            .foregroundColor(textColor)
-            .background(background)
+        HStack {
+            Text("Species")
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.gray)
+                .frame(width: 50, alignment: .leading)
+            Text(StringHelper.getEnglishText(from: species.genera))
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.black)
+                .padding(.leading, 5)
+            Spacer()
+        }
+        .padding(.leading, 10)
+        .frame(height: 30, alignment: .center)
     }
 }
