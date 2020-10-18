@@ -95,6 +95,10 @@ class Session {
     func moveTarget(from url: String) -> AnyPublisher<MoveTarget, Error> {
         return call(url)
     }
+    
+    func ability(from url: String) -> AnyPublisher<Ability, Error> {
+        return call(url)
+    }
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {

@@ -37,19 +37,28 @@ struct AboutContentView: View {
     var id = UUID()
     var pokemon: Pokemon
     @ObservedObject var updater: SpeciesUpdater
-    
+    @State var seletedString: String?
     @State var showAbilityDetail: Bool = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
             GeneralDetailView(pokemon: pokemon,
                               species: updater.species,
-                              isExtened: $showAbilityDetail)
+                              selectedString: $seletedString)
                 .frame(height: 120, alignment: .center)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+                .onChange(of: seletedString, perform: { seletedString in
+                    withAnimation(.linear) {
+                        if seletedString == nil {
+                            showAbilityDetail = false
+                        } else {
+                            showAbilityDetail = true
+                        }
+                    }
+                })
             
             if showAbilityDetail {
-                AbilityDetailView()
+                AbilityDetailView(pokemon: pokemon, selectedAbility: $seletedString)
                     .padding()
             }
             
@@ -179,7 +188,7 @@ struct CustomText: View {
 struct GeneralDetailView: View {
     var pokemon: Pokemon
     var species: Species
-    @Binding var isExtened: Bool
+    @Binding var selectedString: String?
 
     @State var showGif = false
 
@@ -188,7 +197,7 @@ struct GeneralDetailView: View {
             HStack(alignment: .center, spacing: 10) {
                 VStack(alignment: .leading, spacing: 20) {
                     SpeciesNameView(species: species)
-                    AbilitesView(pokemon: pokemon, isExtened: $isExtened)
+                    AbilitesView(pokemon: pokemon, selectedString: $selectedString)
                         .frame(width: abs(geometry.size.width - 100))
                 }
 
@@ -211,8 +220,7 @@ struct GeneralDetailView: View {
 
 struct AbilitesView: View {
     var pokemon: Pokemon
-    @Binding var isExtened: Bool
-    @State var selectedString: String?
+    @Binding var selectedString: String?
 
     var body: some View {
         VStack(spacing: 10) {
@@ -230,15 +238,8 @@ struct AbilitesView: View {
                         .onTapGesture {
                             if text == selectedString {
                                 selectedString = nil
-                                withAnimation(.spring()) {
-                                    isExtened = false
-                                }
                             } else {
                                 selectedString = text
-                                withAnimation(.spring()) {
-                                    isExtened = false
-                                    isExtened = true
-                                }
                             }
                         }
                 })
@@ -266,13 +267,16 @@ struct SpeciesNameView: View {
                 .padding(.leading, 5)
             Spacer()
         }
+        .padding(.leading, 10)
         .frame(height: 30, alignment: .center)
     }
 }
 
 struct AbilityDetailView: View {
-    var height: CGFloat = 100
-    
+    var pokemon: Pokemon
+    @Binding var selectedAbility: String?
+    @StateObject var updater = AbilityUpdater(name: "")
+        
     var body: some View {
         ZStack {
             HStack {
@@ -281,40 +285,51 @@ struct AbilityDetailView: View {
                     .renderingMode(.template)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .offset(x: height/3)
+                    .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
                     .scaleEffect(1.1)
+                    .frame(width: 120, height: 120, alignment: .trailing)
+                    .offset(x: 60)
             }
             
             VStack(spacing: 5) {
-                    Text("Species")
+                Text(updater.title)
                         .font(Biotif.bold(size: 15).font)
                         .foregroundColor(.gray)
-                        .frame(minWidth: 0, maxWidth: .infinity,
-                               alignment: .leading)
-
-                    Text("Description")
-                        .font(Biotif.regular(size: 12).font)
-                        .foregroundColor(.black)
-                        .padding(.leading, 20)
                         .frame(minWidth: 0,
                                maxWidth: .infinity,
                                alignment: .leading)
+                        .padding(.trailing, 20)
+
+                    Text(updater.description)
+                        .font(Biotif.regular(size: 12).font)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0,
+                               maxWidth: .infinity,
+                               alignment: .leading)
+                        .padding(.leading, 20)
+                        .padding(.trailing, 20)
             }
+            .animation(.linear)
+            .transition(.opacity)
             .padding(.leading, 20)
         }
+        .onAppear {
+            updater.name = selectedAbility ?? ""
+        }
+        .onChange(of: selectedAbility, perform: { selectedAbility in
+            if let selectedAbility = selectedAbility,
+               selectedAbility != updater.name {
+                updater.name = selectedAbility
+            }
+        })
         .background(Color.white)
+        .padding()
         .overlay(
             RoundedRectangle(cornerRadius: 25)
-                .stroke(Color.black, lineWidth: 5)
+                .stroke(pokemon.mainType.color.background.opacity(0.5),
+                        lineWidth: 5)
         )
         .cornerRadius(25)
-        .frame(height: height, alignment: .center)
         .frame(minWidth: 0, maxWidth: .infinity)
-    }
-}
-
-struct AboutView_Previews: PreviewProvider {
-    static var previews: some View {
-        AbilityDetailView()
     }
 }
