@@ -33,7 +33,7 @@ struct PokemonCellModel: Identifiable, Equatable {
 
 class Updater: ObservableObject {
     @Published private var pokemons: [NamedAPIResource] = []
-    @Published var pokemonsCells: [PokemonCellModel] = [PokemonCellModel()]
+    @Published var pokemonsCells: [PokemonCellModel] = []
 
     
     private var canLoadMore = true

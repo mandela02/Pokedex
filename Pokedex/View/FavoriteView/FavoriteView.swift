@@ -8,10 +8,6 @@
 import SwiftUI
 
 struct FavoriteView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    @State var showDetail: Bool = false
-    @State var pokemonUrl: String = ""
-    @State var isViewDisplayed = false
     @Binding var show: Bool
     
     var body: some View {
@@ -33,12 +29,6 @@ struct FavoriteView: View {
                 //                    .offset(x: -(size.width * 1/4 + 25), y: size.height * 3/5)
                 
                 FavoriteListView(show: $show)
-                    .environmentObject(environment)
-                PushOnSigalView(show: $showDetail, destination: {
-                    PokemonInformationView(pokemonUrl: pokemonUrl,
-                                           isShowing: $showDetail)
-                        .environmentObject(environment)
-                })
                 VStack {
                     VStack {
                         HStack(alignment: .center) {
@@ -57,18 +47,6 @@ struct FavoriteView: View {
                     Spacer()
                 }
             }
-            .onReceive(environment.$selectedPokemon) { url in
-                if !url.isEmpty && isViewDisplayed {
-                    pokemonUrl = url
-                    showDetail = true
-                }
-            }
-            .onAppear {
-                isViewDisplayed = true
-            }
-            .onDisappear {
-                isViewDisplayed = false
-            }
             .navigationTitle("")
             .navigationBarHidden(true)
             .ignoresSafeArea()
@@ -77,7 +55,6 @@ struct FavoriteView: View {
 }
 
 struct FavoriteListView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
     @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
     @Binding var show: Bool
         
@@ -92,7 +69,6 @@ struct FavoriteListView: View {
                         paddingHeader: 80,
                         paddingFooter: 50,
                         cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
-                .environmentObject(environment)
                 .onReceive(didChange) { _ in
                     favoriteUpdater.fetchEntries()
                 }

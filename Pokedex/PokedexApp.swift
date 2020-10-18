@@ -38,7 +38,6 @@ struct HomeView: View {
                     .frame(width: size.width, height: size.height, alignment: .center)
                     .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
                 NavigationPokedexView()
-                    .environmentObject(EnvironmentUpdater())
             }
         }
     }

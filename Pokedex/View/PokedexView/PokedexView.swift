@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 struct NavigationPokedexView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
     @State var showDetail: Bool = false
     @State var showTypeList: Bool = false
     @State var pokemonUrl: String = ""
@@ -21,26 +20,6 @@ struct NavigationPokedexView: View {
             PokedexView()
                 .ignoresSafeArea()
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                .environmentObject(environment)
-                .background(PushOnSigalView(show: $showDetail, destination: {
-                                                PokemonInformationView(pokemonUrl: pokemonUrl,
-                                                                       isShowing: $showDetail)}))
-                .background(PushOnSigalView(show: $showTypeList, destination: {
-                                                PokemonsOfTypeList(show: $showTypeList,
-                                                                   type: pokemonType)
-                                                    .environmentObject(environment)}))
-        }
-        .onReceive(environment.$selectedPokemon) { url in
-            if !url.isEmpty && isViewDisplayed {
-                pokemonUrl = url
-                showDetail = true
-            }
-        }
-        .onReceive(environment.$selectedType) { type in
-            if type != .non {
-                showTypeList = true
-                pokemonType = type
-            }
         }
         .onAppear {
             isViewDisplayed = true
@@ -52,8 +31,6 @@ struct NavigationPokedexView: View {
 }
 
 struct PokedexView: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
-    
     @State private var selectedMenu = -1
     @State private var showSubView: Bool = false
     @State private var subViewOffset: CGSize = CGSize.zero
@@ -74,7 +51,6 @@ struct PokedexView: View {
                 AllPokemonList()
                     .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
                     .blur(radius: showSubView ? 3 : 0)
-                    .environmentObject(environment)
                 VStack {
                     Spacer()
                     HStack {
@@ -90,7 +66,6 @@ struct PokedexView: View {
                         TypeSubView(isShowing: $showSubView,
                                     offset: $subViewOffset,
                                     kind: SubViewKind.getKind(from: selectedMenu))
-                            .environmentObject(environment)
                             .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
                             .padding(.bottom, self.keyboardHeight)
@@ -105,7 +80,6 @@ struct PokedexView: View {
                 PushOnSigalView(show: $showFavorite,
                                 destination:  {
                                     FavoriteView(show: $showFavorite)
-                                        .environmentObject(environment)
                                 })
             }
             .onChange(of: selectedMenu, perform: { active in

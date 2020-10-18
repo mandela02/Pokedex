@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PokemonsOfTypeList: View {
-    @EnvironmentObject var environment: EnvironmentUpdater
     @State var selectedPokemonUrl: String = ""
     @State var isViewDisplayed = false
     @State var showDetail: Bool = false
@@ -32,7 +31,7 @@ struct PokemonsOfTypeList: View {
                             paddingHeader: 110,
                             paddingFooter: 50,
                             cellSize: CGSize(width: geometry.size.width, height: height)) { cell in
-                }.environmentObject(environment)
+                }
                 
                 PushOnSigalView(show: $showDetail, destination: {
                     PokemonInformationView(pokemonUrl: selectedPokemonUrl,
@@ -59,12 +58,6 @@ struct PokemonsOfTypeList: View {
                 }
                 isFirstTimeLoading = false
             })
-            .onReceive(environment.$selectedPokemon) { url in
-                if !url.isEmpty && isViewDisplayed {
-                    selectedPokemonUrl = url
-                    showDetail = true
-                }
-            }
             .onDisappear {
                 isViewDisplayed = false
             }
