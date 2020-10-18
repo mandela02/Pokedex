@@ -276,19 +276,22 @@ struct AbilityDetailView: View {
     var pokemon: Pokemon
     @Binding var selectedAbility: String?
     @StateObject var updater = AbilityUpdater(name: "")
-        
+    @State var isLoadingData = false
     var body: some View {
         ZStack {
-            HStack {
+            VStack {
+                HStack {
+                    Spacer()
+                    Image("ic_pokeball")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
+                        .scaleEffect(1.1)
+                        .frame(width: 120, height: 120, alignment: .trailing)
+                        .offset(x: 30, y: -20)
+                }
                 Spacer()
-                Image("ic_pokeball")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
-                    .scaleEffect(1.1)
-                    .frame(width: 120, height: 120, alignment: .trailing)
-                    .offset(x: 60)
             }
             
             VStack(spacing: 5) {
@@ -312,15 +315,30 @@ struct AbilityDetailView: View {
             .animation(.linear)
             .transition(.opacity)
             .padding(.leading, 20)
+            
+            if isLoadingData {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: pokemon.mainType.color.background))
+                        .scaleEffect(1.2)
+                    Spacer()
+                }
+            }
         }
         .onAppear {
             updater.name = selectedAbility ?? ""
+            isLoadingData = true
         }
         .onChange(of: selectedAbility, perform: { selectedAbility in
             if let selectedAbility = selectedAbility,
                selectedAbility != updater.name {
                 updater.name = selectedAbility
+                isLoadingData = true
             }
+        })
+        .onReceive(updater.$description, perform: { _ in
+            isLoadingData = false
         })
         .background(Color.white)
         .padding()
