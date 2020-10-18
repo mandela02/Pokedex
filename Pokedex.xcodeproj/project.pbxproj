@@ -45,6 +45,8 @@
 		846F3BD1253BE459003A30C6 /* FavoriteUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3BD0253BE459003A30C6 /* FavoriteUpdater.swift */; };
 		846F3BD6253C00B6003A30C6 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3BD5253C00B6003A30C6 /* LazyView.swift */; };
 		846F3C08253C8DBE003A30C6 /* DotDotDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3C07253C8DBE003A30C6 /* DotDotDot.swift */; };
+		846F3C32253CA5F1003A30C6 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3C31253CA5F1003A30C6 /* UIImage+Extension.swift */; };
+		846F3C37253CA649003A30C6 /* GIFPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3C36253CA649003A30C6 /* GIFPlayerView.swift */; };
 		84707A982530CB0400DEA772 /* Evolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84707A972530CB0400DEA772 /* Evolution.swift */; };
 		847A12312531584F00146D24 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12302531584F00146D24 /* Move.swift */; };
 		847A12362531586D00146D24 /* Ability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A12352531586D00146D24 /* Ability.swift */; };
@@ -166,6 +168,8 @@
 		846F3BD0253BE459003A30C6 /* FavoriteUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteUpdater.swift; sourceTree = "<group>"; };
 		846F3BD5253C00B6003A30C6 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		846F3C07253C8DBE003A30C6 /* DotDotDot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotDotDot.swift; sourceTree = "<group>"; };
+		846F3C31253CA5F1003A30C6 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
+		846F3C36253CA649003A30C6 /* GIFPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFPlayerView.swift; sourceTree = "<group>"; };
 		84707A972530CB0400DEA772 /* Evolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evolution.swift; sourceTree = "<group>"; };
 		847A12302531584F00146D24 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
 		847A12352531586D00146D24 /* Ability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ability.swift; sourceTree = "<group>"; };
@@ -387,6 +391,7 @@
 				90AD3BDC252BFD0E009EECEE /* String+Extension.swift */,
 				90DF66DE252EFF42000284A6 /* Devide+Extension.swift */,
 				8483127C2538B005006FBCD6 /* Publishers+Extension.swift */,
+				846F3C31253CA5F1003A30C6 /* UIImage+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -597,6 +602,7 @@
 			children = (
 				90F942CD2536DC5D003C23FF /* NavigationConfigurator.swift */,
 				90F942D52536DC79003C23FF /* WillDisappearHandler.swift */,
+				846F3C36253CA649003A30C6 /* GIFPlayerView.swift */,
 			);
 			path = UIViewConfigurator;
 			sourceTree = "<group>";
@@ -756,6 +762,7 @@
 				90F942FF2536FAD5003C23FF /* LoadingHorizontalView.swift in Sources */,
 				8422CFD1252E0F00006F4535 /* AbilitiesResult.swift in Sources */,
 				84D9AFEA252B774800E4C9D5 /* Session.swift in Sources */,
+				846F3C37253CA649003A30C6 /* GIFPlayerView.swift in Sources */,
 				847A124F25315C0600146D24 /* EvolutionUpdater.swift in Sources */,
 				847A126B2533249000146D24 /* AnimatedLikeButton.swift in Sources */,
 				847A124A253158FA00146D24 /* Item.swift in Sources */,
@@ -795,6 +802,7 @@
 				846F3BD1253BE459003A30C6 /* FavoriteUpdater.swift in Sources */,
 				9086782A2538239F0064B02C /* MovesView.swift in Sources */,
 				84382D76253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift in Sources */,
+				846F3C32253CA5F1003A30C6 /* UIImage+Extension.swift in Sources */,
 				908678332538439A0064B02C /* MovesUpdater.swift in Sources */,
 				84D9AFEF252B776800E4C9D5 /* Constant.swift in Sources */,
 				84D9B002252B895500E4C9D5 /* PokemonUpdater.swift in Sources */,
