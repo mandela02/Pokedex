@@ -23,16 +23,18 @@ struct PokemonPairCell: View {
             HStack(alignment: .center, spacing: 10, content: {
                 TappablePokemonCell(updater: PokemonUpdater(url: firstPokemon?.url ?? ""),
                                     show: $showFirst,
-                                    size: CGSize(width: width, height: height))
+                                    size: CGSize(width: width - 10, height: height))
                     .environmentObject(environment)
                     .isHidden(firstPokemon == nil)
                 TappablePokemonCell(updater: PokemonUpdater(url: secondPokemon?.url ?? ""),
                                     show: $showSecond,
-                                    size: CGSize(width: width, height: height))
+                                    size: CGSize(width: width - 10, height: height))
                     .environmentObject(environment)
                     .isHidden(secondPokemon == nil)
             })
             .buttonStyle(PlainButtonStyle())
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
         })
     }
 }

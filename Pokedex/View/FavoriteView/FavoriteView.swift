@@ -16,6 +16,11 @@ struct FavoriteView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                BackButtonView(isShowing: $show)
+                Spacer()
+            }
+
             FavoriteListView(show: $show)
                 .environmentObject(environment)
             PushOnSigalView(show: $showDetail, destination: {
@@ -41,7 +46,7 @@ struct FavoriteView: View {
 
 struct FavoriteListView: View {
     @EnvironmentObject var environment: EnvironmentUpdater
-
+    
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
     @Binding var show: Bool
@@ -49,17 +54,11 @@ struct FavoriteListView: View {
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
-            VStack {
-                HStack {
-                    BackButtonView(isShowing: $show)
-                    Spacer()
-                }
-                PokemonList(cells: .constant(prepare()),
-                            isLoading: .constant(false),
-                            isFinal: .constant(false),
-                            cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
-                    .environmentObject(environment)
-            }
+            PokemonList(cells: .constant(prepare()),
+                        isLoading: .constant(false),
+                        isFinal: .constant(false),
+                        cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
+                .environmentObject(environment)
         })
     }
     

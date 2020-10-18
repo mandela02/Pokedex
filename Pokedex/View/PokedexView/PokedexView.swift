@@ -56,7 +56,7 @@ struct NavigationPokedexView: View {
 struct PokedexView: View {
     @EnvironmentObject var environment: EnvironmentUpdater
     
-    @State private var active = -1
+    @State private var selectedMenu = -1
     @State private var showSubView: Bool = false
     @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
@@ -81,7 +81,7 @@ struct PokedexView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        FloatingMenu(active: $active)
+                        FloatingMenu(selectedMenu: $selectedMenu)
                     }
                 }
                 
@@ -91,7 +91,7 @@ struct PokedexView: View {
                         Spacer()
                         TypeSubView(isShowing: $showSubView,
                                     offset: $subViewOffset,
-                                    kind: SubViewKind.getKind(from: active))
+                                    kind: SubViewKind.getKind(from: selectedMenu))
                             .environmentObject(environment)
                             .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
@@ -112,11 +112,11 @@ struct PokedexView: View {
                                         .navigationBarHidden(true)
                                 })
             }
-            .onChange(of: active, perform: { active in
+            .onChange(of: selectedMenu, perform: { active in
                 withAnimation(.default) {
                     if active == 3 {
                         showFavorite = true
-                        self.active = -1
+                        self.selectedMenu = -1
                         showSubView = false
                     } else if active >= 0 {
                         showSubView = true
@@ -125,7 +125,7 @@ struct PokedexView: View {
             })
             .onChange(of: showSubView, perform: { showTypeView in
                 if showTypeView == false {
-                    active = -1
+                    selectedMenu = -1
                     subViewOffset = CGSize.zero
                 }
             })
