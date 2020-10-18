@@ -14,17 +14,18 @@ class FavoriteUpdater: ObservableObject {
     @State private var refreshing = false
     @Published var favorites: [Favorite] = []
     @Published var cells: [PokemonCellModel] = []
-        
+    var didChange =  NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange)
+
     init() {
         fetchEntries()
     }
     
-    func prepare(from favorites: [Favorite]) {
+    private func prepare(from favorites: [Favorite]) {
         let resource = favorites.map({NamedAPIResource(name: "", url: $0.url ?? "")})
         cells = PokemonCellModel.getCells(from: resource)
     }
     
-    func fetchEntries() {
+    private func fetchEntries() {
         let context = PersistenceManager.shared.persistentContainer.viewContext
         let request : NSFetchRequest<Favorite> = Favorite.fetchRequest()
         do {
@@ -34,5 +35,9 @@ class FavoriteUpdater: ObservableObject {
             print("Fetch failed: Error \(error.localizedDescription)")
             cells = []
         }
+    }
+    
+    func update() {
+        fetchEntries()
     }
 }

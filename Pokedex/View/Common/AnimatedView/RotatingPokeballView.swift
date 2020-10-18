@@ -38,7 +38,7 @@ struct RotatingPokeballView: View {
                             }
                          }
                         .onDisappear {
-                            withAnimation(.default) {
+                            withAnimation(nil) {
                                 self.isAnimating = false
                             }
                         }

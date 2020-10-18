@@ -30,7 +30,9 @@ struct PokemonInformationView: View {
         if let updater = updater {
             self.updater = updater
         } else {
-            self.updater = PokemonUpdater(url: pokemonUrl ?? "")
+            let newUpdater = PokemonUpdater(url: pokemonUrl ?? "")
+            newUpdater.isSelected = true
+            self.updater = newUpdater
         }
         self._isShowing = isShowing
     }
@@ -210,14 +212,12 @@ struct PokemonInformationView: View {
                 }
                 hideImage(in: size)
                 if isFirstTimeLoadView {
-                    updater.isSelected = true
                     isFirstTimeLoadView = false
                 }
             }
             .onWillDisappear {
                 isShowingImage = false
                 voiceUpdater.refresh()
-                updater.isSelected = false
             }
             .navigationBarTitle("")
             .navigationBarHidden(true)

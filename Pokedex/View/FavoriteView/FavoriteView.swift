@@ -9,13 +9,17 @@ import SwiftUI
 
 struct FavoriteView: View {
     @Binding var show: Bool
+    @State var showBall: Bool = true
     
     var body: some View {
         ZStack {
-            RotatingPokeballView(color: Color(.systemGray4))
-                .scaleEffect(1.2)
+            if showBall {
+                RotatingPokeballView(color: Color(.systemGray4))
+                    .scaleEffect(1.2)
+            }
             
-            FavoriteListView(show: $show)
+            FavoriteListView()
+            
             VStack {
                 VStack {
                     HStack(alignment: .center) {
@@ -34,6 +38,12 @@ struct FavoriteView: View {
                 Spacer()
             }
         }
+        .onAppear {
+            showBall = true
+        }
+        .onWillDisappear {
+            showBall = false
+        }
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
@@ -42,22 +52,53 @@ struct FavoriteView: View {
 
 struct FavoriteListView: View {
     @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
-    @Binding var show: Bool
-    
-    var didChange =  NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange)
+    @State var isEmpty: Bool = false
     
     var body: some View {
         GeometryReader(content: { geometry in
             let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
-            PokemonList(cells: $favoriteUpdater.cells,
-                        isLoading: .constant(false),
-                        isFinal: .constant(false),
-                        paddingHeader: 80,
-                        paddingFooter: 50,
-                        cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
-                .onReceive(didChange) { _ in
-                    favoriteUpdater.fetchEntries()
+            ZStack {
+                if isEmpty {
+                    EmptyFavoriteView()
+                        .padding(.top, 100)
+                } else {
+                    PokemonList(cells: $favoriteUpdater.cells,
+                                isLoading: .constant(false),
+                                isFinal: .constant(false),
+                                paddingHeader: 80,
+                                paddingFooter: 50,
+                                cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
                 }
+            }
+            .onReceive(favoriteUpdater.didChange) { _ in
+                favoriteUpdater.update()
+            }
+            .onReceive(favoriteUpdater.$cells, perform: { cells in
+                isEmpty = cells.isEmpty
+            })
         })
+    }
+}
+
+struct EmptyFavoriteView: View {
+    var isShow: Bool = true
+    
+    var body: some View {
+        VStack(alignment: .center) {
+            Image("sad")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .scaleEffect(0.8)
+            Text("NOTHING can please you!\nGo send some love to your pokemons!")
+                .font(Biotif.bold(size: 25).font)
+                .foregroundColor(.red)
+                .multilineTextAlignment(.center)
+        }
+    }
+}
+
+struct FavoriteView_Previews: PreviewProvider {
+    static var previews: some View {
+        EmptyFavoriteView()
     }
 }

@@ -28,18 +28,28 @@ struct PokedexApp: App {
 }
 
 struct HomeView: View {
+    @State var showBall: Bool = true
+
     var body: some View {
         ZStack {
             GeometryReader { geometry  in
                 let size = geometry.size
-                
-                RotatingPokeballView(color: .red)
-                    .ignoresSafeArea()
-                    .frame(width: size.width, height: size.height, alignment: .center)
-                    .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
+                if showBall {
+                    RotatingPokeballView(color: .red)
+                        .ignoresSafeArea()
+                        .frame(width: size.width, height: size.height, alignment: .center)
+                        .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
+                }
                 NavigationPokedexView()
             }
         }
+        .onAppear {
+            showBall = true
+        }
+        .onWillDisappear {
+            showBall = false
+        }
+
     }
 }
 

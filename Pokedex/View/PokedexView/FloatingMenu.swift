@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FloatingMenu: View {
     @State var showSubButton = false
-
+    
     @State var pressed = false
     @Binding var selectedMenu: Int
     
@@ -19,7 +19,7 @@ struct FloatingMenu: View {
                 Spacer()
                 if showSubButton {
                     ForEach(SubViewKind.allCases.reversed(), id: \.self) { kind in
-                        MenuItem(icon: "car", text: kind.name, tag: kind.rawValue, selected: $selectedMenu)
+                        MenuItem(icon: kind.image, text: kind.name, tag: kind.rawValue, selected: $selectedMenu)
                             .animation(Animation.default.delay(Double(kind.rawValue)/10))
                             .onTapGesture {
                                 withAnimation(Animation.spring().delay(0.4)) {
@@ -68,6 +68,11 @@ struct MenuItem: View {
         .background(Capsule(style: .circular)
                         .fill(selected == tag ? Color.red : Color.white)
                         .padding(EdgeInsets(top: -10, leading: -20, bottom: -10, trailing: -20)))
+        .overlay(
+            Capsule(style: .circular)
+                .stroke(Color.red, lineWidth: 3)
+                .padding(EdgeInsets(top: -10, leading: -20, bottom: -10, trailing: -20))
+        )
         .padding(.trailing, 30)
     }
 }

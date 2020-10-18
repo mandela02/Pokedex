@@ -43,7 +43,7 @@ struct TappablePokemonCell: View {
         TapToPushView(show: $show) {
             PokedexCardView(updater: updater, size: (size.width, size.height))
         } destination: {
-            PokemonInformationView(updater: updater, isShowing: $show)
+            PokemonInformationView(pokemonUrl: updater.pokemonUrl, isShowing: $show)
         }
     }
 }
