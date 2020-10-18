@@ -85,13 +85,16 @@ struct EmptyFavoriteView: View {
     
     var body: some View {
         VStack(alignment: .center) {
-            Image("sad")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .scaleEffect(0.8)
+            ZStack {
+                DotDotDot()
+                Image("sad")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .scaleEffect(0.8)
+            }
             Text("NOTHING can please you!\nGo send some love to your pokemons!")
                 .font(Biotif.bold(size: 25).font)
-                .foregroundColor(.red)
+                .foregroundColor(.black)
                 .multilineTextAlignment(.center)
         }
     }
