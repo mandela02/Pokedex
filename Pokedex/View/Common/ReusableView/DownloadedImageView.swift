@@ -44,12 +44,18 @@ struct SilhoutteImageView: View {
     @State private var image: UIImage?
     
     var body: some View {
-        Image(uiImage: imageLoader.displayImage ?? UIImage())
-            .renderingMode(.template)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundColor(.black)
-        
+        if let image = imageLoader.displayImage {
+            Image(uiImage: image)
+                .renderingMode(.template)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.black)
+        } else {
+            Image("pokeball")
+                .resizable()
+                .scaleEffect(0.8)
+                .aspectRatio(contentMode: .fit)
+        }
     }
 }
 
@@ -65,6 +71,7 @@ struct NormalImageView: View {
         } else {
             Image("pokeball")
                 .resizable()
+                .scaleEffect(0.8)
                 .aspectRatio(contentMode: .fit)
                 .onReceive(imageLoader.$displayImage, perform: { displayImage in
                     self.image = displayImage
@@ -82,28 +89,28 @@ struct AnimatedImageView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-            if let image = image {
-                ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                            needHidden = true
-                        })
-                    }
-            } else {
-                WigglePokeBallView(image: $image, imageLoader: imageLoader)
-                    .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                        print(imageLoader.url)
-                        if displayImage != nil {
-                            self.image = displayImage
-                            self.trigger = true
+                if let image = image {
+                    ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                needHidden = true
+                            })
                         }
-                    })
-                
+                } else {
+                    WigglePokeBallView(image: $image, imageLoader: imageLoader)
+                        .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                            print(imageLoader.url)
+                            if displayImage != nil {
+                                self.image = displayImage
+                                self.trigger = true
+                            }
+                        })
+                    
+                }
+                ExposionView(trigger: $trigger, needHidden: $needHidden)
             }
-            ExposionView(trigger: $trigger, needHidden: $needHidden)
         }
     }
-}
 }
 
 struct ExposionView: View {
@@ -156,6 +163,7 @@ struct WigglePokeBallView: View {
     var body: some View {
         Image("pokeball")
             .resizable()
+            .scaleEffect(0.8)
             .aspectRatio(contentMode: .fit)
             .rotationEffect(.degrees(isStartWigle ? 0 : 2.5), anchor: .bottom)
             .onAppear() {
@@ -177,6 +185,7 @@ struct ZoomOutImageView: View {
         if let image = image {
             Image(uiImage: image)
                 .resizable()
+                .scaleEffect(0.8)
                 .aspectRatio(contentMode: .fit)
                 .offset(x: isComplete ? 0 : -150)
                 .scaleEffect(isComplete ? 1 : 0)

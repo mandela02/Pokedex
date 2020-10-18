@@ -13,8 +13,8 @@ struct LoadingView: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.5)
-            Text("Loading")
-                .font(Biotif.regular(size: 12).font)
+            Text("Loading...")
+                .font(Biotif.bold(size: 20).font)
                 .foregroundColor(.red)
                 .shadow(color: .red, radius: 5, x: 1, y: 1)
             
