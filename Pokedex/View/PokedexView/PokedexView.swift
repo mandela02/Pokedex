@@ -74,7 +74,6 @@ struct PokedexView: View {
                             }
                     }
                     .transition(.move(edge: .bottom))
-                    .animation(Animation.default.delay(0.1))
                     .offset(y: subViewOffset.height)
                 }
                 PushOnSigalView(show: $showFavorite,

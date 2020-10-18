@@ -28,7 +28,9 @@ class PokemonUpdater: ObservableObject {
     
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
-            updateCurrentId(of: pokemon)
+            if isSelected {
+                updateCurrentId(of: pokemon)
+            }
         }
     }
     
@@ -40,7 +42,9 @@ class PokemonUpdater: ObservableObject {
     @Published var ids: [Int] = [] {
         didSet {
             //loadAlotOfImage()
-            images = ids.map({UrlType.getImageUrlString(of: $0)})
+            if isSelected {
+                images = ids.map({UrlType.getImageUrlString(of: $0)})
+            }
         }
     }
     

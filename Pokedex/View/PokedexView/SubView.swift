@@ -26,6 +26,19 @@ enum SubViewKind: Int, CaseIterable {
         }
     }
     
+    var image: String {
+        switch self {
+        case .search:
+            return "magnifyingglass"
+        case .type:
+            return "person.3"
+        case .region:
+            return "mappin.and.ellipse"
+        case .favorite:
+            return "heart.circle"
+        }
+    }
+
     static func getKind(from index: Int) -> SubViewKind {
         return allCases[safe: index] ?? favorite
     }
