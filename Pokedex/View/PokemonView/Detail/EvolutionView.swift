@@ -131,9 +131,7 @@ struct PokemonCellView: View {
             }
             .background(NavigationLink(destination: PokemonInformationView(pokemonUrl: pokemonUrl,
                                                                            isShowing: $show),
-                                       isActive: $show) {
-                EmptyView()
-            })
+                                       isActive: $show) { EmptyView() })
         }
     }
 }

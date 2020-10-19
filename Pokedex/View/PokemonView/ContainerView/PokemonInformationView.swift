@@ -25,6 +25,7 @@ struct PokemonInformationView: View {
 
     @State var index: Int = 1
     @State var isScrollable: Bool = false
+    
     @Namespace private var namespace
     
     init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
@@ -208,13 +209,15 @@ struct PokemonInformationView: View {
             .onAppear {
                 if isFirstTimeLoadView {
                     isLoadingData = true
-                    if let pokemon = pokemon, pokemon.pokeId != 0 {
-                        updater.pokemon = pokemon
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if let pokemon = pokemon, pokemon.pokeId != 0 {
+                            updater.pokemon = pokemon
+                        }
+                        if let url = url, url != "" {
+                            updater.pokemonUrl = url
+                        }
+                        updater.isSelected = true
                     }
-                    if let url = url, url != "" {
-                        updater.pokemonUrl = url
-                    }
-                    updater.isSelected = true
                 }
                 hideImage(in: size)
                 if isFirstTimeLoadView {
