@@ -17,26 +17,17 @@ struct PokemonsOfTypeList: View {
     
     @Binding var show: Bool
     var type : PokemonType
-    @State var isFinal: Bool = false
     
     @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
     var body: some View {
         GeometryReader(content: { geometry in
-            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
             ZStack {
-                PokemonList(cells: $updater.pokemons,
+                PokemonList(cells: $updater.allPokemons,
                             isLoading: $isLoading,
-                            isFinal: $isFinal,
-                            paddingHeader: 110,
-                            paddingFooter: 50,
-                            cellSize: CGSize(width: geometry.size.width, height: height)) { cell in
-                }
-                
-                PushOnSigalView(show: $showDetail, destination: {
-                    PokemonInformationView(pokemonUrl: selectedPokemonUrl,
-                                           isShowing: $showDetail)
-                })
+                            isFinal: .constant(false),
+                            paddingHeader: 200,
+                            paddingFooter: 50, onCellAppear: { cell in})
                 VStack {
                     PokemonOfTypeHeaderView(isLoading: $isLoading,
                                             show: $show,

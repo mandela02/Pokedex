@@ -20,6 +20,8 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
 
+    @Published var allPokemons: [Pokemon] = []
+    
     @Published var name: String = ""
 
     @Published var url: String = "" {
@@ -30,14 +32,12 @@ class TypeDetailUpdater: ObservableObject {
     
     @Published var type: PokeType = PokeType() {
         didSet {
-            pokemons = getCells(from: type.pokemon.map({$0.pokemon}))
             getDamageDetail(from: type.moveDamageClass.url)
+            loadPokemonDetailData()
         }
     }
 
     @Published var damage: MoveDamageClass = MoveDamageClass()
-    @Published var pokemons: [PokemonCellModel] = []
-
 
     private var cancellables = Set<AnyCancellable>()
     
@@ -58,17 +58,14 @@ class TypeDetailUpdater: ObservableObject {
         .assign(to: \.damage, on: self)
         .store(in: &cancellables)
     }
-    
-    private func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
-        var cells: [PokemonCellModel] = []
         
-        result.enumerated().forEach { item in
-            if item.offset % 2 == 0 {
-                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
-                cells.append(newPokemons)
-            }
-        }
-        
-        return cells
+    private func loadPokemonDetailData() {
+        Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
+            .collect()
+            .replaceError(with: [])
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.allPokemons, on: self)
+            .store(in: &cancellables)
     }
 }

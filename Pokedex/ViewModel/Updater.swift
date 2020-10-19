@@ -32,22 +32,19 @@ struct PokemonCellModel: Identifiable, Equatable {
 }
 
 class Updater: ObservableObject {
-    @Published private var pokemons: [NamedAPIResource] = []
-    @Published var pokemonsCells: [PokemonCellModel] = []
+    @Published var allPokemons: [Pokemon] = []
 
-    
     private var canLoadMore = true
     @Published var isLoadingPage = false
     @Published var isFinal = false
+    private var cancellables = Set<AnyCancellable>()
 
     var url: String = "" {
         didSet {
             loadPokemonData()
         }
     }
-    
-    private var cancellable: AnyCancellable?
-    
+
     @Published var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
             guard let nextURL = pokemonResult.next else {
@@ -56,26 +53,15 @@ class Updater: ObservableObject {
                 isFinal = true
                 return
             }
-            let result = pokemonResult.results.map({NamedAPIResource(name: $0.name, url: $0.url)})
-            pokemons = pokemons + result
             url = nextURL
-            result.enumerated().forEach { item in
-                if item.offset % 2 == 0 {
-                    let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
-                    pokemonsCells.append(newPokemons)
-                }
-            }
+            loadPokemonDetailData()
             self.isLoadingPage = false
         }
     }
-    
-    deinit {
-        cancellable?.cancel()
-    }
-        
-    func loadMorePokemonIfNeeded(current pokemonCell: PokemonCellModel) {
-        let thresholdIndex = pokemonsCells.index(pokemonsCells.endIndex, offsetBy: -5)
-        if pokemonsCells.firstIndex(where: { $0 == pokemonCell }) == thresholdIndex {
+            
+    func loadMorePokemonIfNeeded(current pokemon: Pokemon) {
+        let thresholdIndex = allPokemons.index(allPokemons.endIndex, offsetBy: -5)
+        if allPokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
             loadPokemonData()
         }
     }
@@ -87,12 +73,26 @@ class Updater: ObservableObject {
         
         isLoadingPage = true
         
-        self.cancellable = Session
+        Session
             .share
             .pokemons(from: url)
             .replaceError(with: PokemonResult())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemonResult, on: self)
+            .store(in: &cancellables)
+    }
+    
+    private func loadPokemonDetailData() {
+        Publishers.MergeMany(pokemonResult.results.map({Session.share.pokemon(from: $0.url)}))
+            .collect()
+            .replaceError(with: [])
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            .sink { [weak self] pokemons in
+                guard let self = self else { return }
+                self.allPokemons = self.allPokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})
+            }
+            .store(in: &cancellables)
     }
 }
