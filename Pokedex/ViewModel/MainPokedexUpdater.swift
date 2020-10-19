@@ -8,31 +8,7 @@
 import Foundation
 import Combine
 
-struct PokemonCellModel: Identifiable, Equatable {
-    static func == (lhs: PokemonCellModel, rhs: PokemonCellModel) -> Bool {
-        lhs.firstPokemon?.url == rhs.firstPokemon?.url
-    }
-    
-    var id = UUID().uuidString
-    var firstPokemon: NamedAPIResource?
-    var secondPokemon: NamedAPIResource?
-    
-    static func getCells(from result: [NamedAPIResource]) -> [PokemonCellModel] {
-        var cells: [PokemonCellModel] = []
-        
-        result.enumerated().forEach { item in
-            if item.offset % 2 == 0 {
-                let newPokemons = PokemonCellModel(firstPokemon: item.element, secondPokemon: result[safe: item.offset + 1])
-                cells.append(newPokemons)
-            }
-        }
-        
-        return cells
-    }
-}
-
-class Updater: ObservableObject {
-    @Published var allPokemons: [Pokemon] = []
+class MainPokedexUpdater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
     
@@ -41,7 +17,7 @@ class Updater: ObservableObject {
 
     var url: String = "" {
         didSet {
-            loadPokemonData()
+            loadPokemonResource()
         }
     }
 
@@ -54,19 +30,24 @@ class Updater: ObservableObject {
                 return
             }
             url = nextURL
-            loadPokemonDetailData()
+            loadPokemonsData()
+        }
+    }
+    
+    @Published var pokemons: [Pokemon] = [] {
+        didSet {
             self.isLoadingPage = false
         }
     }
             
     func loadMorePokemonIfNeeded(current pokemon: Pokemon) {
-        let thresholdIndex = allPokemons.index(allPokemons.endIndex, offsetBy: -5)
-        if allPokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
-            loadPokemonData()
+        let thresholdIndex = pokemons.index(pokemons.endIndex, offsetBy: -5)
+        if pokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
+            loadPokemonResource()
         }
     }
     
-    private func loadPokemonData() {
+    private func loadPokemonResource() {
         guard !isLoadingPage && canLoadMore else {
             return
         }
@@ -83,7 +64,7 @@ class Updater: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func loadPokemonDetailData() {
+    private func loadPokemonsData() {
         Publishers.MergeMany(pokemonResult.results.map({Session.share.pokemon(from: $0.url)}))
             .collect()
             .replaceError(with: [])
@@ -91,7 +72,7 @@ class Updater: ObservableObject {
             .eraseToAnyPublisher()
             .sink { [weak self] pokemons in
                 guard let self = self else { return }
-                self.allPokemons = self.allPokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})
+                self.pokemons = self.pokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})
             }
             .store(in: &cancellables)
     }

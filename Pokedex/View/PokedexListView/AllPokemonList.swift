@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct AllPokemonList: View {    
-    @StateObject var updater: Updater = Updater()
+    @StateObject var updater: MainPokedexUpdater = MainPokedexUpdater()
     @State var isLoading = false
     @State var isFinal = false
     @State var isFirstTimeLoadView = true
     
     var body: some View {
-        PokemonList(cells: $updater.allPokemons,
+        PokemonList(cells: $updater.pokemons,
                     isLoading: $isLoading,
                     isFinal: $isFinal,
                     paddingHeader: 50,
