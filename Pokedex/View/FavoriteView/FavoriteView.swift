@@ -56,26 +56,30 @@ struct FavoriteListView: View {
     
     var body: some View {
         GeometryReader(content: { geometry in
-            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
             ZStack {
                 if isEmpty {
                     EmptyFavoriteView()
                         .padding(.top, 100)
                 } else {
-                    PokemonList(cells: $favoriteUpdater.cells,
+                    PokemonList(cells: $favoriteUpdater.pokemons,
                                 isLoading: .constant(false),
                                 isFinal: .constant(false),
-                                paddingHeader: 80,
-                                paddingFooter: 50,
-                                cellSize: CGSize(width: geometry.size.width - 10, height: height)) { _ in }
+                                paddingHeader: 150,
+                                paddingFooter: 50, onCellAppear: { pokemon in })
                 }
             }
             .onReceive(favoriteUpdater.didChange) { _ in
-                favoriteUpdater.update()
+                favoriteUpdater.refreshing = true
             }
-            .onReceive(favoriteUpdater.$cells, perform: { cells in
+            .onReceive(favoriteUpdater.$pokemons, perform: { cells in
                 isEmpty = cells.isEmpty
             })
+            .onAppear {
+                if favoriteUpdater.refreshing {
+                    favoriteUpdater.update()
+                    favoriteUpdater.refreshing = false
+                }
+            }
         })
     }
 }

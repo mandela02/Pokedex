@@ -8,22 +8,20 @@
 import SwiftUI
 
 struct AllPokemonList: View {    
-    @StateObject var updater: Updater = Updater()
+    @StateObject var updater: MainPokedexUpdater = MainPokedexUpdater()
     @State var isLoading = false
     @State var isFinal = false
     @State var isFirstTimeLoadView = true
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            let height: CGFloat = (geometry.size.width - 20) / 2 * 0.7
-            PokemonList(cells: $updater.pokemonsCells,
-                        isLoading: $isLoading,
-                        isFinal: $updater.isFinal,
-                        paddingHeader: 50,
-                        paddingFooter: 50,
-                        cellSize: CGSize(width: geometry.size.width, height: height)) { item in
-                updater.loadMorePokemonIfNeeded(current: item)
-            }
+        PokemonList(cells: $updater.pokemons,
+                    isLoading: $isLoading,
+                    isFinal: $isFinal,
+                    paddingHeader: 50,
+                    paddingFooter: 50,
+                    onCellAppear: { pokemon in
+                        updater.loadMorePokemonIfNeeded(current: pokemon)
+                    })
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
                 withAnimation(Animation.spring()) {
                     if isLoading {
@@ -53,6 +51,5 @@ struct AllPokemonList: View {
                 }
                 isFirstTimeLoadView = false
             }
-        })
     }
 }

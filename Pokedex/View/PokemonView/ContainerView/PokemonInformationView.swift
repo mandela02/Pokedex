@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct PokemonInformationView: View {
-    @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
-    
-    @ObservedObject var updater: PokemonUpdater
-    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
-    
     @Binding var isShowing: Bool
+    var pokemon: Pokemon?
+    var url: String?
+    
+    @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
+    @StateObject var updater: PokemonUpdater = PokemonUpdater(url: "")
+    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @State private var isExpanded = true
     @State private var isShowingImage = true
@@ -24,17 +25,13 @@ struct PokemonInformationView: View {
 
     @State var index: Int = 1
     @State var isScrollable: Bool = false
+    
     @Namespace private var namespace
     
-    init(updater: PokemonUpdater? = nil, pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
-        if let updater = updater {
-            self.updater = updater
-        } else {
-            let newUpdater = PokemonUpdater(url: pokemonUrl ?? "")
-            newUpdater.isSelected = true
-            self.updater = newUpdater
-        }
+    init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
+        self.pokemon = pokemon
+        self.url = pokemonUrl
     }
     
     private var safeAreaOffset: CGFloat {
@@ -104,7 +101,7 @@ struct PokemonInformationView: View {
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea()
                     .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
-                    .animation(Animation.linear)
+                    .animation(.linear)
                 
                 if isExpanded {
                     RotatingPokeballView()
@@ -212,6 +209,15 @@ struct PokemonInformationView: View {
             .onAppear {
                 if isFirstTimeLoadView {
                     isLoadingData = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if let pokemon = pokemon, pokemon.pokeId != 0 {
+                            updater.pokemon = pokemon
+                        }
+                        if let url = url, url != "" {
+                            updater.pokemonUrl = url
+                        }
+                        updater.isSelected = true
+                    }
                 }
                 hideImage(in: size)
                 if isFirstTimeLoadView {

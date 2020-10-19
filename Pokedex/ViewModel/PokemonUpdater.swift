@@ -28,9 +28,7 @@ class PokemonUpdater: ObservableObject {
     
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
-            if isSelected {
-                updateCurrentId(of: pokemon)
-            }
+            updateCurrentId(of: pokemon)
         }
     }
     
@@ -42,9 +40,7 @@ class PokemonUpdater: ObservableObject {
     @Published var ids: [Int] = [] {
         didSet {
             //loadAlotOfImage()
-            if isSelected {
-                images = ids.map({UrlType.getImageUrlString(of: $0)})
-            }
+            images = ids.map({UrlType.getImageUrlString(of: $0)})
         }
     }
     
@@ -75,42 +71,10 @@ class PokemonUpdater: ObservableObject {
             onSuccess()
         }
     }
-}
-
-extension PokemonUpdater {
+    
     private func updateCurrentId(of pokemon: Pokemon) {
         if currentId != pokemon.pokeId {
             currentId = pokemon.pokeId
         }
-    }
-    private func loadAlotOfImage() {
-        Publishers.Sequence(sequence: ids.map({UrlType.getImageUrlString(of: $0)}).map({loadImage(from: $0)}))
-            .flatMap({$0})
-            .collect()
-            .replaceError(with: [])
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-            .assign(to: \.preLoadImages, on: self)
-            .store(in: &cancellables)
-    }
-    
-    private func loadImage(from urlString: String) -> AnyPublisher<UIImage?, Never> {
-        if let image = imageCache.get(forKey: urlString) {
-            return Just(image).eraseToAnyPublisher()
-        }
-        
-        guard let url = URL(string: urlString) else {
-            return PassthroughSubject<UIImage?, Never>().eraseToAnyPublisher()
-        }
-                
-        return URLSession.shared.dataTaskPublisher(for: url)
-            .map { (data, response) -> UIImage? in return UIImage(data: data) }
-            .catch { error in return Just(nil) }
-            .receive(on: DispatchQueue.main)
-            .handleEvents(receiveOutput: { [weak self] image in
-                guard let image = image else { return }
-                self?.imageCache.set(forKey: urlString, image: image)
-            })
-            .eraseToAnyPublisher()
     }
 }

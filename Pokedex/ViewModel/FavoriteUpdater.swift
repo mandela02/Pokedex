@@ -11,29 +11,44 @@ import Combine
 import CoreData
 
 class FavoriteUpdater: ObservableObject {
-    @State private var refreshing = false
-    @Published var favorites: [Favorite] = []
-    @Published var cells: [PokemonCellModel] = []
+    @Published var refreshing = false
+    
+    @Published var favorites: [Favorite] = [] {
+        didSet {
+            loadPokemonDetailData()
+        }
+    }
+    
+    @Published var pokemons: [Pokemon] = []
     var didChange =  NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange)
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         fetchEntries()
     }
-    
-    private func prepare(from favorites: [Favorite]) {
-        let resource = favorites.map({NamedAPIResource(name: "", url: $0.url ?? "")})
-        cells = PokemonCellModel.getCells(from: resource)
+        
+    private func loadPokemonDetailData() {
+        if favorites.isEmpty {
+            pokemons = []
+            return
+        }
+        Publishers.MergeMany(favorites.map({Session.share.pokemon(from: $0.url ?? "")}))
+            .collect()
+            .replaceError(with: [])
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.pokemons, on: self)
+            .store(in: &cancellables)
     }
-    
+
     private func fetchEntries() {
         let context = PersistenceManager.shared.persistentContainer.viewContext
         let request : NSFetchRequest<Favorite> = Favorite.fetchRequest()
         do {
             let favorites = try context.fetch(request)
-            prepare(from: favorites)
+            self.favorites = favorites
         } catch {
             print("Fetch failed: Error \(error.localizedDescription)")
-            cells = []
         }
     }
     
