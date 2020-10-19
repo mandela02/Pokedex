@@ -11,7 +11,7 @@ import Combine
 import CoreData
 
 class FavoriteUpdater: ObservableObject {
-    @State private var refreshing = false
+    @Published var refreshing = false
     
     @Published var favorites: [Favorite] = [] {
         didSet {

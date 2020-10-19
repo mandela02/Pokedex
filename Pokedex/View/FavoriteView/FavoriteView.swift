@@ -69,11 +69,17 @@ struct FavoriteListView: View {
                 }
             }
             .onReceive(favoriteUpdater.didChange) { _ in
-                favoriteUpdater.update()
+                favoriteUpdater.refreshing = true
             }
             .onReceive(favoriteUpdater.$pokemons, perform: { cells in
                 isEmpty = cells.isEmpty
             })
+            .onAppear {
+                if favoriteUpdater.refreshing {
+                    favoriteUpdater.update()
+                    favoriteUpdater.refreshing = false
+                }
+            }
         })
     }
 }

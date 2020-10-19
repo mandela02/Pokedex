@@ -101,7 +101,7 @@ struct PokemonInformationView: View {
             ZStack {
                 updater.pokemon.mainType.color.background.ignoresSafeArea()
                     .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
-                    .animation(Animation.linear)
+                    .animation(.linear)
                 
                 if isExpanded {
                     RotatingPokeballView()
