@@ -16,6 +16,7 @@ struct TappablePokemonCell: View {
     var body: some View {
         TapToPushView(show: $show) {
             PokedexCardView(pokemon: pokemon, size: (size.width, size.height))
+                .contextMenu(menuItems: {})
         } destination: {
             PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }

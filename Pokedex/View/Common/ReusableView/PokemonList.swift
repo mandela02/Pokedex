@@ -31,13 +31,13 @@ struct PokemonList: View {
                     LazyVGrid(columns: columns) {
                         ForEach(cells) { cell in
                             TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
+                                .background(Color.clear)
                                 .onAppear {
                                     onCellAppear(cell)
                                 }
                         }
                     }
                     .animation(.linear)
-                    
                     
                     if isFinal {
                         CompleteView().frame(height: 200)

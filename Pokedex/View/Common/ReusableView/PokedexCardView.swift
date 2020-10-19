@@ -33,7 +33,7 @@ struct PokedexCardView: View {
                     .aspectRatio(contentMode: .fit)
                     .foregroundColor(pokemon.mainType == .non ? pokemon.mainType.color.background : Color.white.opacity(0.3))
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
-                    .offset(x: size.width * 1/4, y: size.height * 1/3 )
+                    .offset(x: size.width * 1/4, y: size.height * 1/4 )
                     .blur(radius: 1)
                 
                 VStack {

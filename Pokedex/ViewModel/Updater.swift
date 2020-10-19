@@ -33,11 +33,11 @@ struct PokemonCellModel: Identifiable, Equatable {
 
 class Updater: ObservableObject {
     @Published var allPokemons: [Pokemon] = []
-
-    private var canLoadMore = true
     @Published var isLoadingPage = false
     @Published var isFinal = false
+    
     private var cancellables = Set<AnyCancellable>()
+    private var canLoadMore = true
 
     var url: String = "" {
         didSet {
