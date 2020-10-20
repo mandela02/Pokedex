@@ -90,6 +90,12 @@ class StringHelper {
                     .replacingOccurrences(of: "/", with: "")) ?? 0
     }
     
+    static func getMachineId(from url: String) -> Int {
+        let base = Constants.baseMachineUrl
+        return Int(url.replacingOccurrences(of: base, with: "")
+                    .replacingOccurrences(of: "/", with: "")) ?? 0
+    }
+    
     static func getStringLength(text: String) -> CGSize {
         let font = UIFont(name: "Biotif-Book", size: 10)
         let fontAttributes = [NSAttributedString.Key.font: font]

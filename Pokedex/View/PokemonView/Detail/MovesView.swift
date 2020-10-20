@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MovesView: View {
     var pokemon: Pokemon
+
     @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
     var body: some View {
         GeometryReader(content: { geometry in
@@ -20,7 +21,8 @@ struct MovesView: View {
                     Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
                         ForEach(section.cells) { cell in
                             let isSelected = cell.move.name == moveUpdater.selected
-                            TappableMoveCell(selectedMove: $moveUpdater.selected, pokemonMove: cell.pokemonMove, move: cell.move)
+                            TappableMoveCell(selectedMove: $moveUpdater.selected,
+                                             moveCellModel: cell)
                                 .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
                                 .onDisappear {
                                     if isSelected {
@@ -51,55 +53,48 @@ struct MovesView: View {
             extraHeight = textSize.height + textSize.width/(width - 180) * 10
         }
         return extraHeight + 200
-        //48
     }
 }
 
 struct TappableMoveCell: View {
-    var type: PokemonType = .bug
     @State var isExtensed = false
     @Binding var selectedMove: String?
-    var pokemonMove: PokemonMove
-    var move: Move
-    
+    var moveCellModel: MoveCellModel
     var body: some View {
         Button {
             isExtensed.toggle()
-            selectedMove = isExtensed ? move.name : nil
+            selectedMove = isExtensed ? moveCellModel.move.name : nil
         } label: {
-            MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
+            MoveCell(moveCellModel: moveCellModel, isExtensed: $isExtensed)
         }
         .onChange(of: selectedMove, perform: { value in
-            isExtensed = selectedMove == move.name
+            isExtensed = selectedMove == moveCellModel.move.name
         })
         .buttonStyle(PlainButtonStyle())
     }
 }
 
 struct MoveCell: View {
-    var pokemonMove: PokemonMove
-    var move: Move
+    var moveCellModel: MoveCellModel
     @Binding var isExtensed: Bool
-    
-    @StateObject var moveDetail: MoveDetailUpdater = MoveDetailUpdater()
     var body: some View {
         GeometryReader(content: { geometry in
-            let type = PokemonType.type(from: move.type?.name ?? "")
+            let type = PokemonType.type(from: moveCellModel.move.type?.name ?? "")
             let width = geometry.size.width
             let height = width * 0.2 + 10
             VStack {
                 SmallMoveCellView(height: height,
-                                  move: move,
-                                  level: pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
+                                  move: moveCellModel.move,
+                                  level: moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
                                   isExtensed: $isExtensed)
                 if isExtensed {
                     VStack(spacing: 5) {
-                        MachineSubView(move: move, machine: moveDetail.machine,
-                                       target: StringHelper.getEnglishText(from: moveDetail.moveTarget.descriptions))
+                        MachineSubView(move: moveCellModel.move, machine: moveCellModel.machine,
+                                       target: StringHelper.getEnglishText(from: moveCellModel.target.descriptions))
                             .padding(.leading, 20)
-                        TextInformationView(move: move,
-                                            pokemonMove: pokemonMove,
-                                            learnMethod: StringHelper.getEnglishText(from: moveDetail.moveLearnMethod.descriptions))
+                        TextInformationView(move: moveCellModel.move,
+                                            pokemonMove: moveCellModel.pokemonMove,
+                                            learnMethod: StringHelper.getEnglishText(from: moveCellModel.learnMethod.descriptions))
                             .padding(.all, 5)
                     }
                 }
@@ -110,10 +105,6 @@ struct MoveCell: View {
                     .stroke(type.color.background.opacity(0.5), lineWidth: 5)
             )
             .cornerRadius(25)
-            .onAppear {
-                moveDetail.pokemonMove = pokemonMove
-                moveDetail.move = move
-            }
         })
     }
 }
