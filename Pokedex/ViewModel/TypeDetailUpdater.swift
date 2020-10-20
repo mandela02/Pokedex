@@ -20,7 +20,11 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
 
-    @Published var allPokemons: [Pokemon] = []
+    @Published var allPokemons: [Pokemon] = [] {
+        didSet {
+            print(allPokemons.count)
+        }
+    }
     
     @Published var name: String = ""
 
