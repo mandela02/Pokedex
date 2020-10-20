@@ -14,7 +14,6 @@ struct PokemonInformationView: View {
     
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater(url: "")
-    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     
     @State private var isExpanded = true
     @State private var isShowingImage = true
@@ -122,7 +121,7 @@ struct PokemonInformationView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-                    DetailPageView(updater: speciesUpdater, pokemon: updater.pokemon)
+                    DetailPageView(species: updater.species, pokemon: updater.pokemon)
                         .frame(width: size.width, height: abs(detailViewHeight), alignment: .bottom)
                         .background(HexColor.white)
                         .isRemove(!isShowing)
@@ -189,12 +188,9 @@ struct PokemonInformationView: View {
             }
             .ignoresSafeArea()
             .onReceive(updater.$pokemon, perform: { pokemon in
-                if speciesUpdater.speciesUrl != pokemon.species.url {
-                    speciesUpdater.speciesUrl = pokemon.species.url
                     voiceUpdater.pokemon = pokemon
-                }
             })
-            .onReceive(speciesUpdater.$species, perform: { species in
+            .onReceive(updater.$species, perform: { species in
                 if species.id != 0 {
                     voiceUpdater.species = species
                     isScrollable = true

@@ -13,7 +13,6 @@ struct ParallaxView: View {
     var url: String?
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater(url: "")
-    @StateObject var speciesUpdater: SpeciesUpdater = SpeciesUpdater(url: "")
     @State private var isExpanded = true
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
@@ -28,17 +27,17 @@ struct ParallaxView: View {
     }
 
     var body: some View {
-        ParallaxContentView(isShowing: $isShowing, voiceUpdater: voiceUpdater, updater: updater, speciesUpdater: speciesUpdater)
+        ParallaxContentView(isShowing: $isShowing,
+                            isShowingImage: $isShowingImage,
+                            voiceUpdater: voiceUpdater,
+                            updater: updater)
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
         .onReceive(updater.$pokemon, perform: { pokemon in
-            if speciesUpdater.speciesUrl != pokemon.species.url {
-                speciesUpdater.speciesUrl = pokemon.species.url
-                voiceUpdater.pokemon = pokemon
-            }
+            voiceUpdater.pokemon = pokemon
         })
-        .onReceive(speciesUpdater.$species, perform: { species in
+        .onReceive(updater.$species, perform: { species in
             if species.id != 0 {
                 voiceUpdater.species = species
                 
@@ -76,6 +75,7 @@ struct ParallaxContentView: View {
     let maxHeight = UIScreen.main.bounds.height * 0.4 - 50
     
     @Binding var isShowing: Bool
+    @Binding var isShowingImage: Bool
 
     @State var isMinimized = false
     @State var colums = Array(repeating: GridItem(.flexible(), spacing: 15), count: 1)
@@ -84,7 +84,6 @@ struct ParallaxContentView: View {
     
     @ObservedObject var voiceUpdater: VoiceHelper
     @ObservedObject var updater: PokemonUpdater
-    @ObservedObject var speciesUpdater: SpeciesUpdater
     
     @Namespace private var namespace
 
@@ -130,31 +129,33 @@ struct ParallaxContentView: View {
                             .frame(height: 100, alignment: .center)
                             .cornerRadius(25)
                             .offset(y: 50)
-                        DetailPageView(updater: speciesUpdater, pokemon: updater.pokemon)
+                        DetailPageView(species: updater.species,
+                                       pokemon: updater.pokemon)
                             .background(Color.white)
                     }
                     .frame(height: UIScreen.main.bounds.height - 50, alignment: .center)
                 }
             }
-            
-            HeaderImageScrollView(index: $index,
-                                  items: $updater.images,
-                                  onScrolling: { gesture in
-                                  }, onEndScrolling: { gesture in
-                                    if index == updater.ids.endIndex - 1 {
-                                        updater.currentId = updater.ids.last ?? 0
-                                    } else if index == 0 {
-                                        if updater.currentId != 1 {
-                                            updater.currentId = updater.ids.first ?? 0
+            if isShowingImage {
+                HeaderImageScrollView(index: $index,
+                                      items: $updater.images,
+                                      onScrolling: { gesture in
+                                      }, onEndScrolling: { gesture in
+                                        if index == updater.ids.endIndex - 1 {
+                                            updater.currentId = updater.ids.last ?? 0
+                                        } else if index == 0 {
+                                            if updater.currentId != 1 {
+                                                updater.currentId = updater.ids.first ?? 0
+                                            }
                                         }
-                                    }
-                                    index = 1
-                                    updater.update(onSuccess: {
-                                    })
-                                  })
-                .frame(width: UIScreen.main.bounds.width * 1/2, height: maxHeight * 2/3, alignment: .center)
-                .opacity(opacity)
-                .offset(y: maxHeight/2 + 20 )
+                                        index = 1
+                                        updater.update(onSuccess: {
+                                        })
+                                      })
+                    .frame(width: UIScreen.main.bounds.width * 1/2, height: maxHeight * 2/3, alignment: .center)
+                    .opacity(opacity)
+                    .offset(y: maxHeight/2 + 20 )
+            }
 
             HeaderView(isShowing: $isShowing, isInExpandeMode: $isMinimized, opacity: $opacity, pokemon: updater.pokemon)
             

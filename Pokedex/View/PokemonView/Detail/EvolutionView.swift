@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct EvolutionView: View {
-    var speciesUpdater: SpeciesUpdater
+    var species: Species
     
     var body: some View {
-        EvolutionChainView(speciesUpdater: speciesUpdater)
+        EvolutionChainView(species: species)
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .center)
     }
 }
 
 struct EvolutionChainView: View {
-    var speciesUpdater: SpeciesUpdater
+    var species: Species
     @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
     
     var body: some View {
@@ -40,16 +40,13 @@ struct EvolutionChainView: View {
                         .padding(.bottom, 5)
                 }
             }
-            .isRemove(!speciesUpdater.species.havingMega)
+            .isRemove(!species.havingMega)
             
             Color.clear.frame(height: 100, alignment: .center)
         }
-        .onReceive(speciesUpdater.$species, perform: { species in
+        .onAppear {
             evolutionUpdater.species = species
-        })
-        .onReceive(speciesUpdater.$evolution, perform: { evolution in
-            evolutionUpdater.evolution = evolution
-        })
+        }
         .listStyle(SidebarListStyle())
         .animation(.linear)
     }
