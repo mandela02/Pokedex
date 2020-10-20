@@ -13,6 +13,9 @@ struct MoveCellModel: Identifiable {
     
     var pokemonMove = PokemonMove()
     var move = Move()
+    var learnMethod = MoveLearnMethod()
+    var machine = Machine()
+    var target = MoveTarget()
 }
 
 struct GroupedMoveCellModel: Identifiable {
@@ -28,7 +31,7 @@ class MovesUpdater: ObservableObject {
             pokemonMoves = pokemon.moves
         }
     }
-
+    
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
             getAllMoves()
@@ -37,11 +40,7 @@ class MovesUpdater: ObservableObject {
     
     @Published var moves: [Move] = [] {
         didSet {
-            var cells: [MoveCellModel] = []
-            for (index, move) in moves.enumerated() {
-                cells.append(MoveCellModel(pokemonMove: pokemonMoves[safe: index] ?? PokemonMove(), move: move))
-            }
-            moveCellModels = cells
+            merge()
         }
     }
     @Published var moveCellModels: [MoveCellModel] = [] {
@@ -61,6 +60,60 @@ class MovesUpdater: ObservableObject {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.moves, on: self)
+            .store(in: &cancellables)
+    }
+    
+    private func getMoveDetails() -> AnyPublisher<[MoveLearnMethod], Error> {
+        let detailUrl = pokemonMoves.map({$0.versionGroupDetails.first?.moveLearnMethod.url}).compactMap({$0}).uniques
+                
+        return Publishers.Sequence(sequence: detailUrl.map({Session.share.moveLearnMethod(from: $0)}))
+            .flatMap({$0})
+            .replaceEmpty(with: MoveLearnMethod())
+            .collect()
+            .eraseToAnyPublisher()
+    }
+    
+    private func getMachine() -> AnyPublisher<[Machine], Error> {
+        let machineUrl = moves.map({$0.machines?.first?.machine.url}).compactMap({$0}).uniques
+                
+        return Publishers.Sequence(sequence: machineUrl.map({Session.share.machine(from: $0)}))
+            .flatMap({$0})
+            .replaceEmpty(with: Machine())
+            .collect()
+            .eraseToAnyPublisher()
+    }
+    
+    private func getTarget() -> AnyPublisher<[MoveTarget], Error>{
+        let targetUrl = moves.map({ $0.target?.url}).compactMap({$0}).uniques
+        
+        return Publishers.Sequence(sequence: targetUrl.map({Session.share.moveTarget(from: $0)}))
+            .flatMap({$0})
+            .replaceEmpty(with: MoveTarget())
+            .collect()
+            .eraseToAnyPublisher()
+    }
+    
+    private func merge() {
+        Publishers.Zip3(getMoveDetails(), getMachine(), getTarget())
+            .receive(on: DispatchQueue.main)
+            .replaceError(with: ([], [], []))
+            .sink { [weak self] (moveLearnMethods, machines, targets) in
+                guard let self = self else { return }
+                var cells: [MoveCellModel] = []
+                for (index, move) in self.moves.enumerated() {
+                    let pokemonMove = self.pokemonMoves[safe: index] ?? PokemonMove()
+                    let learnMethodName = pokemonMove.versionGroupDetails.first?.moveLearnMethod.name ?? ""
+                    let machineId = StringHelper.getMachineId(from: move.machines?.first?.machine.url ?? "")
+                    let targetName = move.target?.name ?? ""
+                    let moveModel = MoveCellModel(pokemonMove: pokemonMove,
+                                                  move: move,
+                                                  learnMethod: moveLearnMethods.first(where: {$0.name == learnMethodName}) ?? MoveLearnMethod(),
+                                                  machine: machines.first(where: {$0.id == machineId}) ?? Machine(),
+                                                  target: targets.first(where: {$0.name == targetName}) ?? MoveTarget())
+                    cells.append(moveModel)
+                }
+                self.moveCellModels = cells
+            }
             .store(in: &cancellables)
     }
 }
