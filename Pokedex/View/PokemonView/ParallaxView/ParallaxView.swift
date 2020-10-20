@@ -82,6 +82,7 @@ struct ParallaxContentView: View {
     @State var index: Int = 1
     @State private var opacity: Double = 1
     @State private var scale: CGFloat = 1
+    @State private var imageOffsetY: CGFloat = 1
 
     @ObservedObject var voiceUpdater: VoiceHelper
     @ObservedObject var updater: PokemonUpdater
@@ -114,13 +115,16 @@ struct ParallaxContentView: View {
                                 .onChange(of: reader.frame(in: .global).minY - 100 + maxHeight, perform:  { y in
                                     opacity = 1 + Double(reader.frame(in: .global).minY/(maxHeight - 50))
                                     scale = 1 + CGFloat(reader.frame(in: .global).minY/(maxHeight - 50))
-                                    
+                                    imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
                                     if y < 0 {
                                         withAnimation(.linear) { isMinimized = true }
                                     } else {
                                         withAnimation(.linear) { isMinimized = false }
                                     }
                                 })
+                            .onAppear {
+                                imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
+                            }
                         )
                     }
                     .frame(height: maxHeight)
@@ -157,7 +161,7 @@ struct ParallaxContentView: View {
                     .frame(width: UIScreen.main.bounds.width * 1/2, height: maxHeight * 2/3, alignment: .center)
                     .opacity(opacity)
                     .scaleEffect(scale)
-                    .offset(y: maxHeight/2 + 20 )
+                    .offset(y: imageOffsetY)
             }
 
             HeaderView(isShowing: $isShowing, isInExpandeMode: $isMinimized, opacity: $opacity, pokemon: updater.pokemon)

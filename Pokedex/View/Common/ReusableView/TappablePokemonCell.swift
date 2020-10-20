@@ -21,5 +21,6 @@ struct TappablePokemonCell: View {
             ParallaxView(pokemon: pokemon, isShowing: $show)
             //PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }

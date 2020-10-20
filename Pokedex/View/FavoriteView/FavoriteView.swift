@@ -13,29 +13,48 @@ struct FavoriteView: View {
     
     var body: some View {
         ZStack {
+            CustomBigTitleNavigationView(content: {
+                ZStack {
+                    if showBall {
+                        RotatingPokeballView(color: Color(.systemGray4))
+                            .scaleEffect(1.2)
+                    }
+                    
+                    FavoriteListView()
+                }
+                .frame(height: UIScreen.main.bounds.height, alignment: .center)
+            }, header: {
+                    VStack {
+                        Text("Your Favorite Pokemon")
+                            .font(Biotif.extraBold(size: 30).font)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 5)
+                    }
+                    .padding(.top, 75)
+                    .padding(.leading, 20)
+            }, stickyHeader: {
+                    HStack {
+                        Spacer()
+                        Text("Your Favorite Pokemon")
+                            .font(Biotif.extraBold(size: 20).font)
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .padding(.top, 50)
+                    .padding(.bottom, 20)
+                    .background(Color.white.opacity(0.5))
+            }, maxHeight: 150)
             if showBall {
-                RotatingPokeballView(color: Color(.systemGray4))
-                    .scaleEffect(1.2)
-            }
-            
-            FavoriteListView()
-            
-            VStack {
                 VStack {
                     HStack(alignment: .center) {
                         BackButtonView(isShowing: $show)
                         Spacer()
                     }
-                    Text("Your Favorite Pokemon")
-                        .font(Biotif.extraBold(size: 30).font)
-                        .foregroundColor(.black)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, 5)
+                    Spacer()
                 }
-                .padding(.top, 25)
+                .padding(.top, 30)
                 .padding(.leading, 20)
-                .background(Color.white.opacity(0.5))
-                Spacer()
             }
         }
         .onAppear {
@@ -55,16 +74,14 @@ struct FavoriteListView: View {
     @State var isEmpty: Bool = false
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            ZStack {
+        ZStack {
                 if isEmpty {
                     EmptyFavoriteView()
-                        .padding(.top, 100)
                 } else {
                     PokemonList(cells: $favoriteUpdater.pokemons,
                                 isLoading: .constant(false),
                                 isFinal: .constant(false),
-                                paddingHeader: 150,
+                                paddingHeader: 0,
                                 paddingFooter: 50, onCellAppear: { pokemon in })
                 }
             }
@@ -80,7 +97,6 @@ struct FavoriteListView: View {
                     favoriteUpdater.refreshing = false
                 }
             }
-        })
     }
 }
 
