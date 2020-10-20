@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct EvolutionView: View {
-    var speciesUpdater: SpeciesUpdater
+    var species: Species
     
     var body: some View {
-        EvolutionChainView(speciesUpdater: speciesUpdater)
+        EvolutionChainView(species: species)
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .center)
     }
 }
 
 struct EvolutionChainView: View {
-    var speciesUpdater: SpeciesUpdater
+    var species: Species
     @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
     
     var body: some View {
@@ -40,16 +40,13 @@ struct EvolutionChainView: View {
                         .padding(.bottom, 5)
                 }
             }
-            .isRemove(!speciesUpdater.species.havingMega)
+            .isRemove(!species.havingMega)
             
             Color.clear.frame(height: 100, alignment: .center)
         }
-        .onReceive(speciesUpdater.$species, perform: { species in
+        .onAppear {
             evolutionUpdater.species = species
-        })
-        .onReceive(speciesUpdater.$evolution, perform: { evolution in
-            evolutionUpdater.evolution = evolution
-        })
+        }
         .listStyle(SidebarListStyle())
         .animation(.linear)
     }
@@ -112,9 +109,7 @@ struct PokemonCellView: View {
         self.imageURL = UrlType.getImageUrlString(of: pokeId)
     }
     var body: some View {
-        Button {
-            show = true
-        } label: {
+        TapToPushView(show: $show) {
             VStack(alignment: .center, spacing: 10) {
                 ZStack {
                     Image("ic_pokeball")
@@ -129,9 +124,8 @@ struct PokemonCellView: View {
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }
-            .background(NavigationLink(destination: PokemonInformationView(pokemonUrl: pokemonUrl,
-                                                                           isShowing: $show),
-                                       isActive: $show) { EmptyView() })
+        } destination: {
+            ParallaxView(pokemonUrl: pokemonUrl, isShowing: $show)
         }
     }
 }

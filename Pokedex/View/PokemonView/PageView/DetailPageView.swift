@@ -66,15 +66,15 @@ struct TabItem: View {
 
 struct DetailPageView: View {
     @State private var selected: Int = 0
-    @ObservedObject var updater: SpeciesUpdater
     
+    var species: Species
     var pokemon: Pokemon
     var views: [PageContentView] = []
     
     var body: some View {
         GeometryReader { geometry in
             let views = Tab.allCases
-                .map({PageContentView(tab: $0, pokemon: pokemon, updater: updater, selectedIndex: $selected)})
+                .map({PageContentView(tab: $0, pokemon: pokemon, species: species, selectedIndex: $selected)})
 
             PagerView(index: $selected, color: pokemon.mainType.color.background, tabs: Tab.allCases) {
                 views
@@ -88,18 +88,17 @@ struct PageContentView: View, Identifiable {
     
     var tab: Tab
     var pokemon: Pokemon
-    
-    @ObservedObject var updater: SpeciesUpdater
+    var species: Species
     @Binding var selectedIndex: Int
     
     var body: some View {
         switch tab {
         case .about:
-            AboutView(pokemon: pokemon, updater: updater)
+            AboutView(pokemon: pokemon, species: species)
         case .stats:
             StatsView(pokemon: pokemon, selectedIndex: $selectedIndex)
         case .evolution:
-            EvolutionView(speciesUpdater: updater)
+            EvolutionView(species: species)
         case .moves:
             MovesView(pokemon: pokemon)
         }

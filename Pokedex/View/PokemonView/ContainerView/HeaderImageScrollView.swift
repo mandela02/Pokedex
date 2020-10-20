@@ -11,7 +11,6 @@ struct HeaderImageScrollView: View {
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
     @Binding var items: [String]
-    @Binding var isScrollable: Bool
 
     @State var image: UIImage?
     
@@ -21,16 +20,13 @@ struct HeaderImageScrollView: View {
 
     private func drag(in size: CGSize) -> some Gesture {
         return DragGesture().onChanged({ value in
-            if isScrollable {
                 withAnimation(.spring()) {
                     self.isGestureActive = true
                     self.offset = value.translation.width + -size.width * CGFloat(self.index)
                     onScrolling(value)
-                }
             }
         }).onEnded({ value in
             withAnimation(.spring()) {
-                if isScrollable {
                     if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
                         self.index += 1
                     }
@@ -42,7 +38,6 @@ struct HeaderImageScrollView: View {
                     }
                     self.isGestureActive = false
                     onEndScrolling(value)
-                }
             }
         })
     }
@@ -63,6 +58,7 @@ struct HeaderImageScrollView: View {
                     HStack(alignment: .center, spacing: 0) {
                         ForEach(Array(zip(items.indices, items)), id: \.0) { index, item in
                             ImageView(image: item, tag: index, size: geometry.size)
+                            
                         }
                     }
                 }

@@ -29,17 +29,24 @@ class PokemonUpdater: ObservableObject {
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
             updateCurrentId(of: pokemon)
+            speciesUrl = pokemon.species.url
         }
     }
     
+    var speciesUrl: String = "" {
+        didSet {
+            initPokemonSpecies(from: speciesUrl)
+        }
+    }
+
+    @Published var species: Species = Species()
+
     @Published var isSelected = false
     
     @Published var preLoadImages: [UIImage?] = []
-    
     @Published var images: [String] = []
     @Published var ids: [Int] = [] {
         didSet {
-            //loadAlotOfImage()
             images = ids.map({UrlType.getImageUrlString(of: $0)})
         }
     }
@@ -61,6 +68,15 @@ class PokemonUpdater: ObservableObject {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
+            .store(in: &cancellables)
+    }
+    
+    private func initPokemonSpecies(from url: String) {
+         Session.share.species(from: url)
+            .replaceError(with: Species())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            .assign(to: \.species, on: self)
             .store(in: &cancellables)
     }
     

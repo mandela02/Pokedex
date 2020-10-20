@@ -32,7 +32,7 @@ struct MovesView: View {
                         }
                     }
                 }
-                Color.clear.frame(height: 100)
+                Color.clear.frame(height: UIScreen.main.bounds.height * 0.4 - 50)
             }
             .listStyle(SidebarListStyle())
             .animation(.spring())

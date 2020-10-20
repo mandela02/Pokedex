@@ -38,17 +38,14 @@ struct PagerView<Content: View & Identifiable>: View {
     var color: Color
     var tabs: [Tab]
     var pages: () -> [Content]
-
+    
     @State private var isGestureActive: Bool = false
     
     private func drag(in size: CGSize) -> some Gesture{
         return DragGesture().onChanged({ value in
             withAnimation(.spring()) {
-                let dirction = Direction.getDirection(value: value)
-                if dirction == .left || dirction == .right {
-                    self.isGestureActive = true
-                    self.offset = value.translation.width + -size.width * CGFloat(self.index)
-                }
+                self.isGestureActive = true
+                self.offset = value.translation.width + -size.width * CGFloat(self.index)
             }
         }).onEnded({ value in
             withAnimation(.spring()) {

@@ -26,9 +26,10 @@ class EvolutionUpdater: ObservableObject {
             if let megas = species?.megas {
                 megaEvolutionLinks = megas.map({EvoLink(from: species?.pokemon ?? NamedAPIResource(), to: $0, detail: [], triggers: "Mega")})
             }
+            initEvolution(of: species?.evolutionChain.url ?? "")
         }
     }
-    
+
     @Published var evolution: Evolution = Evolution() {
         didSet {
             evolutionChains = evolution.allChains
