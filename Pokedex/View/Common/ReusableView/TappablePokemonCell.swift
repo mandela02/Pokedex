@@ -18,7 +18,8 @@ struct TappablePokemonCell: View {
             PokedexCardView(pokemon: pokemon, size: (size.width, size.height))
                 .contextMenu(menuItems: {})
         } destination: {
-            PokemonInformationView(pokemon: pokemon, isShowing: $show)
+            ParallaxView(pokemon: pokemon, isShowing: $show)
+            //PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }
     }
 }

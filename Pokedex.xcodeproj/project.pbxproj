@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8402DAC3253F23EB007D222E /* ParallaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402DAC2253F23EB007D222E /* ParallaxView.swift */; };
 		8407B83E252C5E2000341270 /* PokemonInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8407B83D252C5E2000341270 /* PokemonInformationView.swift */; };
 		8407B854252CB88300341270 /* DownloadedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8407B853252CB88300341270 /* DownloadedImageView.swift */; };
 		8412B356253B5BAB00C0843B /* PokemonModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8412B354253B5BAB00C0843B /* PokemonModel.xcdatamodeld */; };
@@ -134,6 +135,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8402DAC2253F23EB007D222E /* ParallaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxView.swift; sourceTree = "<group>"; };
 		8407B83D252C5E2000341270 /* PokemonInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonInformationView.swift; sourceTree = "<group>"; };
 		8407B853252CB88300341270 /* DownloadedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedImageView.swift; sourceTree = "<group>"; };
 		8412B355253B5BAB00C0843B /* PokemonModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PokemonModel.xcdatamodel; sourceTree = "<group>"; };
@@ -456,6 +458,7 @@
 		90454D1C252E9DB1000F5B79 /* PokemonView */ = {
 			isa = PBXGroup;
 			children = (
+				8402DAC2253F23EB007D222E /* ParallaxView.swift */,
 				84B40AA825348AC700E31921 /* ContainerView */,
 				84B40AA725348ABE00E31921 /* PageView */,
 				90DF66EE252F0EBE000284A6 /* Detail */,
@@ -813,6 +816,7 @@
 				8483127D2538B006006FBCD6 /* Publishers+Extension.swift in Sources */,
 				907D5F52252B130100E30748 /* ImageLoader.swift in Sources */,
 				907D5F65252B1AD700E30748 /* MainPokedexUpdater.swift in Sources */,
+				8402DAC3253F23EB007D222E /* ParallaxView.swift in Sources */,
 				84D9AFF5252B802F00E4C9D5 /* Color+Extension.swift in Sources */,
 				841E96882536365C00FAD664 /* TypeCardView.swift in Sources */,
 				8407B83E252C5E2000341270 /* PokemonInformationView.swift in Sources */,

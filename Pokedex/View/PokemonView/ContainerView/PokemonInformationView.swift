@@ -147,7 +147,6 @@ struct PokemonInformationView: View {
                 if isShowingImage {
                     HeaderImageScrollView(index: $index,
                                           items: $updater.images,
-                                          isScrollable: $isScrollable,
                                           onScrolling: { gesture in
                                             onGestureScrolling(gesture: gesture, size: size)
                                           }, onEndScrolling: { gesture in
