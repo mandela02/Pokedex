@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8402DAC3253F23EB007D222E /* ParallaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402DAC2253F23EB007D222E /* ParallaxView.swift */; };
+		8402DAD5253F4966007D222E /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8402DAD4253F4966007D222E /* HeaderView.swift */; };
 		8407B83E252C5E2000341270 /* PokemonInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8407B83D252C5E2000341270 /* PokemonInformationView.swift */; };
 		8407B854252CB88300341270 /* DownloadedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8407B853252CB88300341270 /* DownloadedImageView.swift */; };
 		8412B356253B5BAB00C0843B /* PokemonModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8412B354253B5BAB00C0843B /* PokemonModel.xcdatamodeld */; };
@@ -42,7 +43,6 @@
 		8440592B253743E1009D4385 /* Biotif-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8440591B253743E1009D4385 /* Biotif-Light.ttf */; };
 		84405930253745A9009D4385 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8440592F253745A9009D4385 /* Test.storyboard */; };
 		8440593525374B69009D4385 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440593425374B69009D4385 /* Font.swift */; };
-		8440C092253A170600DABFBB /* MoveDetailUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8440C091253A170600DABFBB /* MoveDetailUpdater.swift */; };
 		846F3BD1253BE459003A30C6 /* FavoriteUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3BD0253BE459003A30C6 /* FavoriteUpdater.swift */; };
 		846F3BD6253C00B6003A30C6 /* LazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3BD5253C00B6003A30C6 /* LazyView.swift */; };
 		846F3C08253C8DBE003A30C6 /* DotDotDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F3C07253C8DBE003A30C6 /* DotDotDot.swift */; };
@@ -135,6 +135,7 @@
 
 /* Begin PBXFileReference section */
 		8402DAC2253F23EB007D222E /* ParallaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParallaxView.swift; sourceTree = "<group>"; };
+		8402DAD4253F4966007D222E /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		8407B83D252C5E2000341270 /* PokemonInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonInformationView.swift; sourceTree = "<group>"; };
 		8407B853252CB88300341270 /* DownloadedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadedImageView.swift; sourceTree = "<group>"; };
 		8412B355253B5BAB00C0843B /* PokemonModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PokemonModel.xcdatamodel; sourceTree = "<group>"; };
@@ -169,7 +170,6 @@
 		8440591B253743E1009D4385 /* Biotif-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Biotif-Light.ttf"; sourceTree = "<group>"; };
 		8440592F253745A9009D4385 /* Test.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		8440593425374B69009D4385 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
-		8440C091253A170600DABFBB /* MoveDetailUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDetailUpdater.swift; sourceTree = "<group>"; };
 		846F3BD0253BE459003A30C6 /* FavoriteUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteUpdater.swift; sourceTree = "<group>"; };
 		846F3BD5253C00B6003A30C6 /* LazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyView.swift; sourceTree = "<group>"; };
 		846F3C07253C8DBE003A30C6 /* DotDotDot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotDotDot.swift; sourceTree = "<group>"; };
@@ -275,6 +275,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8402DAD3253F4945007D222E /* ParallaxView */ = {
+			isa = PBXGroup;
+			children = (
+				8402DAC2253F23EB007D222E /* ParallaxView.swift */,
+				8402DAD4253F4966007D222E /* HeaderView.swift */,
+			);
+			path = ParallaxView;
+			sourceTree = "<group>";
+		};
 		841E96862536363F00FAD664 /* TypeListView */ = {
 			isa = PBXGroup;
 			children = (
@@ -456,7 +465,7 @@
 		90454D1C252E9DB1000F5B79 /* PokemonView */ = {
 			isa = PBXGroup;
 			children = (
-				8402DAC2253F23EB007D222E /* ParallaxView.swift */,
+				8402DAD3253F4945007D222E /* ParallaxView */,
 				84B40AA825348AC700E31921 /* ContainerView */,
 				84B40AA725348ABE00E31921 /* PageView */,
 				90DF66EE252F0EBE000284A6 /* Detail */,
@@ -566,7 +575,6 @@
 				847A124E25315C0600146D24 /* EvolutionUpdater.swift */,
 				90F942B82536D381003C23FF /* TypeDetailUpdater.swift */,
 				908678322538439A0064B02C /* MovesUpdater.swift */,
-				8440C091253A170600DABFBB /* MoveDetailUpdater.swift */,
 				846F3BD0253BE459003A30C6 /* FavoriteUpdater.swift */,
 				846F3C3E253CC026003A30C6 /* AbilityUpdater.swift */,
 			);
@@ -805,7 +813,6 @@
 				8440593525374B69009D4385 /* Font.swift in Sources */,
 				90F942CE2536DC5D003C23FF /* NavigationConfigurator.swift in Sources */,
 				84D9AFFA252B849700E4C9D5 /* Type.swift in Sources */,
-				8440C092253A170600DABFBB /* MoveDetailUpdater.swift in Sources */,
 				907D5F1B252B12C500E30748 /* ContentView.swift in Sources */,
 				847A125F2531EF0500146D24 /* Stat.swift in Sources */,
 				847A125425316BF300146D24 /* EvolutionView.swift in Sources */,
@@ -839,6 +846,7 @@
 				90DF66DF252EFF42000284A6 /* Devide+Extension.swift in Sources */,
 				84D278C325376831004755BE /* SubView.swift in Sources */,
 				907D5F19252B12C500E30748 /* PokedexApp.swift in Sources */,
+				8402DAD5253F4966007D222E /* HeaderView.swift in Sources */,
 				90AD3BE2252C1016009EECEE /* Collection+Extensions.swift in Sources */,
 				847A12802533696200146D24 /* FlexibleGridView.swift in Sources */,
 				846F3C48253CCB13003A30C6 /* AbilityView.swift in Sources */,
