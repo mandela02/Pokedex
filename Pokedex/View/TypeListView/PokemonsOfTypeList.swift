@@ -59,6 +59,11 @@ struct PokemonsOfTypeListNavigationView: View {
             }
             .padding(.top, 30)
             .padding(.leading, 20)
+            
+            if updater.isLoading {
+                LoadingView(background: .white)
+                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+            }
         }
         .onAppear(perform: {
             isViewDisplayed = true

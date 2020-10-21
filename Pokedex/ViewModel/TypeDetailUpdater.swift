@@ -13,6 +13,8 @@ class TypeDetailUpdater: ObservableObject {
         self.pokemonType = type
     }
 
+    @Published var isLoading = true
+    
     @Published var pokemonType: PokemonType? {
         didSet {
             name = pokemonType?.rawValue ?? ""
@@ -22,7 +24,7 @@ class TypeDetailUpdater: ObservableObject {
 
     @Published var allPokemons: [Pokemon] = [] {
         didSet {
-            print(allPokemons.count)
+            isLoading = false
         }
     }
     
@@ -36,8 +38,7 @@ class TypeDetailUpdater: ObservableObject {
     
     @Published var type: PokeType = PokeType() {
         didSet {
-            getDamageDetail(from: type.moveDamageClass.url)
-            loadPokemonDetailData()
+            merge()
         }
     }
 
@@ -54,22 +55,27 @@ class TypeDetailUpdater: ObservableObject {
         .store(in: &cancellables)
     }
     
-    private func getDamageDetail(from url: String) {
-        Session.share.moveDamageClass(from: url)
-        .replaceError(with: MoveDamageClass())
+    private func getDamageDetail() -> AnyPublisher<MoveDamageClass, Error> {
+        Session.share.moveDamageClass(from: type.moveDamageClass.url)
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
-        .assign(to: \.damage, on: self)
-        .store(in: &cancellables)
     }
         
-    private func loadPokemonDetailData() {
+    private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Error> {
         Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
             .collect()
-            .replaceError(with: [])
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.allPokemons, on: self)
+    }
+    
+    private func merge() {
+        Publishers.Zip(loadPokemonDetailData(), getDamageDetail())
+            .receive(on: DispatchQueue.main)
+            .replaceError(with: ([], MoveDamageClass()))
+            .sink { [weak self] (pokemons, damage) in
+                self?.damage = damage
+                self?.allPokemons = pokemons
+            }
             .store(in: &cancellables)
     }
 }

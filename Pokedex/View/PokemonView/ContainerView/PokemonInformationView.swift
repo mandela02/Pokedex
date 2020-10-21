@@ -182,7 +182,7 @@ struct PokemonInformationView: View {
                 }
                 
                 if isLoadingData {
-                    LoadingView()
+                    LoadingView(background: .white)
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }

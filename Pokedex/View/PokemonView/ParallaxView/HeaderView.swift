@@ -142,23 +142,35 @@ struct NewNameView: View {
 
 struct NewTypeView: View {
     let pokemon: Pokemon
-    
     var body: some View {
         HStack(alignment: .center, spacing: 30, content: {
             ForEach(pokemon.types.map({$0.type})) { type in
-                Text(type.name)
-                    .frame(alignment: .leading)
-                    .font(.system(size: 15))
-                    .foregroundColor(pokemon.mainType.color.text)
-                    .background(Rectangle()
-                                    .fill(Color.white.opacity(0.5))
-                                    .cornerRadius(10)
-                                    .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
+                TappableNewTypeView(type: type)
             }
             Spacer()
         })
         .padding(.leading, 40)
         .padding(.top, 5)
         .background(Color.clear)
+    }
+}
+
+struct TappableNewTypeView: View {
+    var type: NamedAPIResource
+    @State var isShow = false
+    
+    var body: some View {
+        TapToPushView(show: $isShow) {
+            Text(type.name)
+                .frame(alignment: .leading)
+                .font(.system(size: 15))
+                .foregroundColor(.white)
+                .background(Rectangle()
+                                .fill(Color.white.opacity(0.5))
+                                .cornerRadius(10)
+                                .padding(EdgeInsets(top: -5, leading: -10, bottom: -5, trailing: -10)))
+        } destination: {
+            PokemonsOfTypeListNavigationView(show: $isShow, type: PokemonType.type(from: type.name))
+        }
     }
 }
