@@ -114,7 +114,7 @@ struct SpeciesNameView: View {
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.gray)
                 .frame(width: 50, alignment: .leading)
-            Text(StringHelper.getEnglishText(from: species.genera))
+            Text(StringHelper.getEnglishText(from: species.genera ?? []))
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.black)
                 .padding(.leading, 5)
