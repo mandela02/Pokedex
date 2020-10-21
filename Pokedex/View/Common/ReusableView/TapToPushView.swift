@@ -14,12 +14,13 @@ struct TapToPushView<Content: View, Destination: View>: View {
     let destination: () -> Destination
     
     var body: some View {
-        content()
-            .background(NavigationLink(destination: destination(),
-                                       isActive: $show) { EmptyView() })
-            .onTapGesture {
-                show = true
-            }
+        Button  {
+            show = true
+        } label: {
+            content()
+                .background(NavigationLink(destination: destination(),
+                                           isActive: $show) { EmptyView() })
+        }
         .background(Color.clear)
     }
 }

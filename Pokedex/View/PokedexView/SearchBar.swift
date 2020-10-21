@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SearchBar: View {
-    var placeholder: String = "Search everything you like."
-    @State var text: String = ""
+    var placeholder: String = "Search pokemon name."
+    @Binding var text: String
     
     var body: some View {
         HStack {
@@ -33,11 +33,5 @@ struct SearchBar: View {
         }
         .background(Capsule().fill(Color(.systemGray6)).padding(.all, -10))
         .padding()
-    }
-}
-
-struct SearchBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchBar()
     }
 }

@@ -9,12 +9,13 @@ import SwiftUI
 import CoreData
 
 @main
-struct PokedexApp: App {    
-    @State var show = true
+struct PokedexApp: App {
+    @ObservedObject var settings = UserSettings()
+    @StateObject var updater = SearchDataPrepareUpdater()
     var body: some Scene {
         WindowGroup {
             EmptyView()
-                .fullScreenCover(isPresented: $show) {
+                .fullScreenCover(isPresented: $updater.isDone) {
                     NavigationView {
                         HomeView()
                             .statusBar(hidden: true)
@@ -23,12 +24,16 @@ struct PokedexApp: App {
                     }
                 }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
                 .statusBar(hidden: true)
+                .onAppear {
+                    updater.oldPokemonsCount = settings.pokemonsCount
+                    updater.check = true
+                }
         }
     }
 }
 
 struct HomeView: View {
-    @State var showBall: Bool = true
+    @State var showBall: Bool = false
 
     var body: some View {
         ZStack {
@@ -44,36 +49,13 @@ struct HomeView: View {
             }
         }
         .onAppear {
-            showBall = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                showBall = true
+            }
         }
         .onWillDisappear {
             showBall = false
         }
 
-    }
-}
-
-class PersistenceManager {
-    static let shared = PersistenceManager()
-    
-    let persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "PokemonModel")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
-    
-    private init() {
-        let center = NotificationCenter.default
-        let notification = UIApplication.willResignActiveNotification
-        center.addObserver(forName: notification, object: nil, queue: nil) { [weak self] _ in
-            guard let self = self else { return }
-            if self.persistentContainer.viewContext.hasChanges {
-                try? self.persistentContainer.viewContext.save()
-            }
-        }
     }
 }
