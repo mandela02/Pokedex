@@ -116,10 +116,29 @@ struct TypeSubView: View {
 }
 
 struct SearchView: View {
+    @StateObject private var searchUpdater = SearchUpdater()
+    
     var body: some View {
         VStack {
-            SearchBar()
+            SearchBar(text: $searchUpdater.searchValue)
+            List(searchUpdater.pokemonsResource) { pokemon in
+                SeachResultCell(name: pokemon.name ?? "", url: pokemon.url ?? "")
+            }
             Spacer()
+        }
+    }
+}
+
+struct SeachResultCell: View {
+    var name: String
+    var url: String
+    
+    @State var show = false
+    var body: some View {
+        TapToPushView(show: $show) {
+            Text(name.capitalized)
+        } destination: {
+            ParallaxView(pokemonUrl: url, isShowing: $show)
         }
     }
 }

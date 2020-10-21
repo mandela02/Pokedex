@@ -36,6 +36,10 @@ enum UrlType: String, CaseIterable {
     static func getAbilityUrl(of name: String) -> String {
         return Constants.baseAbilityUrl + name.lowercased()
     }
+    
+    static func getAllPokemonsResource(limit: Int) -> String {
+        return String(format: Constants.allPokemonsUrl, "\(limit)")
+    }
 }
 
 class Session {

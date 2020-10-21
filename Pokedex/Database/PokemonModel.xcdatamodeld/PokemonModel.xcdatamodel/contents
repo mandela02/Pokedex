@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="20A5384c" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Favorite" representedClassName="Favorite" syncable="YES">
         <attribute name="url" optional="YES" attributeType="String" defaultValueString="&quot;&quot;"/>
     </entity>
+    <entity name="PokemonsResource" representedClassName="PokemonsResource" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+    </entity>
     <elements>
         <element name="Favorite" positionX="-63" positionY="-18" width="128" height="58"/>
+        <element name="PokemonsResource" positionX="167.25390625" positionY="-14.97265625" width="114.171875" height="73"/>
     </elements>
 </model>

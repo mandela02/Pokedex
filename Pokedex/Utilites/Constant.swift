@@ -16,4 +16,6 @@ struct Constants {
     static let baseAbilityUrl = "https://pokeapi.co/api/v2/ability/"
     static let basePokemonSpeciesUrl = "https://pokeapi.co/api/v2/pokemon-species/"
     static let genderRateMaxChance = 8
+    static let allPokemonsUrl = "https://pokeapi.co/api/v2/pokemon/?limit=%@"
+    static let baseCheckPokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
 }

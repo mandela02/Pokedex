@@ -39,11 +39,7 @@ class PokemonUpdater: ObservableObject {
         }
     }
 
-    @Published var species: Species = Species() {
-        didSet {
-            print(species)
-        }
-    }
+    @Published var species: Species = Species()
 
     @Published var isSelected = false
     
