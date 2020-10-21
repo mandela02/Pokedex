@@ -11,11 +11,21 @@ import Combine
 import CoreData
 
 class FavoriteUpdater: ObservableObject {
+    @Published var isTopView: Bool = true {
+        didSet {
+            if refreshing && isTopView{
+                update()
+                refreshing = false
+            }
+        }
+    }
+
     @Published var refreshing = false
-    
+    @Published var isEmpty: Bool = false
     @Published var favorites: [Favorite] = [] {
         didSet {
             loadPokemonDetailData()
+            isEmpty = favorites.isEmpty
         }
     }
     

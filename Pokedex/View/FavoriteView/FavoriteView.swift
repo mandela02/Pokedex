@@ -9,94 +9,76 @@ import SwiftUI
 
 struct FavoriteView: View {
     @Binding var show: Bool
-    @State var showBall: Bool = true
+    @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
+    let width = (UIScreen.main.bounds.width - 80) / 2
+    var height: CGFloat {
+        width * 0.7
+    }
+    
+    private func calculateGridItem() -> [GridItem] {
+        return [GridItem(.fixed(width), spacing: 10), GridItem(.fixed(width), spacing: 10)]
+    }
     
     var body: some View {
         ZStack {
-            CustomBigTitleNavigationView(content: {
+            // Rotating Ball
+            if favoriteUpdater.isTopView {
+                RotatingPokeballView(color: Color(.systemGray4))
+                    .scaleEffect(1.2)
+            }
+            
+            //Main ScrollView
+            if favoriteUpdater.isEmpty {
                 ZStack {
-                    if showBall {
-                        RotatingPokeballView(color: Color(.systemGray4))
-                            .scaleEffect(1.2)
-                    }
-                    
-                    FavoriteListView()
-                }
-                .frame(height: UIScreen.main.bounds.height, alignment: .center)
-            }, header: {
                     VStack {
-                        Text("Your Favorite Pokemon")
-                            .font(Biotif.extraBold(size: 30).font)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            .padding(.leading, 5)
-                    }
-                    .padding(.top, 75)
-                    .padding(.leading, 20)
-            }, stickyHeader: {
-                    HStack {
-                        Spacer()
-                        Text("Your Favorite Pokemon")
-                            .font(Biotif.extraBold(size: 20).font)
-                            .foregroundColor(.black)
+                        BigTitle()
                         Spacer()
                     }
-                    .padding(.top, 50)
-                    .padding(.bottom, 20)
-                    .background(Color.white.opacity(0.5))
-            }, maxHeight: 150)
-            if showBall {
-                VStack {
-                    HStack(alignment: .center) {
-                        BackButtonView(isShowing: $show)
+                    EmptyFavoriteView()
+                }
+            } else {
+                CustomBigTitleNavigationView(content: {
+                    VStack {
+                        LazyVGrid(columns: calculateGridItem()) {
+                            ForEach(favoriteUpdater.pokemons) { cell in
+                                TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
+                                    .background(Color.clear)
+                            }
+                        }
                         Spacer()
                     }
+                    .background(Color.clear)
+                    .frame(height: UIScreen.main.bounds.height, alignment: .center)
+                }, header: {
+                    BigTitle()
+                }, stickyHeader: {
+                    SmallTitle()
+                }, maxHeight: 150)
+                .background(Color.clear)
+            }
+            // Back Button
+            VStack {
+                HStack(alignment: .center) {
+                    BackButtonView(isShowing: $show)
                     Spacer()
                 }
-                .padding(.top, 30)
-                .padding(.leading, 20)
+                Spacer()
             }
+            .padding(.top, 30)
+            .padding(.leading, 20)
         }
         .onAppear {
-            showBall = true
+            favoriteUpdater.isTopView = true
         }
         .onWillDisappear {
-            showBall = false
+            favoriteUpdater.isTopView = false
+        }
+        .onReceive(favoriteUpdater.didChange) { _ in
+            favoriteUpdater.refreshing = true
         }
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
-    }
-}
-
-struct FavoriteListView: View {
-    @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
-    @State var isEmpty: Bool = false
-    
-    var body: some View {
-        ZStack {
-                if isEmpty {
-                    EmptyFavoriteView()
-                } else {
-                    PokemonList(cells: $favoriteUpdater.pokemons,
-                                isLoading: .constant(false),
-                                isFinal: .constant(false),
-                                paddingHeader: 0,
-                                paddingFooter: 50, onCellAppear: { pokemon in })
-                }
-            }
-            .onReceive(favoriteUpdater.didChange) { _ in
-                favoriteUpdater.refreshing = true
-            }
-            .onReceive(favoriteUpdater.$pokemons, perform: { cells in
-                isEmpty = cells.isEmpty
-            })
-            .onAppear {
-                if favoriteUpdater.refreshing {
-                    favoriteUpdater.update()
-                    favoriteUpdater.refreshing = false
-                }
-            }
     }
 }
 
@@ -123,5 +105,32 @@ struct EmptyFavoriteView: View {
 struct FavoriteView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyFavoriteView()
+    }
+}
+
+struct BigTitle: View {
+    var body: some View {
+        Text("Your Favorite Pokemon")
+            .font(Biotif.extraBold(size: 30).font)
+            .foregroundColor(.black)
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 35)
+            .padding(.top, 75)
+            .frame(height: 150)
+    }
+}
+
+struct SmallTitle: View {
+    var body: some View {
+        HStack {
+            Spacer()
+            Text("Your Favorite Pokemon")
+                .font(Biotif.extraBold(size: 20).font)
+                .foregroundColor(.black)
+            Spacer()
+        }
+        .padding(.top, 50)
+        .padding(.bottom, 20)
+        .background(Color.white.opacity(0.5))
     }
 }

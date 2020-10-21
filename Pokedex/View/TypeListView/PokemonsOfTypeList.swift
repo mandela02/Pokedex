@@ -16,17 +16,32 @@ struct PokemonsOfTypeListNavigationView: View {
     @State var isViewDisplayed = false
     @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
+    let width = (UIScreen.main.bounds.width - 80) / 2
+    
+    var height: CGFloat {
+        width * 0.7
+    }
+    
+    private func calculateGridItem() -> [GridItem] {
+        return [GridItem(.fixed(width), spacing: 10), GridItem(.fixed(width), spacing: 10)]
+    }
+    
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
-                PokemonsOfTypeList(updater: updater)
-                    .frame(height: UIScreen.main.bounds.height, alignment: .center)
+                LazyVGrid(columns: calculateGridItem()) {
+                    ForEach(updater.allPokemons) { cell in
+                        TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
+                            .background(Color.clear)
+                    }
+                }
+                .animation(.linear)
             }, header: {
                 PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
             }, stickyHeader: {
                 HStack {
                     Spacer()
-                    Text(updater.name)
+                    Text(updater.name.capitalized)
                         .font(Biotif.extraBold(size: 20).font)
                         .foregroundColor(.black)
                     Spacer()
@@ -58,18 +73,6 @@ struct PokemonsOfTypeListNavigationView: View {
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
-    }
-}
-
-struct PokemonsOfTypeList: View {
-    @ObservedObject var updater: TypeDetailUpdater
-    
-    var body: some View {
-        PokemonList(cells: $updater.allPokemons,
-                    isLoading: .constant(false),
-                    isFinal: .constant(false),
-                    paddingHeader: 0,
-                    paddingFooter: 50, onCellAppear: { cell in })
     }
 }
 
