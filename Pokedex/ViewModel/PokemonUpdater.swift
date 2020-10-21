@@ -39,11 +39,14 @@ class PokemonUpdater: ObservableObject {
         }
     }
 
-    @Published var species: Species = Species()
+    @Published var species: Species = Species() {
+        didSet {
+            print(species)
+        }
+    }
 
     @Published var isSelected = false
     
-    @Published var preLoadImages: [UIImage?] = []
     @Published var images: [String] = []
     @Published var ids: [Int] = [] {
         didSet {

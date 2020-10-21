@@ -32,7 +32,7 @@ struct AboutContentView: View {
             GeneralDetailView(pokemon: pokemon,
                               species: species,
                               selectedString: $seletedString)
-                .frame(height: 120, alignment: .center)
+                .frame(height: pokemon.abilities.isEmpty ? 0 : 120, alignment: .center)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
                 .onChange(of: seletedString, perform: { seletedString in
                     withAnimation(.linear) {
@@ -56,17 +56,20 @@ struct AboutContentView: View {
                 .padding()
                 .padding(.bottom, 20)
             
-            Text("Breeding")
+            if let genderRate = species.genderRate {
+                Text("Breeding")
                 .font(Biotif.extraBold(size: 20).font)
                 .foregroundColor(.black)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 20)
             
-            BreedingView(rate: species.genderRate,
-                         group: species.eggGroup.first?.name ?? "",
-                         habitat: species.habitat?.name ?? "")
-                .padding(.leading, 20)
-                .padding(.top, 10)
+                BreedingView(rate: genderRate,
+                             group: species.eggGroup?.first?.name ?? "",
+                             habitat: species.habitat?.name ?? "")
+                    .padding(.leading, 20)
+                    .padding(.top, 10)
+            }
+            
             Spacer()
         }.background(Color.clear)
     }

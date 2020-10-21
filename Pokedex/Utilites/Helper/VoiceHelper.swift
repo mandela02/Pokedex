@@ -21,7 +21,7 @@ class VoiceHelper: NSObject, ObservableObject {
         didSet {
             if isSpeaking {
                 speak(text: speech)
-                speech = StringHelper.getRandomEnglishText(from: species.flavorTextEntries)
+                speech = StringHelper.getRandomEnglishText(from: species.flavorTextEntries ?? [])
             } else {
                 if speechSynthesizer.isSpeaking {
                     speechSynthesizer.stopSpeaking(at: .immediate)

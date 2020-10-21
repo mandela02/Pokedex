@@ -9,20 +9,18 @@ import Foundation
 
 struct Species: Codable {
     var id: Int = 0
-    var name: String = ""
-    var baseHappiness: Int = 0
-    var flavorTextEntries: [FlavorTextEntry] = []
-    var genderRate: Int = 1
-    var eggGroup: [NamedAPIResource] = []
+    var name: String?
+    var flavorTextEntries: [FlavorTextEntry]?
+    var genderRate: Int?
+    var eggGroup: [NamedAPIResource]?
     var habitat: NamedAPIResource?
-    var evolutionChain: APIResource = APIResource(url: "")
-    var varieties: [PokemonSpeciesVariety] = []
-    var genera: [Genus] = []
+    var evolutionChain: APIResource?
+    var varieties: [PokemonSpeciesVariety]?
+    var genera: [Genus]?
     
     enum CodingKeys: String, CodingKey {
         case id
         case name
-        case baseHappiness = "base_happiness"
         case flavorTextEntries = "flavor_text_entries"
         case genderRate = "gender_rate"
         case eggGroup = "egg_groups"
@@ -37,11 +35,11 @@ struct Species: Codable {
     }
     
     var megas: [NamedAPIResource] {
-        return varieties.map({$0.pokemon}).filter({$0.name.contains("mega")})
+        return varieties?.map({$0.pokemon}).filter({$0.name.contains("mega")}) ?? []
     }
     
     var pokemon: NamedAPIResource {
-        return varieties.filter({$0.isDefault}).first?.pokemon ?? NamedAPIResource()
+        return varieties?.filter({$0.isDefault}).first?.pokemon ?? NamedAPIResource()
     }
 }
 
