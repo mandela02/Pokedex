@@ -46,8 +46,8 @@ struct PokemonList: View {
                     Color.clear.frame(height: paddingFooter, alignment: .center)
                         .animation(.linear)
                         .listStyle(SidebarListStyle())
-                        .blur(radius: isLoading ? 3.0 : 0)
                 })
+                .blur(radius: isLoading ? 3.0 : 0)
                 
                 VStack {
                     Spacer()
@@ -59,7 +59,7 @@ struct PokemonList: View {
                 }
                 
                 if isLoading {
-                    LoadingView()
+                    LoadingView(background: .white)
                         .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }

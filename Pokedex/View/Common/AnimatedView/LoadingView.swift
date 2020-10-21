@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct LoadingView: View {
+    var background: Color
     @State private var isSpining = false
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            background.opacity(0.5)
             Text("Loading...")
                 .font(Biotif.bold(size: 20).font)
                 .foregroundColor(.red)

@@ -34,7 +34,9 @@ class MovesUpdater: ObservableObject {
     
     @Published var pokemonMoves: [PokemonMove] = [] {
         didSet {
-            getAllMoves()
+            if !pokemonMoves.isEmpty {
+                getAllMoves()
+            }
         }
     }
     
