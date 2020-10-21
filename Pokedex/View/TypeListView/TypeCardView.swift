@@ -16,7 +16,7 @@ struct TappableTypeCardView: View {
         TapToPushView(show: $show) {
             TypeCardView(type: type, size: size)
         } destination: {
-            PokemonsOfTypeList(show: $show, type: type)
+            PokemonsOfTypeListNavigationView(show: $show, type: type)
         }
     }
 }

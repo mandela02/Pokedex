@@ -47,7 +47,7 @@ struct HeaderImageScrollView: View {
                             style: index == tag ? .animated : .silhoutte)
             .foregroundColor(.black)
             .blur(radius: index == tag ? 0 : 3.0)
-            .scaleEffect(index == tag ? 1.4 : 0.6)
+            .scaleEffect(index == tag ? 1.6 : 0.8)
             .frame(width: size.width, height: size.height)
     }
     

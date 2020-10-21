@@ -13,12 +13,10 @@ struct ParallaxView: View {
     var url: String?
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater(url: "")
-    @State private var isExpanded = true
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
     @State private var isFirstTimeLoadView = true
-    @State private var isLoadingData = true
 
     init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
@@ -43,13 +41,13 @@ struct ParallaxView: View {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     voiceUpdater.isSpeaking = true
-                    isLoadingData = false
                 }
             }
         })
         .onAppear {
+            isShowingImage = true
+            
             if isFirstTimeLoadView {
-                isLoadingData = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if let pokemon = pokemon, pokemon.pokeId != 0 {
                         updater.pokemon = pokemon
@@ -72,16 +70,16 @@ struct ParallaxView: View {
 }
 
 struct ParallaxContentView: View {
-    let maxHeight = UIScreen.main.bounds.height * 0.4 - 50
+    private let maxHeight = UIScreen.main.bounds.height * 0.4 - 50
     
     @Binding var isShowing: Bool
     @Binding var isShowingImage: Bool
 
-    @State var isMinimized = false
-    @State var colums = Array(repeating: GridItem(.flexible(), spacing: 15), count: 1)
-    @State var index: Int = 1
+    @State private var isMinimized = false
+    @State private var index: Int = 1
     @State private var opacity: Double = 1
     @State private var scale: CGFloat = 1
+    @State private var imageOffsetY: CGFloat = 1
 
     @ObservedObject var voiceUpdater: VoiceHelper
     @ObservedObject var updater: PokemonUpdater
@@ -93,19 +91,27 @@ struct ParallaxContentView: View {
             updater.pokemon.mainType.color.background.ignoresSafeArea()
                 .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
                 .animation(.linear)
-            if !isMinimized {
-                RotatingPokeballView()
-                    .ignoresSafeArea()
-                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .bottom)
-            } else {
-                RotatingPokeballView()
-                    .ignoresSafeArea()
-                    .frame(width: UIScreen.main.bounds.width * 4/5,
-                           height: UIScreen.main.bounds.height * 4/5,
-                           alignment: .center)
-                    .offset(x: UIScreen.main.bounds.width * 1/3, y: -UIScreen.main.bounds.height * 1/3 )
+            
+            // Rotatin Ball
+            if isShowingImage {
+                if isMinimized {
+                    RotatingPokeballView()
+                        .ignoresSafeArea()
+                        .frame(width: UIScreen.main.bounds.width * 4/5,
+                               height: UIScreen.main.bounds.height * 4/5,
+                               alignment: .center)
+                        .offset(x: UIScreen.main.bounds.width * 1/3,
+                                y: -UIScreen.main.bounds.height * 1/3 + maxHeight / 4 )
+                } else {
+                    RotatingPokeballView()
+                        .ignoresSafeArea()
+                        .frame(width: UIScreen.main.bounds.width,
+                               height: UIScreen.main.bounds.height,
+                               alignment: .bottom)
+                }
             }
             
+            //Detail View
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
                     GeometryReader { reader -> AnyView in
@@ -114,13 +120,16 @@ struct ParallaxContentView: View {
                                 .onChange(of: reader.frame(in: .global).minY - 100 + maxHeight, perform:  { y in
                                     opacity = 1 + Double(reader.frame(in: .global).minY/(maxHeight - 50))
                                     scale = 1 + CGFloat(reader.frame(in: .global).minY/(maxHeight - 50))
-                                    
+                                    imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
                                     if y < 0 {
                                         withAnimation(.linear) { isMinimized = true }
                                     } else {
                                         withAnimation(.linear) { isMinimized = false }
                                     }
                                 })
+                            .onAppear {
+                                imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
+                            }
                         )
                     }
                     .frame(height: maxHeight)
@@ -138,6 +147,8 @@ struct ParallaxContentView: View {
                     .frame(height: UIScreen.main.bounds.height - 50, alignment: .center)
                 }
             }
+            
+            //Top Image view
             if isShowingImage {
                 HeaderImageScrollView(index: $index,
                                       items: $updater.images,
@@ -151,15 +162,17 @@ struct ParallaxContentView: View {
                                             }
                                         }
                                         index = 1
-                                        updater.update(onSuccess: {
-                                        })
+                                        updater.update(onSuccess: {})
                                       })
-                    .frame(width: UIScreen.main.bounds.width * 1/2, height: maxHeight * 2/3, alignment: .center)
+                    .frame(width: UIScreen.main.bounds.width * 1/2,
+                           height: maxHeight * 2/3,
+                           alignment: .center)
                     .opacity(opacity)
                     .scaleEffect(scale)
-                    .offset(y: maxHeight/2 + 20 )
+                    .offset(y: imageOffsetY)
             }
 
+            // Header View (name, type, etc...)
             HeaderView(isShowing: $isShowing, isInExpandeMode: $isMinimized, opacity: $opacity, pokemon: updater.pokemon)
             
             VStack() {
@@ -173,23 +186,6 @@ struct ParallaxContentView: View {
                         .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }
-
-//            NewButtonView(isShowing: $isShowing, isInExpandeMode: $isMinimized, pokemon: updater.pokemon)
-//                .ignoresSafeArea()
-//                .opacity(isMinimized ? 1 : 0)
-//                //.background(BackgroundView(isExpanded: $isMinimized, pokemon: updater.pokemon))
         })
-    }
-}
-
-struct BackgroundView: View {
-    @Binding var isExpanded: Bool
-    var pokemon: Pokemon
-    var body: some View {
-        if isExpanded {
-            pokemon.mainType.color.background.opacity(0.5).blur(radius: 3)
-        } else {
-            Color.clear
-        }
     }
 }

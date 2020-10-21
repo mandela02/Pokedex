@@ -7,59 +7,76 @@
 
 import SwiftUI
 
-struct PokemonsOfTypeList: View {
-    @State var selectedPokemonUrl: String = ""
-    @State var isViewDisplayed = false
-    @State var showDetail: Bool = false
-    
-    @State var isLoading = false
-    @State var isFirstTimeLoading = true
-    
+struct PokemonsOfTypeListNavigationView: View {
     @Binding var show: Bool
     var type : PokemonType
     
+    @State var isFirstTimeLoading = true
+    @State var showDetail: Bool = false
+    @State var isViewDisplayed = false
     @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
+    let width = (UIScreen.main.bounds.width - 80) / 2
+    
+    var height: CGFloat {
+        width * 0.7
+    }
+    
+    private func calculateGridItem() -> [GridItem] {
+        return [GridItem(.fixed(width), spacing: 10), GridItem(.fixed(width), spacing: 10)]
+    }
+    
     var body: some View {
-        GeometryReader(content: { geometry in
-            ZStack {
-                PokemonList(cells: $updater.allPokemons,
-                            isLoading: $isLoading,
-                            isFinal: .constant(false),
-                            paddingHeader: 200,
-                            paddingFooter: 50, onCellAppear: { cell in})
-                VStack {
-                    PokemonOfTypeHeaderView(isLoading: $isLoading,
-                                            show: $show,
-                                            typeName: updater.name,
-                                            damage: updater.damage)
-                        .background(Color.white.opacity(0.5))
-                    Spacer()
-                }
-            }
-            .ignoresSafeArea()
-            .onAppear(perform: {
-                isViewDisplayed = true
-                if isFirstTimeLoading {
-                    updater.pokemonType = type
-                    isLoading = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        isLoading = false
+        ZStack {
+            CustomBigTitleNavigationView(content: {
+                LazyVGrid(columns: calculateGridItem()) {
+                    ForEach(updater.allPokemons) { cell in
+                        TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
+                            .background(Color.clear)
                     }
                 }
-                isFirstTimeLoading = false
-            })
-            .onDisappear {
-                isViewDisplayed = false
+                .animation(.linear)
+            }, header: {
+                PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
+            }, stickyHeader: {
+                HStack {
+                    Spacer()
+                    Text(updater.name.capitalized)
+                        .font(Biotif.extraBold(size: 20).font)
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+                .padding(.top, 50)
+                .padding(.bottom, 20)
+                .background(Color.white.opacity(0.5))
+            }, maxHeight: 200)
+            VStack {
+                HStack(alignment: .center) {
+                    BackButtonView(isShowing: $show)
+                    Spacer()
+                }
+                Spacer()
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
+            .padding(.top, 30)
+            .padding(.leading, 20)
+        }
+        .onAppear(perform: {
+            isViewDisplayed = true
+            if isFirstTimeLoading {
+                updater.pokemonType = type
+            }
+            isFirstTimeLoading = false
         })
+        .onDisappear {
+            isViewDisplayed = false
+        }
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
     }
 }
 
 struct PokemonOfTypeHeaderView: View {
-    @Binding var isLoading: Bool
     @Binding var show: Bool
     var typeName: String
     var damage: MoveDamageClass
@@ -67,15 +84,11 @@ struct PokemonOfTypeHeaderView: View {
     var body: some View {
         ZStack {
             VStack {
-                HStack {
-                    BackButtonView(isShowing: $show)
-                    Spacer()
-                }
                 HStack(alignment: .lastTextBaseline) {
                     Text(typeName.capitalized)
                         .font(Biotif.extraBold(size: 30).font)
                         .foregroundColor(.black)
-                
+                    
                     Spacer()
                     
                     if !damage.name.isEmpty {
@@ -85,22 +98,19 @@ struct PokemonOfTypeHeaderView: View {
                             .animation(.linear)
                     }
                 }
+                .padding(.top, 75)
                 .padding(.leading, 30)
                 .padding(.trailing, 30)
                 .padding(.bottom, 3)
-
+                
                 HStack {
                     Spacer()
                     Text(StringHelper.getEnglishText(from: damage.descriptions))
                         .font(Biotif.regular(size: 15).font)
-                        .foregroundColor(Color(.systemGray3))
+                        .foregroundColor(Color(.darkGray))
                         .padding(.trailing, 30)
                         .animation(.linear)
                 }
-            }
-            if isLoading {
-                Color.black.opacity(0.5)
-                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
             }
         }
         .frame(height: 180)
