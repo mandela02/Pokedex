@@ -16,7 +16,7 @@ struct GeneralDetailView: View {
 
     var body: some View {
         GeometryReader(content: { geometry in
-            if !pokemon.abilities.isEmpty {
+            if !(pokemon.abilities?.isEmpty ?? true) {
                 HStack(alignment: .center, spacing: 10) {
                     VStack(alignment: .leading, spacing: 20) {
                         SpeciesNameView(species: species)

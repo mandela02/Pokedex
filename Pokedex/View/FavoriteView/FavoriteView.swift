@@ -8,15 +8,20 @@
 import SwiftUI
 
 struct FavoriteView: View {
+    let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
+
     @Binding var show: Bool
     @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
-    let width = (UIScreen.main.bounds.width - 80) / 2
+    var width: CGFloat {
+        return (UIScreen.main.bounds.width - 80) / numberOfColumns
+    }
     var height: CGFloat {
         width * 0.7
     }
     
     private func calculateGridItem() -> [GridItem] {
-        return [GridItem(.fixed(width), spacing: 10), GridItem(.fixed(width), spacing: 10)]
+        let gridItem = GridItem(.fixed(width), spacing: 10)
+        return Array(repeating: gridItem, count: Int(numberOfColumns))
     }
     
     var body: some View {
@@ -48,7 +53,6 @@ struct FavoriteView: View {
                         Spacer()
                     }
                     .background(Color.clear)
-                    .frame(height: UIScreen.main.bounds.height, alignment: .center)
                 }, header: {
                     BigTitle()
                 }, stickyHeader: {

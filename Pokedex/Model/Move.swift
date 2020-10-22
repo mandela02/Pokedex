@@ -28,7 +28,7 @@ struct Move: Codable, Identifiable {
     }
 }
 
-class MoveFlavorTextEntry: Codable {
+struct MoveFlavorTextEntry: Codable {
     var flavorText: String?
     var language: NamedAPIResource?
     var version: NamedAPIResource?

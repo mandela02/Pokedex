@@ -43,12 +43,12 @@ struct PagerView<Content: View & Identifiable>: View {
     
     private func drag(in size: CGSize) -> some Gesture{
         return DragGesture().onChanged({ value in
-            withAnimation(.spring()) {
+            withAnimation(.linear) {
                 self.isGestureActive = true
                 self.offset = value.translation.width + -size.width * CGFloat(self.index)
             }
         }).onEnded({ value in
-            withAnimation(.spring()) {
+            withAnimation(.linear) {
                 if -value.predictedEndTranslation.width > size.width / 2, self.index < self.pages().endIndex - 1 {
                     self.index += 1
                 }
@@ -67,16 +67,13 @@ struct PagerView<Content: View & Identifiable>: View {
         GeometryReader { geometry in
             VStack {
                 TabControlView(tabs: tabs, color: color,selected: $index, offset: $offset)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 0) {
-                        ForEach(self.pages()) { page in
-                            page
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .background(HexColor.white)
-                        }
+                HStack(alignment: .center, spacing: 0) {
+                    ForEach(self.pages()) { page in
+                        page
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .background(HexColor.white)
                     }
                 }
-                .content
                 .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))
                 .frame(width: geometry.size.width, height: nil, alignment: .leading)
                 .gesture(drag(in: geometry.size))

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PokemonsOfTypeListNavigationView: View {
+    
     @Binding var show: Bool
     var type : PokemonType
     
@@ -16,16 +17,20 @@ struct PokemonsOfTypeListNavigationView: View {
     @State var isViewDisplayed = false
     @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
-    let width = (UIScreen.main.bounds.width - 80) / 2
+    let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
     
+    var width: CGFloat {
+        return (UIScreen.main.bounds.width - 80) / numberOfColumns
+    }
     var height: CGFloat {
         width * 0.7
     }
     
     private func calculateGridItem() -> [GridItem] {
-        return [GridItem(.fixed(width), spacing: 10), GridItem(.fixed(width), spacing: 10)]
+        let gridItem = GridItem(.fixed(width), spacing: 10)
+        return Array(repeating: gridItem, count: Int(numberOfColumns))
     }
-    
+
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
@@ -50,6 +55,12 @@ struct PokemonsOfTypeListNavigationView: View {
                 .padding(.bottom, 20)
                 .background(Color.white.opacity(0.5))
             }, maxHeight: 200)
+            
+            if updater.isLoading {
+                LoadingView(background: .white)
+                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+            }
+            
             VStack {
                 HStack(alignment: .center) {
                     BackButtonView(isShowing: $show)
@@ -59,11 +70,6 @@ struct PokemonsOfTypeListNavigationView: View {
             }
             .padding(.top, 30)
             .padding(.leading, 20)
-            
-            if updater.isLoading {
-                LoadingView(background: .white)
-                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-            }
         }
         .onAppear(perform: {
             isViewDisplayed = true

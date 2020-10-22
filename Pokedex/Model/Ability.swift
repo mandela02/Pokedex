@@ -28,7 +28,7 @@ struct Ability: Codable {
     }
 }
 
-class FlavorTextEntryVersionGroup: Codable {
+struct FlavorTextEntryVersionGroup: Codable {
     var flavorText: String = ""
     var language: NamedAPIResource = NamedAPIResource()
     var version: NamedAPIResource = NamedAPIResource()

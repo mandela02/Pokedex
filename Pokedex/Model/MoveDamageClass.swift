@@ -12,5 +12,4 @@ struct MoveDamageClass: Codable {
     var id: Int = 0
     var moves: [NamedAPIResource] = []
     var name: String = ""
-    var names: [Name] = []
 }

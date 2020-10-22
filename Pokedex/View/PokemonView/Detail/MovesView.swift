@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct MovesView: View {
-    var pokemon: Pokemon
-
-    @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
+    @ObservedObject var moveUpdater: MovesUpdater
+    
+    init(pokemon: Pokemon) {
+        moveUpdater = MovesUpdater(of: pokemon)
+    }
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let width = geometry.size.width - 80
@@ -36,11 +39,6 @@ struct MovesView: View {
             }
             .listStyle(SidebarListStyle())
             .animation(.spring())
-            .onAppear {
-                if moveUpdater.pokemon.pokeId != pokemon.pokeId {
-                    moveUpdater.pokemon = pokemon
-                }
-            }
         })
     }
     

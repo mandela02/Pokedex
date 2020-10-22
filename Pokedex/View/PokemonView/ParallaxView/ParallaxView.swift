@@ -117,16 +117,24 @@ struct ParallaxContentView: View {
                     GeometryReader { reader -> AnyView in
                         return AnyView(
                         Color.clear
-                                .onChange(of: reader.frame(in: .global).minY - 100 + maxHeight, perform:  { y in
-                                    opacity = 1 + Double(reader.frame(in: .global).minY/(maxHeight - 50))
-                                    scale = 1 + CGFloat(reader.frame(in: .global).minY/(maxHeight - 50))
+                                .onChange(of: reader.frame(in: .global).minY, perform:  { minFrameY in
+                                    let frameY = minFrameY - 100 + maxHeight
+                                    opacity = 1 + Double(minFrameY/(maxHeight - 50))
+                                    scale = 1 + CGFloat(minFrameY/(maxHeight - 50))
                                     imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
-                                    if y < 0 {
+                                    if frameY < 0 {
                                         withAnimation(.linear) { isMinimized = true }
                                     } else {
-                                        withAnimation(.linear) { isMinimized = false }
+                                        withAnimation(.linear) {
+                                            if isMinimized == true {
+                                                isMinimized = false
+                                            }
+                                        }
                                     }
                                 })
+                            .onChange(of: reader.frame(in: .global).maxY, perform:  { maxFrameY in
+                                imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
+                            })
                             .onAppear {
                                 imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
                             }

@@ -104,7 +104,6 @@ struct AnimatedImageView: View {
                                 self.trigger = true
                             }
                         })
-                    
                 }
                 ExposionView(trigger: $trigger, needHidden: $needHidden)
             }
@@ -184,7 +183,6 @@ struct ZoomOutImageView: View {
         if let image = image {
             Image(uiImage: image)
                 .resizable()
-                .scaleEffect(0.8)
                 .aspectRatio(contentMode: .fit)
                 .offset(x: isComplete ? 0 : -150)
                 .scaleEffect(isComplete ? 1 : 0)

@@ -54,13 +54,12 @@ struct Pokemon: Codable, Identifiable {
     var sprites: PokemonImage = PokemonImage()
     var order: Int = 0
     var species: NamedAPIResource = NamedAPIResource()
-    var baseExp: Int = 0
     var height: Int = 0
     var weight: Int = 0
-    var abilities: [AbilitiesResult] = []
+    var abilities: [AbilitiesResult]?
     var stats: [PokeStatUrl] = []
     var pokeId: Int = 0
-    var moves: [PokemonMove] = []
+    var moves: [PokemonMove]?
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -72,7 +71,6 @@ struct Pokemon: Codable, Identifiable {
         case sprites = "sprites"
         case order = "order"
         case species = "species"
-        case baseExp = "base_experience"
         case height = "height"
         case weight = "weight"
         case abilities = "abilities"
@@ -82,7 +80,7 @@ struct Pokemon: Codable, Identifiable {
     }
 }
 
-class PokemonImage: Codable {
+struct PokemonImage: Codable {
     var back: String?
     var backFemale: String?
     var backShiny: String?
@@ -93,7 +91,6 @@ class PokemonImage: Codable {
     var frontShinyFemale: String?
     var other: OtherImageResult?
     var versions: Versions?
-    var animated: PokemonImage?
 
     enum CodingKeys: String, CodingKey {
         case back = "back_default"
@@ -105,7 +102,6 @@ class PokemonImage: Codable {
         case frontShiny = "front_shiny"
         case frontShinyFemale = "front_shiny_female"
         case other
-        case animated
         case versions
     }
 }
@@ -119,10 +115,22 @@ struct Versions: Codable {
 }
 
 struct GenerationV: Codable {
-    var blackWhite: PokemonImage?
+    var blackWhite: BlackImage?
 
     enum CodingKeys: String, CodingKey {
         case blackWhite = "black-white"
+    }
+}
+
+struct BlackImage: Codable {
+    var animated: AnimatedImage?
+}
+
+struct AnimatedImage: Codable {
+    var front: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case front = "front_default"
     }
 }
 

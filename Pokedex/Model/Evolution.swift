@@ -33,10 +33,10 @@ struct Evolution: Codable, EvolutionVending {
             }
         }
     }
+    
     var babyTriggerItem: Item?
     var chain: EvolutionChain?
     var id: Int = 0
-    
     enum CodingKeys: String, CodingKey {
         case babyTriggerItem = "baby_trigger_item"
         case chain

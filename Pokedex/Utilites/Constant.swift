@@ -18,4 +18,5 @@ struct Constants {
     static let genderRateMaxChance = 8
     static let allPokemonsUrl = "https://pokeapi.co/api/v2/pokemon/?limit=%@"
     static let baseCheckPokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
+    static let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
 }

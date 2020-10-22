@@ -42,7 +42,7 @@ enum UrlType: String, CaseIterable {
     }
 }
 
-class Session {
+struct Session {
     static let share = Session()
 
     private init() {}

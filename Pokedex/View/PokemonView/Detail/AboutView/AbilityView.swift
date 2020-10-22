@@ -13,30 +13,32 @@ struct AbilitesView: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            Text("Abilities")
-                .font(Biotif.extraBold(size: 20).font)
-                .foregroundColor(.black)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 10)
-            HStack(alignment: .center, spacing: 30) {
-                ForEach(pokemon.abilities.map({$0.ability.name.capitalized}), content: { text in
-                    TypeBubbleCellView(text: text,
-                                       foregroundColor: text == selectedString ? .white : .gray,
-                                       backgroundColor: text == selectedString ? .gray : .white,
-                                       font: Biotif.semiBold(size: 15).font)
-                        .onTapGesture {
-                            if text == selectedString {
-                                selectedString = nil
-                            } else {
-                                selectedString = text
+            if let abilities = pokemon.abilities, !abilities.isEmpty  {
+                Text("Abilities")
+                    .font(Biotif.extraBold(size: 20).font)
+                    .foregroundColor(.black)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 10)
+                HStack(alignment: .center, spacing: 30) {
+                    ForEach(abilities.map({$0.ability.name.capitalized}), content: { text in
+                        TypeBubbleCellView(text: text,
+                                           foregroundColor: text == selectedString ? .white : .gray,
+                                           backgroundColor: text == selectedString ? .gray : .white,
+                                           font: Biotif.semiBold(size: 15).font)
+                            .onTapGesture {
+                                if text == selectedString {
+                                    selectedString = nil
+                                } else {
+                                    selectedString = text
+                                }
                             }
-                        }
-                })
-                Spacer()
+                    })
+                    Spacer()
+                }
+                .padding(.leading, 40)
+                .transition(.opacity)
+                .animation(.easeIn)
             }
-            .padding(.leading, 40)
-            .transition(.opacity)
-            .animation(.easeIn)
         }
     }
 }

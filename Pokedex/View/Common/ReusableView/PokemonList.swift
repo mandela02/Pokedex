@@ -17,12 +17,14 @@ struct PokemonList: View {
     
     let onCellAppear: (Pokemon) -> ()
     
+    let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
+    
     var body: some View {
         GeometryReader(content: { geometry in
-            let width = (geometry.size.width - 80) / 2
+            let width = (geometry.size.width - 80) / numberOfColumns
             let height = width * 0.7
             let gridItem = GridItem(.fixed(width), spacing: 10)
-            let columns = [gridItem, gridItem]
+            let columns: [GridItem] = Array(repeating: gridItem, count: Int(numberOfColumns))
             
             ZStack {
                 ScrollView(.vertical, showsIndicators: false, content: {

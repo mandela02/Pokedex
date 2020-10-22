@@ -8,17 +8,11 @@
 import SwiftUI
 
 struct EvolutionView: View {
-    var species: Species
+    @ObservedObject var evolutionUpdater: EvolutionUpdater
     
-    var body: some View {
-        EvolutionChainView(species: species)
-            .frame(minHeight: 0, maxHeight: .infinity, alignment: .center)
+    init(species: Species) {
+        evolutionUpdater = EvolutionUpdater(of: species)
     }
-}
-
-struct EvolutionChainView: View {
-    var species: Species
-    @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater(of: Species())
     
     var body: some View {
         List {
@@ -40,12 +34,8 @@ struct EvolutionChainView: View {
                         .padding(.bottom, 5)
                 }
             }
-            .isRemove(!species.havingMega)
-            
+            .isRemove(!(evolutionUpdater.species?.havingMega ?? true))
             Color.clear.frame(height: 100, alignment: .center)
-        }
-        .onAppear {
-            evolutionUpdater.species = species
         }
         .listStyle(SidebarListStyle())
         .animation(.linear)
@@ -127,41 +117,5 @@ struct PokemonCellView: View {
         } destination: {
             ParallaxView(pokemonUrl: pokemonUrl, isShowing: $show)
         }
-    }
-}
-
-
-struct CustomAlertView: View {
-    @Binding var image: UIImage?
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        VStack(alignment: .center, spacing: 10) {
-            ZStack {
-                Image("ic_pokeball")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.gray.opacity(0.5))
-                Image(uiImage: image ?? UIImage())
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.gray.opacity(0.5))
-            }
-            Button(action: {
-                withAnimation(.linear) {
-                    isPresented = false
-                }
-            }, label: {
-                Text("OK")
-                    .font(Biotif.bold(size: 25).font)
-                    .frame(minWidth: 0,
-                           maxWidth: .infinity,
-                           alignment: .center)
-                    .background(Color.gray.opacity(0.3))
-                    .cornerRadius(20)
-            })
-        }.background(Color.clear)
     }
 }

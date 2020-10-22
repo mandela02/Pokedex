@@ -18,7 +18,7 @@ struct HeaderView: View {
         VStack {
             NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, pokemon: pokemon)
             NewNameView(pokemon: pokemon, opacity: $opacity)
-            NewTypeView(pokemon: pokemon)
+            NewTypeView(pokemon: pokemon, isInExpandeMode: $isInExpandeMode)
             Spacer()
         }
     }
@@ -142,6 +142,8 @@ struct NewNameView: View {
 
 struct NewTypeView: View {
     let pokemon: Pokemon
+    @Binding var isInExpandeMode: Bool
+
     var body: some View {
         HStack(alignment: .center, spacing: 30, content: {
             ForEach(pokemon.types.map({$0.type})) { type in
@@ -152,6 +154,7 @@ struct NewTypeView: View {
         .padding(.leading, 40)
         .padding(.top, 5)
         .background(Color.clear)
+        .isRemove(isInExpandeMode)
     }
 }
 

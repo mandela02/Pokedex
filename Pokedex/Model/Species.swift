@@ -43,7 +43,7 @@ struct Species: Codable {
     }
 }
 
-class FlavorTextEntry: Codable {
+struct FlavorTextEntry: Codable {
     var flavorText: String = ""
     var language: NamedAPIResource = NamedAPIResource()
     var version: NamedAPIResource = NamedAPIResource()

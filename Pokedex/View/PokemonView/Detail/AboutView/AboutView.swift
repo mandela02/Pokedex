@@ -32,7 +32,7 @@ struct AboutContentView: View {
             GeneralDetailView(pokemon: pokemon,
                               species: species,
                               selectedString: $seletedString)
-                .frame(height: pokemon.abilities.isEmpty ? 0 : 120, alignment: .center)
+                .frame(height: pokemon.abilities?.isEmpty ?? true ? 0 : 120, alignment: .center)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
                 .onChange(of: seletedString, perform: { seletedString in
                     withAnimation(.linear) {

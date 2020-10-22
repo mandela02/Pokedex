@@ -21,7 +21,7 @@ class EvolutionUpdater: ObservableObject {
         self.species = species
     }
     
-    var species: Species? {
+    @Published var species: Species? {
         didSet {
             if let megas = species?.megas {
                 megaEvolutionLinks = megas.map({EvoLink(from: species?.pokemon ?? NamedAPIResource(), to: $0, detail: [], triggers: "Mega")})
@@ -61,7 +61,9 @@ class EvolutionUpdater: ObservableObject {
             .replaceError(with: Evolution())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.evolution, on: self)
+            .sink(receiveValue: { [weak self] evolution in
+                self?.evolution = evolution
+            })
             .store(in: &cancellables)
     }
 

@@ -9,5 +9,5 @@ import Foundation
 import Combine
 
 class TypeUpdater: ObservableObject {
-    @Published var allTypes: [PokemonType] = PokemonType.allCases
+    @Published var allTypes: [PokemonType] = PokemonType.allCases.filter({$0 != .non})
 }
