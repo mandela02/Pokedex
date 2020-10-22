@@ -10,7 +10,6 @@ import CoreData
 
 @main
 struct PokedexApp: App {
-    @ObservedObject var settings = UserSettings()
     @StateObject var updater = SearchDataPrepareUpdater()
     var body: some Scene {
         WindowGroup {
@@ -24,10 +23,6 @@ struct PokedexApp: App {
                     }
                 }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
                 .statusBar(hidden: true)
-                .onAppear {
-                    updater.oldPokemonsCount = settings.pokemonsCount
-                    updater.check = true
-                }
         }
     }
 }

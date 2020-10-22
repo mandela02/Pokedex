@@ -148,7 +148,7 @@ struct PokemonInformationView: View {
                                           items: $updater.images,
                                           onScrolling: { gesture in
                                             onGestureScrolling(gesture: gesture, size: size)
-                                          }, onEndScrolling: { gesture in
+                                          }, onEndScrolling: { gesture, direction  in
                                             if index == updater.ids.endIndex - 1 {
                                                 updater.currentId = updater.ids.last ?? 0
                                             } else if index == 0 {
@@ -211,7 +211,6 @@ struct PokemonInformationView: View {
                         if let url = url, url != "" {
                             updater.pokemonUrl = url
                         }
-                        updater.isSelected = true
                     }
                 }
                 hideImage(in: size)

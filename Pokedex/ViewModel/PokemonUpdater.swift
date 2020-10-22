@@ -11,15 +11,20 @@ import SwiftUI
 class PokemonUpdater: ObservableObject {
     init(url: String) {
         self.pokemonUrl = url
+        wait()
     }
     
     deinit {
         cancellables.removeAll()
     }
     
-    var imageCache = ImageCache.getImageCache()
+    private var isFirstTimeLoadViewModel = true
     private var cancellables = Set<AnyCancellable>()
-    
+
+    @Published var settings = UserSettings()
+    @Published var currentScrollIndex = 0
+    @Published var isScrollingEnable = true
+
     @Published var pokemonUrl: String? {
         didSet {
             initPokemon()
@@ -39,11 +44,14 @@ class PokemonUpdater: ObservableObject {
         }
     }
 
-    @Published var species: Species = Species()
-
-    @Published var isSelected = false
+    @Published var species: Species = Species() {
+        didSet {
+            isScrollingEnable = true
+        }
+    }
     
     @Published var images: [String] = []
+    
     @Published var ids: [Int] = [] {
         didSet {
             images = ids.map({UrlType.getImageUrlString(of: $0)})
@@ -52,8 +60,9 @@ class PokemonUpdater: ObservableObject {
     
     @Published var currentId: Int = 0 {
         didSet {
-            if currentId > 0 {
-                ids = [currentId - 1, currentId, currentId + 1]
+            if isFirstTimeLoadViewModel {
+                generateIds()
+                isFirstTimeLoadViewModel = false
             }
         }
     }
@@ -91,5 +100,61 @@ class PokemonUpdater: ObservableObject {
         if currentId != pokemon.pokeId {
             currentId = pokemon.pokeId
         }
+    }
+    
+    private func generateIds() {
+        var zeroArray = Array(repeating: 0, count: currentId + 3)
+        currentScrollIndex = currentId
+        if currentId > 1 {
+            zeroArray[currentId - 1] = currentId - 1
+        }
+        if currentId > 2 {
+            zeroArray[currentId - 2] = currentId - 2
+        }
+        zeroArray[currentId] = currentId
+        zeroArray[currentId + 1] = currentId + 1
+        zeroArray[currentId + 2] = currentId + 2
+        ids = zeroArray
+    }
+    
+    func moveTo(direction: Direction) {
+        isScrollingEnable = false
+        switch direction {
+        case .left:
+            if currentId != 1 {
+                currentId -= 1
+                if currentId > 1 {
+                    ids[currentId - 1] = currentId - 1
+                }
+                if currentId > 2 {
+                    ids[currentId - 2] = currentId - 2
+                }
+                ids.removeLast()
+            } else {
+                currentScrollIndex += 1
+            }
+        case .right:
+            if currentId != settings.speciesCount {
+                currentId += 1
+                if currentId > 3 {
+                    ids[currentId - 3] = 0
+                }
+                ids.append(currentId + 2)
+            } else {
+                currentScrollIndex -= 1
+            }
+        default:
+            return
+        }
+    }
+    
+    private func wait() {
+        $images
+            .receive(on: RunLoop.main)
+            .debounce(for: 1, scheduler: RunLoop.main)
+            .sink(receiveValue: { [weak self] result in
+                self?.update {}
+            })
+            .store(in: &cancellables)
     }
 }

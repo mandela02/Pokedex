@@ -16,7 +16,7 @@ struct HeaderImageScrollView: View {
     
     @State private var isGestureActive: Bool = false
     var onScrolling: (DragGesture.Value) -> ()
-    var onEndScrolling: (DragGesture.Value) -> ()
+    var onEndScrolling: (DragGesture.Value, Direction) -> ()
     
     private func drag(in size: CGSize) -> some Gesture {
         return DragGesture().onChanged({ value in
@@ -26,34 +26,44 @@ struct HeaderImageScrollView: View {
                 onScrolling(value)
             }
         }).onEnded({ value in
+            var direction: Direction = .up
             withAnimation(.spring()) {
                 if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
                     self.index += 1
+                    direction = .right
+                    
                 }
                 if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
                     self.index -= 1
+                    direction = .left
                 }
                 withAnimation {
                     self.offset = -size.width * CGFloat(self.index)
                 }
                 self.isGestureActive = false
-                onEndScrolling(value)
+                onEndScrolling(value, direction)
             }
         })
     }
     
-    func ImageView(image: String, tag: Int, size: CGSize) -> some View {
-            DownloadedImageView(withURL: image,
-                                style: index == tag ? .animated : .silhoutte)
-                .foregroundColor(.black)
-                .blur(radius: index == tag ? 0 : 4.0)
-                .scaleEffect(index == tag ? 1.5 : 0.7)
-                .frame(width: size.width, height: size.height)
+    func ImageView(image: String, tag: Int, size: CGSize) -> AnyView {
+        if image == Constants.emptyImageUrl {
+            return AnyView(Color.clear
+                            .frame(width: size.width, height: size.height))
+            
+        }
+        return AnyView(DownloadedImageView(withURL: image,
+                                           style: index == tag ? .animated : .silhoutte)
+                        .foregroundColor(.black)
+                        .blur(radius: index == tag ? 0 : 4.0)
+                        .scaleEffect(index == tag ? 1.5 : 0.7)
+                        .frame(width: size.width, height: size.height))
+        
     }
     
     var body: some View {
         GeometryReader { geometry in
-            HStack(alignment: .center, spacing: 10) {
+            LazyHStack(alignment: .center, spacing: 0) {
                 ForEach(Array(zip(items.indices, items)), id: \.0) { index, item in
                     ImageView(image: item, tag: index, size: geometry.size)
                 }

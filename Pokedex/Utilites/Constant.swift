@@ -19,4 +19,5 @@ struct Constants {
     static let allPokemonsUrl = "https://pokeapi.co/api/v2/pokemon/?limit=%@"
     static let baseCheckPokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
     static let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
+    static let emptyImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/0.png"
 }

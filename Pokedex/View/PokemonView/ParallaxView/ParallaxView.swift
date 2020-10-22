@@ -55,7 +55,6 @@ struct ParallaxView: View {
                     if let url = url, url != "" {
                         updater.pokemonUrl = url
                     }
-                    updater.isSelected = true
                 }
             }
             if isFirstTimeLoadView {
@@ -76,7 +75,6 @@ struct ParallaxContentView: View {
     @Binding var isShowingImage: Bool
 
     @State private var isMinimized = false
-    @State private var index: Int = 1
     @State private var opacity: Double = 1
     @State private var scale: CGFloat = 1
     @State private var imageOffsetY: CGFloat = 1
@@ -158,19 +156,11 @@ struct ParallaxContentView: View {
             
             //Top Image view
             if isShowingImage {
-                HeaderImageScrollView(index: $index,
+                HeaderImageScrollView(index: $updater.currentScrollIndex,
                                       items: $updater.images,
                                       onScrolling: { gesture in
-                                      }, onEndScrolling: { gesture in
-                                        if index == updater.ids.endIndex - 1 {
-                                            updater.currentId = updater.ids.last ?? 0
-                                        } else if index == 0 {
-                                            if updater.currentId != 1 {
-                                                updater.currentId = updater.ids.first ?? 0
-                                            }
-                                        }
-                                        index = 1
-                                        updater.update(onSuccess: {})
+                                      }, onEndScrolling: { gesture, direction in
+                                        updater.moveTo(direction: direction)
                                       })
                     .frame(width: UIScreen.main.bounds.width * 1/2,
                            height: maxHeight * 2/3,
