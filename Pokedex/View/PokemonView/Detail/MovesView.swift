@@ -24,18 +24,21 @@ struct MovesView: View {
                     Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
                         ForEach(section.cells) { cell in
                             let isSelected = cell.move.name == moveUpdater.selected
-                            TappableMoveCell(selectedMove: $moveUpdater.selected,
-                                             moveCellModel: cell)
-                                .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
-                                .onDisappear {
-                                    if isSelected {
-                                        moveUpdater.selected = nil
+                            VStack {
+                                TappableMoveCell(selectedMove: $moveUpdater.selected,
+                                                 moveCellModel: cell)
+                                    .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
+                                    .onDisappear {
+                                        if isSelected {
+                                            moveUpdater.selected = nil
+                                        }
                                     }
-                                }
+                                Color.clear.frame(height: 5)
+                            }
                         }
                     }
                 }
-                Color.clear.frame(height: UIScreen.main.bounds.height * 0.4 - 50)
+                Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
             }
             .listStyle(SidebarListStyle())
             .animation(.spring())
