@@ -61,6 +61,11 @@ struct PokedexView: View {
                 
                 if showSubView {
                     Color.black.opacity(0.5)
+                        .onTapGesture {
+                            withAnimation(.linear) {
+                                showSubView = false
+                            }
+                        }
                     VStack {
                         Spacer()
                         TypeSubView(isShowing: $showSubView,

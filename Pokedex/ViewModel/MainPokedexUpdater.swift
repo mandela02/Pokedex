@@ -11,7 +11,8 @@ import Combine
 class MainPokedexUpdater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
-    
+    @Published var settings = UserSettings()
+
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
 
@@ -23,6 +24,9 @@ class MainPokedexUpdater: ObservableObject {
 
     @Published var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
+            if pokemonResult.count != settings.speciesCount {
+                settings.speciesCount = pokemonResult.count
+            }
             guard let nextURL = pokemonResult.next else {
                 canLoadMore = false
                 isLoadingPage = false

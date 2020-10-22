@@ -33,6 +33,7 @@ struct UserDefault<T> {
 enum Keys: String {
     case firstTimeOpenApp
     case pokemonsCount
+    case speciesCount
 }
 
 final class UserSettings: ObservableObject {
@@ -47,6 +48,13 @@ final class UserSettings: ObservableObject {
     
     @UserDefault(Keys.pokemonsCount.rawValue, defaultValue: 0)
     var pokemonsCount: Int {
+        willSet {
+            objectWillChange.send()
+        }
+    }
+    
+    @UserDefault(Keys.speciesCount.rawValue, defaultValue: 0)
+    var speciesCount: Int {
         willSet {
             objectWillChange.send()
         }
