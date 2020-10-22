@@ -65,7 +65,8 @@ class MainPokedexUpdater: ObservableObject {
     }
     
     private func loadPokemonsData() {
-        Publishers.MergeMany(pokemonResult.results.map({Session.share.pokemon(from: $0.url)}))
+        let pokemonUrls = pokemonResult.results.map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
+        Publishers.MergeMany(pokemonUrls.map({Session.share.pokemon(from: $0)}))
             .collect()
             .replaceError(with: [])
             .receive(on: DispatchQueue.main)

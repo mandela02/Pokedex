@@ -45,7 +45,7 @@ struct AllPokemonList: View {
                     self.isLoading = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         withAnimation(Animation.spring()) {
-                            updater.url = UrlType.pokemons.urlString
+                            updater.url = UrlType.species.urlString
                         }
                     }
                 }

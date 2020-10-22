@@ -40,6 +40,8 @@ class ImageLoader: ObservableObject {
         return URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .replaceError(with: UIImage())
+            .replaceEmpty(with: UIImage())
+            .replaceNil(with: UIImage())
             .handleEvents(receiveOutput: { [weak self] image in
                 guard let image = image else { return }
                 self?.imageCache.set(forKey: urlString, image: image)

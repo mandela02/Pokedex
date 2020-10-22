@@ -42,10 +42,10 @@ struct CompleteView: View {
                     .offset(x: geometry.size.width/2 - 45, y: geometry.size.height/2 - 55)
                 }
                 .onDisappear {
-                    toggle(isGone: true)
+                    toggle(isGone: false)
                 }
                 .onAppear {
-                    toggle(isGone: false)
+                    toggle(isGone: true)
                 }
                 Text("This is the end of line, my man")
                     .font(Biotif.bold(size: 20).font)

@@ -12,6 +12,7 @@ enum UrlType: String, CaseIterable {
     case pokemons
     case trigger
     case type
+    case species
 
     var urlString: String {
         switch self {
@@ -22,6 +23,8 @@ enum UrlType: String, CaseIterable {
             return Constants.baseUrl + "evolution-trigger/"
         case .type:
             return Constants.baseUrl + "type/"
+        case .species:
+            return Constants.baseUrl + "pokemon-species/?limit=50"
         }
     }
     
