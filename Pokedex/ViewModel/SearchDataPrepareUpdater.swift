@@ -12,6 +12,13 @@ import CoreData
 class SearchDataPrepareUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let context = PersistenceManager.shared.persistentContainer.viewContext
+    @Published var settings = UserSettings()
+
+    init() {
+        oldPokemonsCount = settings.pokemonsCount
+        check = true
+    }
+    
     @Published var oldPokemonsCount: Int = 0
     
     @Published var check: Bool = false {
@@ -39,6 +46,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     
     @Published var currentPokemonsResult: PokemonResult = PokemonResult() {
         didSet {
+            settings.pokemonsCount = currentPokemonsResult.count
             for resource in currentPokemonsResult.results {
                 let pokemon = NSEntityDescription
                     .insertNewObject(forEntityName: "PokemonsResource", into: context)

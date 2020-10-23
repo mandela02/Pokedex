@@ -74,7 +74,7 @@ class TypeDetailUpdater: ObservableObject {
             .replaceError(with: ([], MoveDamageClass()))
             .sink { [weak self] (pokemons, damage) in
                 self?.damage = damage
-                self?.allPokemons = pokemons
+                self?.allPokemons = pokemons.filter({$0.isDefault})
             }
             .store(in: &cancellables)
     }

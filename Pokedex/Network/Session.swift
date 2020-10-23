@@ -12,6 +12,7 @@ enum UrlType: String, CaseIterable {
     case pokemons
     case trigger
     case type
+    case species
 
     var urlString: String {
         switch self {
@@ -22,11 +23,17 @@ enum UrlType: String, CaseIterable {
             return Constants.baseUrl + "evolution-trigger/"
         case .type:
             return Constants.baseUrl + "type/"
+        case .species:
+            return Constants.baseUrl + "pokemon-species/?limit=50"
         }
     }
     
     static func getImageUrlString(of order: Int) -> String {
         return String(format: Constants.baseImageUrl, "\(order)")
+    }
+    
+    static func getFrontDefaultImageUrl(of id: Int) -> String {
+        return String(format: Constants.baseFrontImageUrl, "\(id)")
     }
     
     static func getPokemonUrl(of order: Int) -> String {

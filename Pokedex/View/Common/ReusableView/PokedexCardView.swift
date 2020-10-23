@@ -39,12 +39,21 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     if viewAppear {
-                        DownloadedImageView(withURL: pokemon.sprites.other?.artwork.front ?? "",
-                                            style: .normal)
-                            .frame(width: size.width/2,
-                                   height: size.height,
-                                   alignment: .bottomTrailing)
-                            .padding(.all, 5)
+                        if let imageUrl = pokemon.sprites.other?.artwork.front {
+                            DownloadedImageView(withURL: imageUrl,
+                                                style: .normal)
+                                .frame(width: size.width/2,
+                                       height: size.height,
+                                       alignment: .bottomTrailing)
+                                .padding(.all, 5)
+                        } else {
+                            DownloadedImageView(withURL: pokemon.sprites.front ?? "",
+                                                style: .normal)
+                                .frame(width: size.width/2,
+                                       height: size.height,
+                                       alignment: .bottomTrailing)
+                                .padding(.all, 5)
+                        }
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 

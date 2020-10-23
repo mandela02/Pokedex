@@ -11,7 +11,8 @@ import Combine
 class MainPokedexUpdater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
-    
+    @Published var settings = UserSettings()
+
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
 
@@ -23,6 +24,9 @@ class MainPokedexUpdater: ObservableObject {
 
     @Published var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
+            if pokemonResult.count != settings.speciesCount {
+                settings.speciesCount = pokemonResult.count
+            }
             guard let nextURL = pokemonResult.next else {
                 canLoadMore = false
                 isLoadingPage = false
@@ -65,7 +69,8 @@ class MainPokedexUpdater: ObservableObject {
     }
     
     private func loadPokemonsData() {
-        Publishers.MergeMany(pokemonResult.results.map({Session.share.pokemon(from: $0.url)}))
+        let pokemonUrls = pokemonResult.results.map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
+        Publishers.MergeMany(pokemonUrls.map({Session.share.pokemon(from: $0)}))
             .collect()
             .replaceError(with: [])
             .receive(on: DispatchQueue.main)
