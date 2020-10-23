@@ -73,7 +73,7 @@ class PokemonUpdater: ObservableObject {
             .share
             .pokemon(from: url)
             .replaceError(with: Pokemon())
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
             .assign(to: \.pokemon, on: self)
             .store(in: &cancellables)
@@ -82,7 +82,7 @@ class PokemonUpdater: ObservableObject {
     private func initPokemonSpecies(from url: String) {
          Session.share.species(from: url)
             .replaceError(with: Species())
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
             .assign(to: \.species, on: self)
             .store(in: &cancellables)

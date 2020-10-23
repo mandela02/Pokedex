@@ -6,9 +6,9 @@
 //
 
 import Foundation
-
 import UIKit
 import ImageIO
+
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
   switch (lhs, rhs) {
   case let (l?, r?):
@@ -177,3 +177,12 @@ extension UIImage {
     }
 }
 
+ 
+extension UIImage {
+    func resizedImage(for size: CGSize) -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { (context) in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}

@@ -60,6 +60,7 @@ struct Pokemon: Codable, Identifiable {
     var stats: [PokeStatUrl] = []
     var pokeId: Int = 0
     var moves: [PokemonMove]?
+    var isDefault: Bool = false
     
     var mainType: PokemonType {
         return PokemonType.type(from: types.first?.type.name)
@@ -77,6 +78,7 @@ struct Pokemon: Codable, Identifiable {
         case stats
         case pokeId = "id"
         case moves = "moves"
+        case isDefault = "is_default"
     }
 }
 

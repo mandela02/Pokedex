@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import UIKit
+import func AVFoundation.AVMakeRect
 
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
@@ -21,33 +22,38 @@ class ImageLoader: ObservableObject {
     
     init(url: String) {
         self.url = url
-        cancellable = loadImage(from: url).assign(to: \.displayImage, on: self)
+        loadImage(from: url)
     }
     
     func cancel() {
         cancellable?.cancel()
     }
     
-    private func loadImage(from urlString: String) -> AnyPublisher<UIImage?, Never> {
+    private func loadImage(from urlString: String) {
         if let image = imageCache.get(forKey: urlString)  {
-            return Just(image).eraseToAnyPublisher()
+            displayImage = image
         }
 
         guard let url = URL(string: urlString) else {
-            return Just(nil).eraseToAnyPublisher()
+            return
         }
-
-        return URLSession.shared.dataTaskPublisher(for: url)
+        
+        let size = UIScreen.main.bounds
+        let smallRect = CGRect(x: 0, y: 0, width: size.width / 2, height: size.height / 2)
+        
+        self.cancellable = URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .replaceError(with: UIImage())
             .replaceEmpty(with: UIImage())
             .replaceNil(with: UIImage())
-            .handleEvents(receiveOutput: { [weak self] image in
-                guard let image = image else { return }
-                self?.imageCache.set(forKey: urlString, image: image)
-            })
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+            .sink(receiveValue: { [weak self] image in
+                let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
+                guard let smallImage = image.resizedImage(for: rect.size) else { return }
+                self?.imageCache.set(forKey: urlString, image: smallImage)
+                self?.displayImage = smallImage
+            })
     }
 }
 
