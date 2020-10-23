@@ -16,6 +16,8 @@ class MainPokedexUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
 
+    init
+    
     var url: String = "" {
         didSet {
             loadPokemonResource()
@@ -27,13 +29,12 @@ class MainPokedexUpdater: ObservableObject {
             if pokemonResult.count != settings.speciesCount {
                 settings.speciesCount = pokemonResult.count
             }
-            guard let nextURL = pokemonResult.next else {
+            if let nextUrl = pokemonResult.next {
+                url = nextUrl
+            } else {
                 canLoadMore = false
-                isLoadingPage = false
                 isFinal = true
-                return
             }
-            url = nextURL
             loadPokemonsData()
         }
     }
@@ -41,6 +42,7 @@ class MainPokedexUpdater: ObservableObject {
     @Published var pokemons: [Pokemon] = [] {
         didSet {
             self.isLoadingPage = false
+            isFinal = pokemonResult.next == nil
         }
     }
             
