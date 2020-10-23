@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Constants {
     static let baseUrl = "https://pokeapi.co/api/v2/"
+    static let baseOfficialImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"
     static let baseImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/%@.png"
     static let basePokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
     static let baseMachineUrl = "https://pokeapi.co/api/v2/machine/"
@@ -20,4 +21,5 @@ struct Constants {
     static let baseCheckPokemonUrl = "https://pokeapi.co/api/v2/pokemon/"
     static let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
     static let emptyImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/0.png"
+    static let baseFrontImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%@.png"
 }

@@ -33,8 +33,6 @@ struct DownloadedImageView: View {
             case .silhoutte:
                 SilhoutteImageView(imageLoader: imageLoader)
             }
-        }.onDisappear {
-            imageLoader.cancel()
         }
     }
 }

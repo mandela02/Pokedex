@@ -12,36 +12,64 @@ import func AVFoundation.AVMakeRect
 
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
     var imageCache = ImageCache.getImageCache()
     var url: String
-
-    deinit {
-        cancel()
-    }
     
     init(url: String) {
         self.url = url
         loadImage(from: url)
     }
-    
-    func cancel() {
-        cancellable?.cancel()
-    }
-    
+        
     private func loadImage(from urlString: String) {
         if let image = imageCache.get(forKey: urlString)  {
             displayImage = image
+            return
         }
 
         guard let url = URL(string: urlString) else {
             return
         }
         
+        loadOfficialImageFromUrl(url: url, key: urlString)
+        
+    }
+    
+    private func loadOfficialImageFromUrl(url: URL, key: String) {
         let size = UIScreen.main.bounds
         let smallRect = CGRect(x: 0, y: 0, width: size.width / 2, height: size.height / 2)
+
+        URLSession.shared.dataTaskPublisher(for: url)
+            .map { (data, response) -> UIImage? in return UIImage(data: data) }
+            .replaceError(with: UIImage())
+            .replaceEmpty(with: UIImage())
+            .replaceNil(with: UIImage())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+            .sink(receiveValue: { [weak self] image in
+                guard let self = self else { return }
+                if image == UIImage() {
+                    self.loadFrontDefaultUrl(from: key, smallRect: smallRect)
+                    return
+                }
+                let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
+                guard let smallImage = image.resizedImage(for: rect.size) else { return }
+                self.imageCache.set(forKey: key, image: smallImage)
+                self.displayImage = smallImage
+            })
+            .store(in: &cancellables)
+    }
+    
+    private func loadFrontDefaultUrl(from urlString: String, smallRect: CGRect) {
+
+        let imageId = StringHelper.getImageId(from: urlString)
+        let frontUrl = String(format: Constants.baseFrontImageUrl, "\(imageId)")
         
-        self.cancellable = URLSession.shared.dataTaskPublisher(for: url)
+        guard let url = URL(string: frontUrl) else {
+            return
+        }
+        
+        URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .replaceError(with: UIImage())
             .replaceEmpty(with: UIImage())
@@ -54,6 +82,7 @@ class ImageLoader: ObservableObject {
                 self?.imageCache.set(forKey: urlString, image: smallImage)
                 self?.displayImage = smallImage
             })
+            .store(in: &cancellables)
     }
 }
 

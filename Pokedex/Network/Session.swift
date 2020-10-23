@@ -32,6 +32,10 @@ enum UrlType: String, CaseIterable {
         return String(format: Constants.baseImageUrl, "\(order)")
     }
     
+    static func getFrontDefaultImageUrl(of id: Int) -> String {
+        return String(format: Constants.baseFrontImageUrl, "\(id)")
+    }
+    
     static func getPokemonUrl(of order: Int) -> String {
         return Constants.baseUrl + "pokemon/\(order)/"
     }

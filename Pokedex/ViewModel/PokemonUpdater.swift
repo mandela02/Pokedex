@@ -20,11 +20,11 @@ class PokemonUpdater: ObservableObject {
     
     private var isFirstTimeLoadViewModel = true
     private var cancellables = Set<AnyCancellable>()
-
+    
     @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
     @Published var isScrollingEnable = true
-
+    
     @Published var pokemonUrl: String? {
         didSet {
             initPokemon()
@@ -43,7 +43,7 @@ class PokemonUpdater: ObservableObject {
             initPokemonSpecies(from: speciesUrl)
         }
     }
-
+    
     @Published var species: Species = Species() {
         didSet {
             isScrollingEnable = true
@@ -80,7 +80,7 @@ class PokemonUpdater: ObservableObject {
     }
     
     private func initPokemonSpecies(from url: String) {
-         Session.share.species(from: url)
+        Session.share.species(from: url)
             .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
@@ -111,9 +111,10 @@ class PokemonUpdater: ObservableObject {
         if currentId > 2 {
             zeroArray[currentId - 2] = currentId - 2
         }
+        
         zeroArray[currentId] = currentId
-        zeroArray[currentId + 1] = currentId + 1
-        zeroArray[currentId + 2] = currentId + 2
+        zeroArray[currentId + 1] = currentId + 1 > settings.speciesCount ? 0 : currentId + 1
+        zeroArray[currentId + 2] = currentId + 2 > settings.speciesCount ? 0 : currentId + 2
         ids = zeroArray
     }
     
@@ -139,7 +140,7 @@ class PokemonUpdater: ObservableObject {
                 if currentId > 3 {
                     ids[currentId - 3] = 0
                 }
-                ids.append(currentId + 2)
+                ids.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
             } else {
                 currentScrollIndex -= 1
             }

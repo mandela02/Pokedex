@@ -155,13 +155,24 @@ struct ParallaxContentView: View {
             }
             
             //Top Image view
-            if isShowingImage {
-                HeaderImageScrollView(index: $updater.currentScrollIndex,
-                                      items: $updater.images,
-                                      onScrolling: { gesture in
-                                      }, onEndScrolling: { gesture, direction in
-                                        updater.moveTo(direction: direction)
-                                      })
+            if updater.pokemon.isDefault {
+                if isShowingImage {
+                    HeaderImageScrollView(index: $updater.currentScrollIndex,
+                                          items: $updater.images,
+                                          onScrolling: { gesture in
+                                          }, onEndScrolling: { gesture, direction in
+                                            updater.moveTo(direction: direction)
+                                          })
+                        .frame(width: UIScreen.main.bounds.width * 1/2,
+                               height: maxHeight * 2/3,
+                               alignment: .center)
+                        .opacity(opacity)
+                        .scaleEffect(scale)
+                        .offset(y: imageOffsetY)
+                }
+            } else {
+                DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
+                    .scaleEffect(1.5)
                     .frame(width: UIScreen.main.bounds.width * 1/2,
                            height: maxHeight * 2/3,
                            alignment: .center)
