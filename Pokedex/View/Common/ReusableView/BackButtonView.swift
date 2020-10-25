@@ -18,7 +18,7 @@ struct BackButtonView: View {
             } label: {
                 Image(systemName: ("arrow.uturn.left"))
                     .renderingMode(.template)
-                    .foregroundColor(.red)
+                    .foregroundColor(.black)
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())

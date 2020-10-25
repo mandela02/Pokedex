@@ -53,11 +53,8 @@ struct PokemonList: View {
                 
                 VStack {
                     Spacer()
-                    LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
-                                                               Color.white.opacity(1)]),
-                                   startPoint: .top, endPoint: .bottom)
+                    GradienView(atTop: false)
                         .frame(height: 100, alignment: .center)
-                        .blur(radius: 3.0)
                 }
                 
                 if isLoading {
@@ -66,5 +63,16 @@ struct PokemonList: View {
                 }
             }
         })
+    }
+}
+
+struct GradienView: View {
+    var atTop: Bool
+    
+    var body: some View {
+        LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
+                                                   Color.white.opacity(1)]),
+                       startPoint: atTop ? .bottom : .top, endPoint: atTop ? .top : .bottom)
+            .blur(radius: 3.0)
     }
 }

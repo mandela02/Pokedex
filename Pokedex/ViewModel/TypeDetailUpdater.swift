@@ -51,7 +51,9 @@ class TypeDetailUpdater: ObservableObject {
         .replaceError(with: PokeType())
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
-        .assign(to: \.type, on: self)
+            .sink(receiveValue: { [weak self] type in
+                self?.type = type
+            })
         .store(in: &cancellables)
     }
     

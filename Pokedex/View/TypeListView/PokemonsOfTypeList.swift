@@ -53,7 +53,7 @@ struct PokemonsOfTypeListNavigationView: View {
                 }
                 .padding(.top, 50)
                 .padding(.bottom, 20)
-                .background(Color.white.opacity(0.5))
+                .background(GradienView(atTop: true))
             }, maxHeight: 200)
             
             if updater.isLoading {
@@ -70,6 +70,12 @@ struct PokemonsOfTypeListNavigationView: View {
             }
             .padding(.top, 30)
             .padding(.leading, 20)
+            
+            VStack {
+                Spacer()
+                GradienView(atTop: false)
+                    .frame(height: 100, alignment: .center)
+            }
         }
         .onAppear(perform: {
             isViewDisplayed = true

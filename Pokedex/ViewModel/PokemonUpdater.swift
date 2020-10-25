@@ -53,7 +53,6 @@ class PokemonUpdater: ObservableObject {
     
     @Published var ids: [Int] = [] {
         didSet {
-            print("ádfasdf")
             images = ids.map({UrlType.getImageUrlString(of: $0)})
         }
     }
