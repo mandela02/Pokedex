@@ -22,7 +22,7 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
 
-    @Published var allPokemons: [Pokemon] = [] {
+    @Published var pokemons: [Pokemon] = [] {
         didSet {
             isLoading = false
         }
@@ -55,26 +55,27 @@ class TypeDetailUpdater: ObservableObject {
         .store(in: &cancellables)
     }
     
-    private func getDamageDetail() -> AnyPublisher<MoveDamageClass, Error> {
-        Session.share.moveDamageClass(from: type.moveDamageClass.url)
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
+    private func getDamageDetail() -> AnyPublisher<MoveDamageClass, Never> {
+        Session.share.moveDamageClass(from: type.moveDamageClass?.url ?? "https://pokeapi.co/api/v2/move-damage-class/0/")
+            .replaceEmpty(with: MoveDamageClass())
+            .replaceError(with: MoveDamageClass())
+            .eraseToAnyPublisher()
     }
         
-    private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Error> {
+    private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Never> {
         Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
             .collect()
-            .receive(on: DispatchQueue.main)
+            .replaceEmpty(with: [])
+            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
     
     private func merge() {
         Publishers.Zip(loadPokemonDetailData(), getDamageDetail())
             .receive(on: DispatchQueue.main)
-            .replaceError(with: ([], MoveDamageClass()))
             .sink { [weak self] (pokemons, damage) in
                 self?.damage = damage
-                self?.allPokemons = pokemons.filter({$0.isDefault})
+                self?.pokemons = pokemons.filter({$0.isDefault})
             }
             .store(in: &cancellables)
     }

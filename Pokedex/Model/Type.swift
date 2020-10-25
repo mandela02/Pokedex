@@ -17,7 +17,7 @@ struct PokeType: Codable {
     var id: Int = 1
     var name: String = ""
     var pokemon: [PokemonOfType] = []
-    var moveDamageClass: NamedAPIResource = NamedAPIResource()
+    var moveDamageClass: NamedAPIResource?
 
     enum CodingKeys: String, CodingKey {
         case id

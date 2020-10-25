@@ -15,8 +15,6 @@ class MainPokedexUpdater: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
-
-    init
     
     var url: String = "" {
         didSet {

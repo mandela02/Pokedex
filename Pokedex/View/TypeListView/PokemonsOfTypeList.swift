@@ -35,7 +35,7 @@ struct PokemonsOfTypeListNavigationView: View {
         ZStack {
             CustomBigTitleNavigationView(content: {
                 LazyVGrid(columns: calculateGridItem()) {
-                    ForEach(updater.allPokemons) { cell in
+                    ForEach(updater.pokemons) { cell in
                         TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
                             .background(Color.clear)
                     }
