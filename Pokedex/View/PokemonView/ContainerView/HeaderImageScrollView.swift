@@ -53,7 +53,7 @@ struct HeaderImageScrollView: View {
             
         }
         return AnyView(DownloadedImageView(withURL: image,
-                                           style: index == tag ? .animated : .silhoutte)
+                                           style: index == tag ? .normal : .silhoutte)
                         .foregroundColor(.black)
                         .blur(radius: index == tag ? 0 : 4.0)
                         .scaleEffect(index == tag ? 1.5 : 0.7)

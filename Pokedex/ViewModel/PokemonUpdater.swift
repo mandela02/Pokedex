@@ -11,7 +11,6 @@ import SwiftUI
 class PokemonUpdater: ObservableObject {
     init(url: String) {
         self.pokemonUrl = url
-        wait()
     }
     
     deinit {
@@ -38,7 +37,7 @@ class PokemonUpdater: ObservableObject {
         }
     }
     
-    var speciesUrl: String = "" {
+    @Published var speciesUrl: String = "" {
         didSet {
             initPokemonSpecies(from: speciesUrl)
         }
@@ -54,6 +53,7 @@ class PokemonUpdater: ObservableObject {
     
     @Published var ids: [Int] = [] {
         didSet {
+            print("ádfasdf")
             images = ids.map({UrlType.getImageUrlString(of: $0)})
         }
     }
@@ -120,17 +120,20 @@ class PokemonUpdater: ObservableObject {
     
     func moveTo(direction: Direction) {
         isScrollingEnable = false
+        var zeroArray = ids
         switch direction {
         case .left:
             if currentId != 1 {
                 currentId -= 1
                 if currentId > 1 {
-                    ids[currentId - 1] = currentId - 1
+                    zeroArray[currentId - 1] = currentId - 1
                 }
                 if currentId > 2 {
-                    ids[currentId - 2] = currentId - 2
+                    zeroArray[currentId - 2] = currentId - 2
                 }
-                ids.removeLast()
+                zeroArray.removeLast()
+                ids = zeroArray
+                update {}
             } else {
                 currentScrollIndex += 1
             }
@@ -138,9 +141,11 @@ class PokemonUpdater: ObservableObject {
             if currentId != settings.speciesCount {
                 currentId += 1
                 if currentId > 3 {
-                    ids[currentId - 3] = 0
+                    zeroArray[currentId - 3] = 0
                 }
-                ids.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
+                zeroArray.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
+                ids = zeroArray
+                update {}
             } else {
                 currentScrollIndex -= 1
             }
