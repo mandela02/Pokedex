@@ -16,10 +16,10 @@ struct ParallaxView: View {
     @StateObject var updater: PokemonUpdater = PokemonUpdater()
     
     @State private var isShowingImage = true
-    @State private var offset = CGSize.zero
     @State private var isFirstTimeLoadView = true
     @State private var isMinimized = false
     @State private var opacity: Double = 1
+    @State private var showLikedNotification: Bool = false
 
     init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
@@ -71,12 +71,29 @@ struct ParallaxView: View {
             PokemonParallaxHeaderView(isShowing: $isShowing,
                                       isInExpandeMode: $isMinimized,
                                       opacity: $opacity,
+                                      showLikedNotification: $showLikedNotification,
                                       pokemon: updater.pokemon)
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
+            
+            
+            if showLikedNotification {
+                LikedNotificationView(id: updater.pokemon.pokeId, name: updater.pokemon.name, image: updater.pokemon.sprites.other?.artwork.front ?? "")
+                    .transition(.opacity)
+                    .animation(.default)
+            }
         }
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
+        .onChange(of: showLikedNotification, perform: { showLikedNotification in
+            if showLikedNotification == true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation(.default) {
+                        self.showLikedNotification = false
+                    }
+                }
+            }
+        })
         .onReceive(updater.$pokemon, perform: { pokemon in
             voiceUpdater.pokemon = pokemon
         })
@@ -127,7 +144,6 @@ struct ParallaxContentView: View {
         
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
-            //Detail View
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
                     GeometryReader { reader -> AnyView in
@@ -175,7 +191,6 @@ struct ParallaxContentView: View {
                 }
             }
             
-            //Top Image view
             if updater.pokemon.isDefault {
                 HeaderImageScrollView(index: $updater.currentScrollIndex,
                                       items: $updater.images,
