@@ -17,9 +17,10 @@ struct ParallaxView: View {
     
     @State private var isShowingImage = true
     @State private var offset = CGSize.zero
-    @State private var opacity: Double = 1
     @State private var isFirstTimeLoadView = true
-    
+    @State private var isMinimized = false
+    @State private var opacity: Double = 1
+
     init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
         self.pokemon = pokemon
@@ -27,45 +28,87 @@ struct ParallaxView: View {
     }
     
     var body: some View {
-        ParallaxContentView(isShowing: $isShowing,
-                            isShowingImage: $isShowingImage,
-                            voiceUpdater: voiceUpdater,
-                            updater: updater)
-            .navigationTitle("")
-            .navigationBarHidden(true)
-            .ignoresSafeArea()
-            .onReceive(updater.$pokemon, perform: { pokemon in
-                voiceUpdater.pokemon = pokemon
-            })
-            .onReceive(updater.$species, perform: { species in
-                if species.id != 0 {
-                    voiceUpdater.species = species
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        voiceUpdater.isSpeaking = true
-                    }
-                }
-            })
-            .onAppear {
-                isShowingImage = true
+        ZStack {
+            updater.pokemon.mainType.color.background.ignoresSafeArea()
+                .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
+                .animation(.linear)
+            
+            if isShowingImage {
+                RotatingPokeballView()
+                    .ignoresSafeArea()
+                    .frame(width: UIScreen.main.bounds.width * 4/5,
+                           height: UIScreen.main.bounds.height * 4/5,
+                           alignment: .center)
+                    .offset(x: UIScreen.main.bounds.width * 1/3,
+                            y: -UIScreen.main.bounds.height * 1/3 )
+                    .isRemove(!isMinimized)
                 
-                if isFirstTimeLoadView {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        if let pokemon = pokemon, pokemon.pokeId != 0 {
-                            updater.pokemon = pokemon
-                        } else if let url = url, url != "" {
-                            updater.pokemonUrl = url
-                        }
+                RotatingPokeballView()
+                    .ignoresSafeArea()
+                    .frame(width: UIScreen.main.bounds.width,
+                           height: UIScreen.main.bounds.height,
+                           alignment: .bottom)
+                    .isRemove(isMinimized)
+            }
+
+            ParallaxContentView(isShowing: $isShowing,
+                                isShowingImage: $isShowingImage,
+                                isMinimized: $isMinimized,
+                                opacity: $opacity,
+                                updater: updater)
+            VStack() {
+                Spacer()
+                HStack {
+                    Spacer()
+                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+                                        about: $updater.pokemon)
+                        .padding(.trailing, 30)
+                        .padding(.bottom, 30)
+                        .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
+                }
+            }
+            
+            PokemonParallaxHeaderView(isShowing: $isShowing,
+                                      isInExpandeMode: $isMinimized,
+                                      opacity: $opacity,
+                                      pokemon: updater.pokemon)
+                .blur(radius: updater.isLoadingNewData ? 3 : 0)
+        }
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .ignoresSafeArea()
+        .onReceive(updater.$pokemon, perform: { pokemon in
+            voiceUpdater.pokemon = pokemon
+        })
+        .onReceive(updater.$species, perform: { species in
+            if species.id != 0 {
+                voiceUpdater.species = species
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    voiceUpdater.isSpeaking = true
+                }
+            }
+        })
+        .onAppear {
+            isShowingImage = true
+            
+            if isFirstTimeLoadView {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let pokemon = pokemon, pokemon.pokeId != 0 {
+                        updater.pokemon = pokemon
+                    } else if let url = url, url != "" {
+                        updater.pokemonUrl = url
                     }
                 }
-                if isFirstTimeLoadView {
-                    isFirstTimeLoadView = false
-                }
             }
-            .onWillDisappear {
-                isShowingImage = false
-                voiceUpdater.refresh()
+            if isFirstTimeLoadView {
+                isFirstTimeLoadView = false
             }
+        }
+        .onDisappear(perform: {
+            isShowingImage = false
+            voiceUpdater.refresh()
+        })
     }
 }
 
@@ -74,40 +117,16 @@ struct ParallaxContentView: View {
     
     @Binding var isShowing: Bool
     @Binding var isShowingImage: Bool
+    @Binding var isMinimized: Bool
+    @Binding var opacity: Double
     
-    @State private var isMinimized = false
-    @State private var opacity: Double = 1
     @State private var scale: CGFloat = 1
     @State private var imageOffsetY: CGFloat = 1
-    
-    @ObservedObject var voiceUpdater: VoiceHelper
+
     @ObservedObject var updater: PokemonUpdater
-    
-    @Namespace private var namespace
-    
+        
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
-            updater.pokemon.mainType.color.background.ignoresSafeArea()
-                .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
-                .animation(.linear)
-            
-            // Rotatin Ball
-            RotatingPokeballView()
-                .ignoresSafeArea()
-                .frame(width: UIScreen.main.bounds.width * 4/5,
-                       height: UIScreen.main.bounds.height * 4/5,
-                       alignment: .center)
-                .offset(x: UIScreen.main.bounds.width * 1/3,
-                        y: -UIScreen.main.bounds.height * 1/3 + maxHeight / 4 )
-                .isRemove(!isMinimized && !isShowingImage)
-            
-            RotatingPokeballView()
-                .ignoresSafeArea()
-                .frame(width: UIScreen.main.bounds.width,
-                       height: UIScreen.main.bounds.height,
-                       alignment: .bottom)
-                .isRemove(isMinimized && !isShowingImage)
-            
             //Detail View
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
@@ -157,45 +176,30 @@ struct ParallaxContentView: View {
             }
             
             //Top Image view
-            HeaderImageScrollView(index: $updater.currentScrollIndex,
-                                  items: $updater.images,
-                                  isScrollable: $updater.isScrollingEnable,
-                                  onScrolling: { gesture in
-                                  }, onEndScrolling: { gesture, direction in
-                                    updater.moveTo(direction: direction)
-                                  })
-                .frame(width: UIScreen.main.bounds.width * 1/2,
-                       height: maxHeight * 2/3,
-                       alignment: .center)
-                .opacity(opacity)
-                .scaleEffect(scale)
-                .offset(y: imageOffsetY)
-                .isRemove(!(updater.pokemon.isDefault && isShowingImage))
-            
-            DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
-                .scaleEffect(1.5)
-                .frame(width: UIScreen.main.bounds.width * 1/2,
-                       height: maxHeight * 2/3,
-                       alignment: .center)
-                .opacity(opacity)
-                .scaleEffect(scale)
-                .offset(y: imageOffsetY)
-                .isRemove(updater.pokemon.isDefault)
-            
-            // Header View (name, type, etc...)
-            PokemonParallaxHeaderView(isShowing: $isShowing, isInExpandeMode: $isMinimized, opacity: $opacity, pokemon: updater.pokemon)
-                .blur(radius: updater.isLoadingNewData ? 3 : 0)
-            
-            VStack() {
-                Spacer()
-                HStack {
-                    Spacer()
-                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
-                                        about: $updater.pokemon)
-                        .padding(.trailing, 30)
-                        .padding(.bottom, 30)
-                        .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
-                }
+            if updater.pokemon.isDefault {
+                HeaderImageScrollView(index: $updater.currentScrollIndex,
+                                      items: $updater.images,
+                                      isScrollable: $updater.isScrollingEnable,
+                                      onScrolling: { gesture in
+                                      }, onEndScrolling: { gesture, direction in
+                                        updater.moveTo(direction: direction)
+                                      })
+                    .frame(width: UIScreen.main.bounds.width * 1/2,
+                           height: maxHeight * 2/3,
+                           alignment: .center)
+                    .opacity(opacity)
+                    .scaleEffect(scale)
+                    .offset(y: imageOffsetY)
+                    .isRemove(!isShowingImage)
+            } else {
+                DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
+                    .scaleEffect(1.5)
+                    .frame(width: UIScreen.main.bounds.width * 1/2,
+                           height: maxHeight * 2/3,
+                           alignment: .center)
+                    .opacity(opacity)
+                    .scaleEffect(scale)
+                    .offset(y: imageOffsetY)
             }
         })
     }
