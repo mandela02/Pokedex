@@ -9,8 +9,7 @@ import Combine
 import SwiftUI
 
 class PokemonUpdater: ObservableObject {
-    init(url: String) {
-        self.pokemonUrl = url
+    init() {
         wait()
     }
     
@@ -50,6 +49,7 @@ class PokemonUpdater: ObservableObject {
     @Published var species: Species = Species() {
         didSet {
             isScrollingEnable = true
+            self.isLoadingNewData = false
         }
     }
     
@@ -139,6 +139,7 @@ class PokemonUpdater: ObservableObject {
                 ids = zeroArray
             } else {
                 currentScrollIndex += 1
+                isLoadingNewData = false
             }
         case .right:
             if currentId != settings.speciesCount {
@@ -150,13 +151,17 @@ class PokemonUpdater: ObservableObject {
                 ids = zeroArray
             } else {
                 currentScrollIndex -= 1
+                isLoadingNewData = false
             }
         default:
+            isLoadingNewData = false
             return
         }
     }
     
     private func wait() {
+        // drop when url = ""
+        // drop when first time load
         $images
             .dropFirst(2)
             .receive(on: RunLoop.main)
@@ -166,7 +171,6 @@ class PokemonUpdater: ObservableObject {
                     return
                 }
                 self.update()
-                self.isLoadingNewData = false
             })
             .store(in: &cancellables)
     }

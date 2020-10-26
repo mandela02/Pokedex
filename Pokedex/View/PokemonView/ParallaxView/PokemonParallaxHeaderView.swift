@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HeaderView: View {
+struct PokemonParallaxHeaderView: View {
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     @Binding var opacity: Double

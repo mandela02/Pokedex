@@ -13,7 +13,7 @@ struct PokemonInformationView: View {
     var url: String?
     
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
-    @StateObject var updater: PokemonUpdater = PokemonUpdater(url: "")
+    @StateObject var updater: PokemonUpdater = PokemonUpdater()
     
     @State private var isExpanded = true
     @State private var isShowingImage = true

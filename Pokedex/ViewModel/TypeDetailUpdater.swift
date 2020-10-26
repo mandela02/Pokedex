@@ -22,12 +22,21 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
 
+    @Published var type: PokeType = PokeType() {
+        didSet {
+            merge()
+        }
+    }
+
+
     @Published var pokemons: [Pokemon] = [] {
         didSet {
             isLoading = false
         }
     }
     
+    @Published var damage: MoveDamageClass = MoveDamageClass()
+
     @Published var name: String = ""
 
     @Published var url: String = "" {
@@ -36,14 +45,8 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
     
-    @Published var type: PokeType = PokeType() {
-        didSet {
-            merge()
-        }
-    }
-
-    @Published var damage: MoveDamageClass = MoveDamageClass()
-
+    @Published var hasNoPokemon: Bool = false
+    
     private var cancellables = Set<AnyCancellable>()
     
     private func getTypeDetail(from url: String) {
@@ -65,14 +68,23 @@ class TypeDetailUpdater: ObservableObject {
     }
         
     private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Never> {
-        Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
-            .collect()
-            .replaceEmpty(with: [])
-            .replaceError(with: [])
-            .eraseToAnyPublisher()
+        return  Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
+                .collect()
+                .replaceEmpty(with: [])
+                .replaceError(with: [])
+                .eraseToAnyPublisher()
     }
     
     private func merge() {
+        if type.pokemon.isEmpty {
+            hasNoPokemon = true
+        }
+
+        if type.moveDamageClass?.url == nil && type.pokemon.isEmpty {
+            isLoading = false
+            return
+        }
+        
         Publishers.Zip(loadPokemonDetailData(), getDamageDetail())
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (pokemons, damage) in

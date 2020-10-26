@@ -36,27 +36,18 @@ struct FavoriteView: View {
             if favoriteUpdater.isEmpty {
                 ZStack {
                     VStack {
-                        BigTitle()
+                        BigTitle(text: "Your Favorite Pokemon")
                         Spacer()
                     }
                     EmptyFavoriteView()
                 }
             } else {
                 CustomBigTitleNavigationView(content: {
-                    VStack {
-                        LazyVGrid(columns: calculateGridItem()) {
-                            ForEach(favoriteUpdater.pokemons) { cell in
-                                TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
-                                    .background(Color.clear)
-                            }
-                        }
-                        Spacer()
-                    }
-                    .background(Color.clear)
+                    ParallaxPokemonsList(pokemons: favoriteUpdater.pokemons)
                 }, header: {
-                    BigTitle()
+                    BigTitle(text: "Your Favorite Pokemon")
                 }, stickyHeader: {
-                    SmallTitle()
+                    NamedHeaderView(name: "Your Favorite Pokemon")
                 }, maxHeight: 150)
                 .background(Color.clear)
             }
@@ -106,35 +97,16 @@ struct EmptyFavoriteView: View {
     }
 }
 
-struct FavoriteView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyFavoriteView()
-    }
-}
-
 struct BigTitle: View {
+    var text: String
+    
     var body: some View {
-        Text("Your Favorite Pokemon")
+        Text(text)
             .font(Biotif.extraBold(size: 30).font)
             .foregroundColor(.black)
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 35)
             .padding(.top, 75)
             .frame(height: 150)
-    }
-}
-
-struct SmallTitle: View {
-    var body: some View {
-        HStack {
-            Spacer()
-            Text("Your Favorite Pokemon")
-                .font(Biotif.extraBold(size: 20).font)
-                .foregroundColor(.black)
-            Spacer()
-        }
-        .padding(.top, 50)
-        .padding(.bottom, 20)
-        .background(Color.white.opacity(0.5))
     }
 }

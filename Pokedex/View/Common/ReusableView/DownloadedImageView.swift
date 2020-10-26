@@ -72,7 +72,9 @@ struct NormalImageView: View {
                 .scaleEffect(0.8)
                 .aspectRatio(contentMode: .fit)
                 .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                    self.image = displayImage
+                    withAnimation(.linear) {
+                        self.image = displayImage
+                    }
                 })
         }
     }
