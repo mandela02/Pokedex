@@ -11,6 +11,7 @@ import SwiftUI
 class PokemonUpdater: ObservableObject {
     init(url: String) {
         self.pokemonUrl = url
+        wait()
     }
     
     deinit {
@@ -23,10 +24,13 @@ class PokemonUpdater: ObservableObject {
     @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
     @Published var isScrollingEnable = true
-    
+    @Published var isLoadingNewData = false
+
     @Published var pokemonUrl: String? {
         didSet {
-            initPokemon()
+            if pokemonUrl != "" {
+                initPokemon()
+            }
         }
     }
     
@@ -36,7 +40,7 @@ class PokemonUpdater: ObservableObject {
             speciesUrl = pokemon.species.url
         }
     }
-    
+
     @Published var speciesUrl: String = "" {
         didSet {
             initPokemonSpecies(from: speciesUrl)
@@ -49,14 +53,6 @@ class PokemonUpdater: ObservableObject {
         }
     }
     
-    @Published var images: [String] = []
-    
-    @Published var ids: [Int] = [] {
-        didSet {
-            images = ids.map({UrlType.getImageUrlString(of: $0)})
-        }
-    }
-    
     @Published var currentId: Int = 0 {
         didSet {
             if isFirstTimeLoadViewModel {
@@ -65,7 +61,16 @@ class PokemonUpdater: ObservableObject {
             }
         }
     }
+
+    @Published var ids: [Int] = [] {
+        didSet {
+            images = ids.map({UrlType.getImageUrlString(of: $0)})
+            
+        }
+    }
     
+    @Published var images: [String] = []
+
     private func initPokemon() {
         guard let url = pokemonUrl, !url.isEmpty else { return }
         Session
@@ -87,11 +92,10 @@ class PokemonUpdater: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func update(onSuccess: () -> ()) {
+    func update() {
         let nextUrl = UrlType.getPokemonUrl(of: currentId)
         if pokemonUrl != nextUrl {
             pokemonUrl = nextUrl
-            onSuccess()
         }
     }
     
@@ -118,7 +122,8 @@ class PokemonUpdater: ObservableObject {
     }
     
     func moveTo(direction: Direction) {
-        isScrollingEnable = false
+        //isScrollingEnable = false
+        isLoadingNewData = true
         var zeroArray = ids
         switch direction {
         case .left:
@@ -132,7 +137,6 @@ class PokemonUpdater: ObservableObject {
                 }
                 zeroArray.removeLast()
                 ids = zeroArray
-                update {}
             } else {
                 currentScrollIndex += 1
             }
@@ -144,7 +148,6 @@ class PokemonUpdater: ObservableObject {
                 }
                 zeroArray.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
                 ids = zeroArray
-                update {}
             } else {
                 currentScrollIndex -= 1
             }
@@ -155,10 +158,15 @@ class PokemonUpdater: ObservableObject {
     
     private func wait() {
         $images
+            .dropFirst(2)
             .receive(on: RunLoop.main)
             .debounce(for: 1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] result in
-                self?.update {}
+                guard let self = self else {
+                    return
+                }
+                self.update()
+                self.isLoadingNewData = false
             })
             .store(in: &cancellables)
     }

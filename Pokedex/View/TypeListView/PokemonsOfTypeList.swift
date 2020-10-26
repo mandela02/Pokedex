@@ -99,7 +99,6 @@ struct PokemonOfTypeHeaderView: View {
     var damage: MoveDamageClass
     
     var body: some View {
-        ZStack {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
                     Text(typeName.capitalized)
@@ -112,7 +111,6 @@ struct PokemonOfTypeHeaderView: View {
                         Text("Damage type: " + damage.name)
                             .font(Biotif.extraBold(size: 20).font)
                             .foregroundColor(Color(.darkGray))
-                            .animation(.linear)
                     }
                 }
                 .padding(.top, 75)
@@ -126,10 +124,8 @@ struct PokemonOfTypeHeaderView: View {
                         .font(Biotif.regular(size: 15).font)
                         .foregroundColor(Color(.darkGray))
                         .padding(.trailing, 30)
-                        .animation(.linear)
                 }
             }
-        }
         .frame(height: 180)
     }
 }

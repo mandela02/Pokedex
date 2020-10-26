@@ -17,54 +17,53 @@ struct ParallaxView: View {
     @State private var offset = CGSize.zero
     @State private var opacity: Double = 1
     @State private var isFirstTimeLoadView = true
-
+    
     init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
         self.pokemon = pokemon
         self.url = pokemonUrl
     }
-
+    
     var body: some View {
         ParallaxContentView(isShowing: $isShowing,
                             isShowingImage: $isShowingImage,
                             voiceUpdater: voiceUpdater,
                             updater: updater)
-        .navigationTitle("")
-        .navigationBarHidden(true)
-        .ignoresSafeArea()
-        .onReceive(updater.$pokemon, perform: { pokemon in
-            voiceUpdater.pokemon = pokemon
-        })
-        .onReceive(updater.$species, perform: { species in
-            if species.id != 0 {
-                voiceUpdater.species = species
+            .navigationTitle("")
+            .navigationBarHidden(true)
+            .ignoresSafeArea()
+            .onReceive(updater.$pokemon, perform: { pokemon in
+                voiceUpdater.pokemon = pokemon
+            })
+            .onReceive(updater.$species, perform: { species in
+                if species.id != 0 {
+                    voiceUpdater.species = species
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        voiceUpdater.isSpeaking = true
+                    }
+                }
+            })
+            .onAppear {
+                isShowingImage = true
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    voiceUpdater.isSpeaking = true
-                }
-            }
-        })
-        .onAppear {
-            isShowingImage = true
-            
-            if isFirstTimeLoadView {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if let pokemon = pokemon, pokemon.pokeId != 0 {
-                        updater.pokemon = pokemon
-                    }
-                    if let url = url, url != "" {
-                        updater.pokemonUrl = url
+                if isFirstTimeLoadView {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if let pokemon = pokemon, pokemon.pokeId != 0 {
+                            updater.pokemon = pokemon
+                        } else if let url = url, url != "" {
+                            updater.pokemonUrl = url
+                        }
                     }
                 }
+                if isFirstTimeLoadView {
+                    isFirstTimeLoadView = false
+                }
             }
-            if isFirstTimeLoadView {
-                isFirstTimeLoadView = false
+            .onWillDisappear {
+                isShowingImage = false
+                voiceUpdater.refresh()
             }
-        }
-        .onWillDisappear {
-            isShowingImage = false
-            voiceUpdater.refresh()
-        }
     }
 }
 
@@ -73,17 +72,17 @@ struct ParallaxContentView: View {
     
     @Binding var isShowing: Bool
     @Binding var isShowingImage: Bool
-
+    
     @State private var isMinimized = false
     @State private var opacity: Double = 1
     @State private var scale: CGFloat = 1
     @State private var imageOffsetY: CGFloat = 1
-
+    
     @ObservedObject var voiceUpdater: VoiceHelper
     @ObservedObject var updater: PokemonUpdater
     
     @Namespace private var namespace
-
+    
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
             updater.pokemon.mainType.color.background.ignoresSafeArea()
@@ -114,7 +113,7 @@ struct ParallaxContentView: View {
                 VStack{
                     GeometryReader { reader -> AnyView in
                         return AnyView(
-                        Color.clear
+                            Color.clear
                                 .onChange(of: reader.frame(in: .global).minY, perform:  { minFrameY in
                                     let frameY = minFrameY - 100 + maxHeight
                                     opacity = 1 + Double(minFrameY/(maxHeight - 50))
@@ -130,12 +129,12 @@ struct ParallaxContentView: View {
                                         }
                                     }
                                 })
-                            .onChange(of: reader.frame(in: .global).maxY, perform:  { maxFrameY in
-                                imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
-                            })
-                            .onAppear {
-                                imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
-                            }
+                                .onChange(of: reader.frame(in: .global).maxY, perform:  { maxFrameY in
+                                    imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
+                                })
+                                .onAppear {
+                                    imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
+                                }
                         )
                     }
                     .frame(height: maxHeight)
@@ -150,6 +149,7 @@ struct ParallaxContentView: View {
                                        pokemon: updater.pokemon)
                             .background(Color.white)
                     }
+                    .blur(radius: updater.isLoadingNewData ? 3 : 0)
                     .frame(height: UIScreen.main.bounds.height - 50, alignment: .center)
                 }
             }
@@ -159,6 +159,7 @@ struct ParallaxContentView: View {
                 if isShowingImage {
                     HeaderImageScrollView(index: $updater.currentScrollIndex,
                                           items: $updater.images,
+                                          isScrollable: $updater.isScrollingEnable,
                                           onScrolling: { gesture in
                                           }, onEndScrolling: { gesture, direction in
                                             updater.moveTo(direction: direction)
@@ -180,9 +181,10 @@ struct ParallaxContentView: View {
                     .scaleEffect(scale)
                     .offset(y: imageOffsetY)
             }
-
+            
             // Header View (name, type, etc...)
             HeaderView(isShowing: $isShowing, isInExpandeMode: $isMinimized, opacity: $opacity, pokemon: updater.pokemon)
+                .blur(radius: updater.isLoadingNewData ? 3 : 0)
             
             VStack() {
                 Spacer()

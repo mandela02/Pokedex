@@ -146,6 +146,7 @@ struct PokemonInformationView: View {
                 if isShowingImage {
                     HeaderImageScrollView(index: $index,
                                           items: $updater.images,
+                                          isScrollable: $updater.isScrollingEnable,
                                           onScrolling: { gesture in
                                             onGestureScrolling(gesture: gesture, size: size)
                                           }, onEndScrolling: { gesture, direction  in
@@ -158,10 +159,10 @@ struct PokemonInformationView: View {
                                             }
                                             index = 1
                                             onGestureEnd(gesture: gesture, size: size)
-                                            updater.update(onSuccess: {
-                                                isLoadingData = true
-                                                isScrollable = false
-                                            })
+//                                            updater.update(onSuccess: {
+//                                                isLoadingData = true
+//                                                isScrollable = false
+//                                            })
                                           })
                         .frame(width: size.width * 1/2, height: size.height * 1/4, alignment: .center)
                         .offset(y: -size.width/2 + 30)
