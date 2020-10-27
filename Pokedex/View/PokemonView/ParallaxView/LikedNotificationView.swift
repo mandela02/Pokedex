@@ -17,7 +17,7 @@ struct LikedNotificationView: View {
     let width = UIScreen.main.bounds.width / 2
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3).blur(radius: 3)
+            Color.black.opacity(0.5)
             VStack {
                 DownloadedImageView(withURL: image, style: .normal)
                     .padding(.all, 10)
@@ -26,7 +26,7 @@ struct LikedNotificationView: View {
                         return
                     }
                     Spacer()
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 5) {
                         Text(name.capitalized)
                             .font(Biotif.regular(size: 20).font)
                         Text(String(format: "#%03d", id))

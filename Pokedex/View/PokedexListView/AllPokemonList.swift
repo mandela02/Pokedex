@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct AllPokemonList: View {    
+struct AllPokemonList: View {
+    @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject var updater: MainPokedexUpdater = MainPokedexUpdater()
     @State var isLoading = false
     @State var isFinal = false
     @State var isFirstTimeLoadView = true
-    
+    @State var isTopView = false
+
     var body: some View {
         PokemonList(cells: $updater.pokemons,
                     isLoading: $isLoading,
@@ -20,7 +22,9 @@ struct AllPokemonList: View {
                     paddingHeader: 50,
                     paddingFooter: 50,
                     onCellAppear: { pokemon in
-                        updater.loadMorePokemonIfNeeded(current: pokemon)
+                        if isTopView {
+                            updater.loadMorePokemonIfNeeded(current: pokemon)
+                        }
                     })
             .onReceive(updater.$isLoadingPage, perform: { isLoading in
                 withAnimation(Animation.spring()) {
@@ -32,15 +36,15 @@ struct AllPokemonList: View {
                         }
                     }
                 }
-            })
-            .onReceive(updater.$isFinal, perform: { isFinal in
+            }).onReceive(updater.$isFinal, perform: { isFinal in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation(Animation.spring()) {
                         self.isFinal = isFinal
                     }
                 }
-            })
-            .onAppear {
+            }).onAppear {
+                isTopView = true
+                updater.errorHandler = errorHandler
                 if isFirstTimeLoadView {
                     self.isLoading = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -50,6 +54,8 @@ struct AllPokemonList: View {
                     }
                 }
                 isFirstTimeLoadView = false
-            }
+            }.onDisappear {
+                isTopView = false
+            }.showAlertIfCallApiFail()
     }
 }

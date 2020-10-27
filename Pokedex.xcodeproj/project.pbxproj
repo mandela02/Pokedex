@@ -69,6 +69,7 @@
 		847A12902533871200146D24 /* PulsatingPlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A128F2533871200146D24 /* PulsatingPlayButton.swift */; };
 		847A5AF3253BD4DC00496D8F /* BackButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A5AF2253BD4DC00496D8F /* BackButtonView.swift */; };
 		8483127D2538B006006FBCD6 /* Publishers+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483127C2538B005006FBCD6 /* Publishers+Extension.swift */; };
+		8497FE132547C085006B7100 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8497FE122547C085006B7100 /* ErrorHandler.swift */; };
 		84CE255F2539EA8D00E8874D /* PokemonContainerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE255E2539EA8D00E8874D /* PokemonContainerHeaderView.swift */; };
 		84CF1781253DD75400FF312B /* TappablePokemonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF1780253DD75400FF312B /* TappablePokemonCell.swift */; };
 		84D278C325376831004755BE /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D278C225376831004755BE /* SubView.swift */; };
@@ -206,6 +207,7 @@
 		847A128F2533871200146D24 /* PulsatingPlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsatingPlayButton.swift; sourceTree = "<group>"; };
 		847A5AF2253BD4DC00496D8F /* BackButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButtonView.swift; sourceTree = "<group>"; };
 		8483127C2538B005006FBCD6 /* Publishers+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publishers+Extension.swift"; sourceTree = "<group>"; };
+		8497FE122547C085006B7100 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		84CE255E2539EA8D00E8874D /* PokemonContainerHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonContainerHeaderView.swift; sourceTree = "<group>"; };
 		84CF1780253DD75400FF312B /* TappablePokemonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TappablePokemonCell.swift; sourceTree = "<group>"; };
 		84D278C225376831004755BE /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; };
@@ -607,6 +609,7 @@
 				846F3C3E253CC026003A30C6 /* AbilityUpdater.swift */,
 				9078CE73254006CC003C597C /* SearchDataPrepareUpdater.swift */,
 				9078CE8425402996003C597C /* SearchUpdater.swift */,
+				8497FE122547C085006B7100 /* ErrorHandler.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -869,6 +872,7 @@
 				846F3C32253CA5F1003A30C6 /* UIImage+Extension.swift in Sources */,
 				908678332538439A0064B02C /* MovesUpdater.swift in Sources */,
 				84D9AFEF252B776800E4C9D5 /* Constant.swift in Sources */,
+				8497FE132547C085006B7100 /* ErrorHandler.swift in Sources */,
 				846F3C50253CCB50003A30C6 /* SpeciesDetailView.swift in Sources */,
 				84D9B002252B895500E4C9D5 /* PokemonUpdater.swift in Sources */,
 				841E9673253618F000FAD664 /* PokedexView.swift in Sources */,

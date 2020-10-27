@@ -71,24 +71,46 @@ class PokemonUpdater: ObservableObject {
     
     @Published var images: [String] = []
 
+    @Published var errorHandler: ErrorHandler?
+    
     private func initPokemon() {
         guard let url = pokemonUrl, !url.isEmpty else { return }
         Session
             .share
             .pokemon(from: url)
-            .replaceError(with: Pokemon())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .assign(to: \.pokemon, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.errorHandler?.dismissAlert()
+                case .failure(let message):
+                    self.errorHandler?.createAlert(text: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.pokemon = result
+            })
             .store(in: &cancellables)
     }
     
     private func initPokemonSpecies(from url: String) {
         Session.share.species(from: url)
-            .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .assign(to: \.species, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.errorHandler?.dismissAlert()
+                case .failure(let message):
+                    self.errorHandler?.createAlert(text: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.species = result
+            })
             .store(in: &cancellables)
     }
     

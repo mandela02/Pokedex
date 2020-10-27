@@ -12,6 +12,7 @@ enum LoadStyle {
     case animated
     case normal
     case silhoutte
+    case plain
 }
 
 struct DownloadedImageView: View {
@@ -32,6 +33,8 @@ struct DownloadedImageView: View {
                 AnimatedImageView(imageLoader: imageLoader)
             case .silhoutte:
                 SilhoutteImageView(imageLoader: imageLoader)
+            case .plain:
+                PlainImageView(imageLoader: imageLoader)
             }
         }
     }
@@ -54,6 +57,16 @@ struct SilhoutteImageView: View {
                 .scaleEffect(0.8)
                 .aspectRatio(contentMode: .fit)
         }
+    }
+}
+
+struct PlainImageView: View {
+    @ObservedObject var imageLoader: ImageLoader
+    
+    var body: some View {
+            Image(uiImage: imageLoader.displayImage ?? UIImage())
+                .resizable()
+                .aspectRatio(contentMode: .fit)
     }
 }
 

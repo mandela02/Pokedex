@@ -10,20 +10,34 @@ import CoreData
 
 @main
 struct PokedexApp: App {
-    @StateObject var updater = SearchDataPrepareUpdater()
+    @StateObject var errorHandler = ErrorHandler()
+
     var body: some Scene {
         WindowGroup {
-            EmptyView()
-                .fullScreenCover(isPresented: $updater.isDone) {
-                    NavigationView {
-                        HomeView()
-                            .statusBar(hidden: true)
-                            .navigationTitle("")
-                            .navigationBarHidden(true)
-                    }
-                }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
-                .statusBar(hidden: true)
+            PrepareView().environmentObject(errorHandler)
         }
+    }
+}
+
+struct PrepareView: View {
+    @EnvironmentObject var errorHandler: ErrorHandler
+    @StateObject var updater = SearchDataPrepareUpdater()
+
+    var body: some View {
+        EmptyView()
+            .fullScreenCover(isPresented: $updater.isDone) {
+                NavigationView {
+                    HomeView()
+                        .statusBar(hidden: true)
+                        .navigationTitle("")
+                        .navigationBarHidden(true)
+                }
+            }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
+            .environmentObject(errorHandler)
+            .onAppear {
+                updater.errorHandler = errorHandler
+            }.statusBar(hidden: true)
+            .showAlertIfCallApiFail()
     }
 }
 
@@ -47,8 +61,7 @@ struct HomeView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 showBall = true
             }
-        }
-        .onWillDisappear {
+        }.onWillDisappear {
             showBall = false
         }
 

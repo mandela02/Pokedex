@@ -53,16 +53,28 @@ class EvolutionUpdater: ObservableObject {
 
     @Published var evolutionLinks: [EvoLink] = []
     @Published var megaEvolutionLinks: [EvoLink] = []
+    
+    @Published var isHavingError = false
+    @Published var message = ""
 
     private var cancellables = Set<AnyCancellable>()
     
     private func initEvolution(of url: String) {
         Session.share.evolution(from: url)
-            .replaceError(with: Evolution())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .sink(receiveValue: { [weak self] evolution in
-                self?.evolution = evolution
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.isHavingError = false
+                case .failure(let message):
+                    self.isHavingError = true
+                    self.message = message.localizedDescription
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.evolution = result
             })
             .store(in: &cancellables)
     }

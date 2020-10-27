@@ -12,6 +12,8 @@ struct ParallaxView: View {
     var pokemon: Pokemon?
     var url: String?
     
+    @EnvironmentObject var errorHandler: ErrorHandler
+    
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater()
     
@@ -42,6 +44,7 @@ struct ParallaxView: View {
                     .offset(x: UIScreen.main.bounds.width * 1/3,
                             y: -UIScreen.main.bounds.height * 1/3 )
                     .isRemove(!isMinimized)
+                    .blur(radius: showLikedNotification ? 3 : 0)
                 
                 RotatingPokeballView()
                     .ignoresSafeArea()
@@ -49,6 +52,7 @@ struct ParallaxView: View {
                            height: UIScreen.main.bounds.height,
                            alignment: .bottom)
                     .isRemove(isMinimized)
+                    .blur(radius: showLikedNotification ? 3 : 0)
             }
 
             ParallaxContentView(isShowing: $isShowing,
@@ -56,6 +60,8 @@ struct ParallaxView: View {
                                 isMinimized: $isMinimized,
                                 opacity: $opacity,
                                 updater: updater)
+                .blur(radius: showLikedNotification ? 3 : 0)
+
             VStack() {
                 Spacer()
                 HStack {
@@ -66,7 +72,7 @@ struct ParallaxView: View {
                         .padding(.bottom, 30)
                         .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
                 }
-            }
+            }.blur(radius: showLikedNotification ? 3 : 0)
             
             PokemonParallaxHeaderView(isShowing: $isShowing,
                                       isInExpandeMode: $isMinimized,
@@ -74,6 +80,7 @@ struct ParallaxView: View {
                                       showLikedNotification: $showLikedNotification,
                                       pokemon: updater.pokemon)
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
+                .blur(radius: showLikedNotification ? 3 : 0)
             
             
             if showLikedNotification {
@@ -93,8 +100,7 @@ struct ParallaxView: View {
                     }
                 }
             }
-        })
-        .onReceive(updater.$pokemon, perform: { pokemon in
+        }).onReceive(updater.$pokemon, perform: { pokemon in
             voiceUpdater.pokemon = pokemon
         })
         .onReceive(updater.$species, perform: { species in
@@ -107,6 +113,7 @@ struct ParallaxView: View {
             }
         })
         .onAppear {
+            updater.errorHandler = errorHandler
             isShowingImage = true
             
             if isFirstTimeLoadView {
@@ -122,10 +129,10 @@ struct ParallaxView: View {
                 isFirstTimeLoadView = false
             }
         }
-        .onDisappear(perform: {
+        .onWillDisappear({
             isShowingImage = false
             voiceUpdater.refresh()
-        })
+        }).showAlertIfCallApiFail()
     }
 }
 

@@ -9,6 +9,12 @@ import Foundation
 import Combine
 
 class StatUpdater: ObservableObject {
+    
+    init(of pokemon: Pokemon) {
+        self.pokemon = pokemon
+        getNumbers(of: pokemon)
+    }
+
     @Published var pokemon: Pokemon = Pokemon()
     
     @Published var numbers: [PokeStatUrl] = [] {
@@ -33,12 +39,10 @@ class StatUpdater: ObservableObject {
     }
     @Published var descriptions: [String] = []
 
-    private var cancellables = Set<AnyCancellable>()
+    @Published var isHavingError = false
+    @Published var message = ""
 
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-        getNumbers(of: pokemon)
-    }
+    private var cancellables = Set<AnyCancellable>()
         
     private func getNumbers(of pokemon: Pokemon) {
         let allStat = pokemon.stats.map({$0.baseStat}).reduce(0, +)
@@ -63,11 +67,22 @@ class StatUpdater: ObservableObject {
             .map({Session.share.characteristic(from: $0).eraseToAnyPublisher()})
             .publisher
             .flatMap({$0})
-            .replaceError(with: Characteristic())
             .eraseToAnyPublisher()
             .receive(on: DispatchQueue.main)
             .collect()
-            .assign(to: \.characteristics, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.isHavingError = false
+                case .failure(let message):
+                    self.isHavingError = true
+                    self.message = message.localizedDescription
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.characteristics = result
+            })
             .store(in: &cancellables)
     }
 }
