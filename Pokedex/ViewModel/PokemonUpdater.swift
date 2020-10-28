@@ -70,8 +70,8 @@ class PokemonUpdater: ObservableObject {
     }
     
     @Published var images: [String] = []
-
-    @Published var errorHandler: ErrorHandler?
+    
+    @Published var error: ApiError = .non
     
     private func initPokemon() {
         guard let url = pokemonUrl, !url.isEmpty else { return }
@@ -84,9 +84,9 @@ class PokemonUpdater: ObservableObject {
                 guard let self = self else { return }
                 switch complete {
                 case .finished:
-                    self.errorHandler?.dismissAlert()
+                    self.error = .non
                 case .failure(let message):
-                    self.errorHandler?.createAlert(text: message.localizedDescription)
+                    self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
@@ -103,9 +103,9 @@ class PokemonUpdater: ObservableObject {
                 guard let self = self else { return }
                 switch complete {
                 case .finished:
-                    self.errorHandler?.dismissAlert()
+                    self.error = .non
                 case .failure(let message):
-                    self.errorHandler?.createAlert(text: message.localizedDescription)
+                    self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }

@@ -36,6 +36,7 @@ struct EvolutionView: View {
             
             Color.clear.frame(height: 100, alignment: .center)
         }
+        .showErrorView(error: $evolutionUpdater.error)
         .listStyle(SidebarListStyle())
         .animation(.linear)
     }

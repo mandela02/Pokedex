@@ -10,17 +10,14 @@ import CoreData
 
 @main
 struct PokedexApp: App {
-    @StateObject var errorHandler = ErrorHandler()
-
     var body: some Scene {
         WindowGroup {
-            PrepareView().environmentObject(errorHandler)
+            PrepareView()
         }
     }
 }
 
 struct PrepareView: View {
-    @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject var updater = SearchDataPrepareUpdater()
 
     var body: some View {
@@ -33,11 +30,9 @@ struct PrepareView: View {
                         .navigationBarHidden(true)
                 }
             }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
-            .environmentObject(errorHandler)
-            .onAppear {
-                updater.errorHandler = errorHandler
-            }.statusBar(hidden: true)
-            .showAlertIfCallApiFail()
+            .statusBar(hidden: true)
+            .showErrorView(error: $updater.error)
+            .showAlert(error: $updater.error)
     }
 }
 

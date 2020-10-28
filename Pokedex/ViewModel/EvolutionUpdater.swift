@@ -54,8 +54,7 @@ class EvolutionUpdater: ObservableObject {
     @Published var evolutionLinks: [EvoLink] = []
     @Published var megaEvolutionLinks: [EvoLink] = []
     
-    @Published var isHavingError = false
-    @Published var message = ""
+    @Published var error: ApiError = .non
 
     private var cancellables = Set<AnyCancellable>()
     
@@ -66,11 +65,8 @@ class EvolutionUpdater: ObservableObject {
             .sink(receiveCompletion: { [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished:
-                    self.isHavingError = false
-                case .failure(let message):
-                    self.isHavingError = true
-                    self.message = message.localizedDescription
+                case .finished: self.error = .non
+                case .failure(let message): self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }

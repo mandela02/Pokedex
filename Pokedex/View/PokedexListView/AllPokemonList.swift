@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AllPokemonList: View {
-    @EnvironmentObject var errorHandler: ErrorHandler
     @StateObject var updater: MainPokedexUpdater = MainPokedexUpdater()
     @State var isLoading = false
     @State var isFinal = false
@@ -44,7 +43,6 @@ struct AllPokemonList: View {
                 }
             }).onAppear {
                 isTopView = true
-                updater.errorHandler = errorHandler
                 if isFirstTimeLoadView {
                     self.isLoading = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -56,6 +54,7 @@ struct AllPokemonList: View {
                 isFirstTimeLoadView = false
             }.onDisappear {
                 isTopView = false
-            }.showAlertIfCallApiFail()
+            }.showAlert(error: $updater.error)
+
     }
 }

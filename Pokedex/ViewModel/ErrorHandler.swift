@@ -9,53 +9,55 @@ import Combine
 import Foundation
 import SwiftUI
 
-class ErrorHandler: ObservableObject {
-    let objectWillChange = PassthroughSubject<String, Never>()
-
-    @Published var isHavingError = false {
-        didSet {
-            objectWillChange.send(message)
-        }
-    }
-    @Published var message = ""
-    
-    func createAlert(text: String) {
-        message = text
-        isHavingError = true
-    }
-    
-    func dismissAlert() {
-        isHavingError = false
-    }
-    
-    func alert() -> Alert {
-        Alert(title: Text("Something happend!").font(Biotif.extraBold(size: 30).font),
-              message: Text(message).font(Biotif.bold(size: 15).font),
-              dismissButton: .default(Text("OK").font(Biotif.medium(size: 15).font)))
-    }
+enum ApiError: Equatable {
+    case internet(message: String)
+    case non
 }
 
 struct FailAlert: ViewModifier {
-    @EnvironmentObject var errorHandler: ErrorHandler
+    @Binding var error: ApiError
     @State var isTopView: Bool = false
     @State var showAlert: Bool = false
+    @State var message: String = ""
 
     func body(content: Content) -> some View {
         content
             .alert(isPresented: $showAlert, content: {
-                errorHandler.alert()
+                Alert(title: Text("Something happend!").font(Biotif.extraBold(size: 30).font),
+                      message: Text(message).font(Biotif.bold(size: 15).font),
+                      dismissButton: .default(Text("OK").font(Biotif.medium(size: 15).font)))
             }).onAppear {
                 isTopView = true
             }.onDisappear {
                 isTopView = false
-            }.onReceive(errorHandler.$isHavingError) { isError in
-                showAlert = isError && isTopView
+            }.onChange(of: error) { error in
+                switch error {
+                case .internet(message: let message):
+                    self.message = message
+                    showAlert = isTopView
+                case .non:
+                    showAlert = false
+                }
             }
     }
 }
 
 extension View {
-    func showAlertIfCallApiFail() -> some View {
-        self.modifier(FailAlert())
+    func showAlert(error: Binding<ApiError>) -> some View {
+        self.modifier(FailAlert(error: error))
+    }
+    
+    @ViewBuilder func showErrorView(error: Binding<ApiError>) -> some View {
+        switch error.wrappedValue {
+        case .non:
+            self
+        case .internet(message: _):
+            ZStack {
+                Image(systemName: "wifi.slash")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 200, height: 200, alignment: .center)
+            }
+        }
     }
 }

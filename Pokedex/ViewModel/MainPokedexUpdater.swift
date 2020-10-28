@@ -12,8 +12,7 @@ class MainPokedexUpdater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
     @Published var settings = UserSettings()
-
-    @Published var errorHandler: ErrorHandler?
+    @Published var error: ApiError = .non
 
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
@@ -68,16 +67,15 @@ class MainPokedexUpdater: ObservableObject {
             .sink(receiveCompletion: { [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished: self.errorHandler?.dismissAlert()
+                case .finished: self.error = .non
                 case .failure(let message):
-                    self.errorHandler?.createAlert(text: message.localizedDescription)
+                    self.error = .internet(message: message.localizedDescription)
                     self.isLoadingPage = false
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
                 self.pokemonResult = result
-            })
-            .store(in: &cancellables)
+            }).store(in: &cancellables)
     }
     
     private func loadPokemonsData() {
@@ -88,10 +86,11 @@ class MainPokedexUpdater: ObservableObject {
             .sink(receiveCompletion: { [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished: self.errorHandler?.dismissAlert()
+                case .finished: self.error = .non
                 case .failure(let message):
                     self.isLoadingPage = false
-                    self.errorHandler?.createAlert(text: message.localizedDescription)                }
+                    self.error = .internet(message: message.localizedDescription)
+                }
             }, receiveValue: { [weak self] pokemons in
                 guard let self = self else { return }
                 self.pokemons = self.pokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})

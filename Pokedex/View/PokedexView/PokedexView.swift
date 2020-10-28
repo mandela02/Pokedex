@@ -9,8 +9,6 @@ import SwiftUI
 import Combine
 
 struct NavigationPokedexView: View {
-    @EnvironmentObject var errorHandler: ErrorHandler
-
     var body: some View {
         VStack {
             PokedexView()

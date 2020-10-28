@@ -56,17 +56,28 @@ class MovesUpdater: ObservableObject {
     }
     @Published var groupedMoveCellModels: [GroupedMoveCellModel] = []
     @Published var selected: String?
+    @Published var error: ApiError = .non
+
     private var cancellables = Set<AnyCancellable>()
     
     private func getAllMoves() {
         Publishers.Sequence(sequence: pokemonMoves.map({Session.share.move(from: $0.move.url)}))
             .flatMap({$0})
             .collect()
-            .replaceError(with: [])
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.moves, on: self)
-            .store(in: &cancellables)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.moves = result
+            }).store(in: &cancellables)
     }
     
     private func getMoveDetails() -> AnyPublisher<[MoveLearnMethod], Error> {
@@ -76,7 +87,14 @@ class MovesUpdater: ObservableObject {
             .flatMap({$0})
             .replaceEmpty(with: MoveLearnMethod())
             .collect()
-            .eraseToAnyPublisher()
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .failure(let error): self.error = .internet(message: error.localizedDescription)
+                case .finished: self.error = .non
+                }
+            }).eraseToAnyPublisher()
     }
     
     private func getMachine() -> AnyPublisher<[Machine], Error> {
@@ -86,7 +104,14 @@ class MovesUpdater: ObservableObject {
             .flatMap({$0})
             .replaceEmpty(with: Machine())
             .collect()
-            .eraseToAnyPublisher()
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .failure(let error): self.error = .internet(message: error.localizedDescription)
+                case .finished: self.error = .non
+                }
+            }).eraseToAnyPublisher()
     }
     
     private func getTarget() -> AnyPublisher<[MoveTarget], Error>{
@@ -96,14 +121,29 @@ class MovesUpdater: ObservableObject {
             .flatMap({$0})
             .replaceEmpty(with: MoveTarget())
             .collect()
-            .eraseToAnyPublisher()
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .failure(let error): self.error = .internet(message: error.localizedDescription)
+                case .finished: self.error = .non
+                }
+            }).eraseToAnyPublisher()
     }
     
     private func merge() {
         Publishers.Zip3(getMoveDetails(), getMachine(), getTarget())
             .receive(on: DispatchQueue.main)
             .replaceError(with: ([], [], []))
-            .sink { [weak self] (moveLearnMethods, machines, targets) in
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] (moveLearnMethods, machines, targets) in
                 guard let self = self else { return }
                 var cells: [MoveCellModel] = []
                 for (index, move) in self.moves.enumerated() {
@@ -119,7 +159,6 @@ class MovesUpdater: ObservableObject {
                     cells.append(moveModel)
                 }
                 self.moveCellModels = cells
-            }
-            .store(in: &cancellables)
+            }).store(in: &cancellables)
     }
 }

@@ -16,6 +16,7 @@ class AbilityUpdater: ObservableObject {
     }
     @Published var name: String = "" {
         didSet {
+            isLoadingData =  true
             url = UrlType.getAbilityUrl(of: name)
         }
     }
@@ -34,11 +35,14 @@ class AbilityUpdater: ObservableObject {
             if let descriptions = ability.effectEntries, !descriptions.isEmpty {
                 description = StringHelper.getEnglishText(from: descriptions)
             }
+            isLoadingData = false
         }
     }
     
-    @Published var title: String = ""
-    @Published var description: String = ""
+    @Published var title = ""
+    @Published var description = ""
+    @Published var isLoadingData = true
+    @Published var error: ApiError = .non
 
     private func getAbility(from url: String) {
         guard !url.isEmpty else { return }
@@ -46,7 +50,19 @@ class AbilityUpdater: ObservableObject {
             .replaceError(with: Ability())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.ability, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let error):
+                    self.isLoadingData = false
+                    self.error = .internet(message: error.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.ability = result
+            })
             .store(in: &cancellables)
     }
 }

@@ -14,7 +14,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     private let context = PersistenceManager.shared.persistentContainer.viewContext
     
     @Published var settings = UserSettings()
-    @Published var errorHandler: ErrorHandler?
+    @Published var error: ApiError = .non
 
     init() {
         oldPokemonsCount = settings.pokemonsCount
@@ -92,8 +92,8 @@ class SearchDataPrepareUpdater: ObservableObject {
             .sink(receiveCompletion: {  [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished: self.errorHandler?.dismissAlert()
-                case .failure(let message): self.errorHandler?.createAlert(text: message.localizedDescription)
+                case .finished: self.error = .non
+                case .failure(let message): self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
@@ -110,8 +110,8 @@ class SearchDataPrepareUpdater: ObservableObject {
             .sink(receiveCompletion: {  [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished: self.errorHandler?.dismissAlert()
-                case .failure(let message): self.errorHandler?.createAlert(text: message.localizedDescription)
+                case .finished: self.error = .non
+                case .failure(let message): self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }

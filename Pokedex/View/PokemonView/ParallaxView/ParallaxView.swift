@@ -11,9 +11,7 @@ struct ParallaxView: View {
     @Binding var isShowing: Bool
     var pokemon: Pokemon?
     var url: String?
-    
-    @EnvironmentObject var errorHandler: ErrorHandler
-    
+        
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater()
     
@@ -113,7 +111,6 @@ struct ParallaxView: View {
             }
         })
         .onAppear {
-            updater.errorHandler = errorHandler
             isShowingImage = true
             
             if isFirstTimeLoadView {
@@ -128,11 +125,10 @@ struct ParallaxView: View {
             if isFirstTimeLoadView {
                 isFirstTimeLoadView = false
             }
-        }
-        .onWillDisappear({
+        }.onWillDisappear({
             isShowingImage = false
             voiceUpdater.refresh()
-        }).showAlertIfCallApiFail()
+        }).showAlert(error: $updater.error)
     }
 }
 

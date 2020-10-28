@@ -39,8 +39,7 @@ class StatUpdater: ObservableObject {
     }
     @Published var descriptions: [String] = []
 
-    @Published var isHavingError = false
-    @Published var message = ""
+    @Published var error: ApiError = .non
 
     private var cancellables = Set<AnyCancellable>()
         
@@ -53,10 +52,20 @@ class StatUpdater: ObservableObject {
         let max = pokemon.stats.max(by: {$0.baseStat < $1.baseStat})
         if let statUrl = max?.statUrl.url {
             Session.share.stat(from: statUrl)
-                .replaceError(with: Stat())
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
-                .assign(to: \.stat, on: self)
+                .sink(receiveCompletion: { [weak self] complete in
+                    guard let self = self else { return }
+                    switch complete {
+                    case .finished:
+                        self.error = .non
+                    case .failure(let message):
+                        self.error = .internet(message: message.localizedDescription)
+                    }
+                }, receiveValue: { [weak self] result in
+                    guard let self = self else { return }
+                    self.stat = result
+                })
                 .store(in: &cancellables)
         }
     }
@@ -74,10 +83,9 @@ class StatUpdater: ObservableObject {
                 guard let self = self else { return }
                 switch complete {
                 case .finished:
-                    self.isHavingError = false
+                    self.error = .non
                 case .failure(let message):
-                    self.isHavingError = true
-                    self.message = message.localizedDescription
+                    self.error = .internet(message: message.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
