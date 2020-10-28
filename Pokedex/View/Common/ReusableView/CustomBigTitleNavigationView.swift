@@ -32,10 +32,10 @@ struct CustomBigTitleNavigationView<Content, Header, StickyHeader>: View where C
                                         scale = 1 + ratio
                                     }
                                     if y < 0 {
-                                        withAnimation(.linear){ isExpanded = true}
+                                        withAnimation(.spring()) {isExpanded = true}
                                     }
                                     else {
-                                        withAnimation(.linear){isExpanded = false}
+                                        withAnimation(.spring()) {isExpanded = false}
                                     }
                                 })
                                 .frame(height: maxHeight)

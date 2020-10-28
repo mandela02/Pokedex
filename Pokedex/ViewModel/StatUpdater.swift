@@ -9,6 +9,12 @@ import Foundation
 import Combine
 
 class StatUpdater: ObservableObject {
+    
+    init(of pokemon: Pokemon) {
+        self.pokemon = pokemon
+        getNumbers(of: pokemon)
+    }
+
     @Published var pokemon: Pokemon = Pokemon()
     
     @Published var numbers: [PokeStatUrl] = [] {
@@ -33,12 +39,9 @@ class StatUpdater: ObservableObject {
     }
     @Published var descriptions: [String] = []
 
-    private var cancellables = Set<AnyCancellable>()
+    @Published var error: ApiError = .non
 
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-        getNumbers(of: pokemon)
-    }
+    private var cancellables = Set<AnyCancellable>()
         
     private func getNumbers(of pokemon: Pokemon) {
         let allStat = pokemon.stats.map({$0.baseStat}).reduce(0, +)
@@ -49,10 +52,20 @@ class StatUpdater: ObservableObject {
         let max = pokemon.stats.max(by: {$0.baseStat < $1.baseStat})
         if let statUrl = max?.statUrl.url {
             Session.share.stat(from: statUrl)
-                .replaceError(with: Stat())
                 .receive(on: DispatchQueue.main)
                 .eraseToAnyPublisher()
-                .assign(to: \.stat, on: self)
+                .sink(receiveCompletion: { [weak self] complete in
+                    guard let self = self else { return }
+                    switch complete {
+                    case .finished:
+                        self.error = .non
+                    case .failure(let message):
+                        self.error = .internet(message: message.localizedDescription)
+                    }
+                }, receiveValue: { [weak self] result in
+                    guard let self = self else { return }
+                    self.stat = result
+                })
                 .store(in: &cancellables)
         }
     }
@@ -63,11 +76,21 @@ class StatUpdater: ObservableObject {
             .map({Session.share.characteristic(from: $0).eraseToAnyPublisher()})
             .publisher
             .flatMap({$0})
-            .replaceError(with: Characteristic())
             .eraseToAnyPublisher()
             .receive(on: DispatchQueue.main)
             .collect()
-            .assign(to: \.characteristics, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.characteristics = result
+            })
             .store(in: &cancellables)
     }
 }

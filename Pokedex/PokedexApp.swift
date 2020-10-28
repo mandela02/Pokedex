@@ -10,20 +10,29 @@ import CoreData
 
 @main
 struct PokedexApp: App {
-    @StateObject var updater = SearchDataPrepareUpdater()
     var body: some Scene {
         WindowGroup {
-            EmptyView()
-                .fullScreenCover(isPresented: $updater.isDone) {
-                    NavigationView {
-                        HomeView()
-                            .statusBar(hidden: true)
-                            .navigationTitle("")
-                            .navigationBarHidden(true)
-                    }
-                }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
-                .statusBar(hidden: true)
+            PrepareView()
         }
+    }
+}
+
+struct PrepareView: View {
+    @StateObject var updater = SearchDataPrepareUpdater()
+
+    var body: some View {
+        EmptyView()
+            .fullScreenCover(isPresented: $updater.isDone) {
+                NavigationView {
+                    HomeView()
+                        .statusBar(hidden: true)
+                        .navigationTitle("")
+                        .navigationBarHidden(true)
+                }
+            }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
+            .statusBar(hidden: true)
+            .showErrorView(error: $updater.error)
+            .showAlert(error: $updater.error)
     }
 }
 
@@ -47,8 +56,7 @@ struct HomeView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 showBall = true
             }
-        }
-        .onWillDisappear {
+        }.onWillDisappear {
             showBall = false
         }
 

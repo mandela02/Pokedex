@@ -17,49 +17,28 @@ struct PokemonsOfTypeListNavigationView: View {
     @State var isViewDisplayed = false
     @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
-    let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
-    
-    var width: CGFloat {
-        return (UIScreen.main.bounds.width - 80) / numberOfColumns
-    }
-    var height: CGFloat {
-        width * 0.7
-    }
-    
-    private func calculateGridItem() -> [GridItem] {
-        let gridItem = GridItem(.fixed(width), spacing: 10)
-        return Array(repeating: gridItem, count: Int(numberOfColumns))
-    }
-
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
-                LazyVGrid(columns: calculateGridItem()) {
-                    ForEach(updater.pokemons) { cell in
-                        TappablePokemonCell(pokemon: cell, size: CGSize(width: width, height: height))
-                            .background(Color.clear)
-                    }
-                }
-                .animation(.linear)
+                ParallaxPokemonsList(pokemons: updater.pokemons)
             }, header: {
                 PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
             }, stickyHeader: {
-                HStack {
-                    Spacer()
-                    Text(updater.name.capitalized)
-                        .font(Biotif.extraBold(size: 20).font)
-                        .foregroundColor(.black)
-                    Spacer()
-                }
-                .padding(.top, 50)
-                .padding(.bottom, 20)
-                .background(GradienView(atTop: true))
+                NamedHeaderView(name: updater.name)
             }, maxHeight: 200)
+                .isRemove(updater.hasNoPokemon)
             
-            if updater.isLoading {
-                LoadingView(background: .white)
-                    .transition(.asymmetric(insertion: .opacity, removal: .opacity))
-            }
+            LoadingView(background: .white)
+                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
+                .isRemove(!updater.isLoading)
+
+            PokemonsOfTypeEmptyView()
+                .isRemove(!updater.hasNoPokemon)
+            
+            VStack {
+                BigTitle(text: updater.name.capitalized)
+                Spacer()
+            }.isRemove(!updater.hasNoPokemon)
             
             VStack {
                 HStack(alignment: .center) {
@@ -87,6 +66,8 @@ struct PokemonsOfTypeListNavigationView: View {
         .onDisappear {
             isViewDisplayed = false
         }
+        .showErrorView(error: $updater.error)
+        .showAlert(error: $updater.error)
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
@@ -99,7 +80,6 @@ struct PokemonOfTypeHeaderView: View {
     var damage: MoveDamageClass
     
     var body: some View {
-        ZStack {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
                     Text(typeName.capitalized)
@@ -112,7 +92,6 @@ struct PokemonOfTypeHeaderView: View {
                         Text("Damage type: " + damage.name)
                             .font(Biotif.extraBold(size: 20).font)
                             .foregroundColor(Color(.darkGray))
-                            .animation(.linear)
                     }
                 }
                 .padding(.top, 75)
@@ -126,10 +105,23 @@ struct PokemonOfTypeHeaderView: View {
                         .font(Biotif.regular(size: 15).font)
                         .foregroundColor(Color(.darkGray))
                         .padding(.trailing, 30)
-                        .animation(.linear)
                 }
             }
-        }
         .frame(height: 180)
+    }
+}
+
+struct PokemonsOfTypeEmptyView: View {
+    var body: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                Image("suprise_pikachu")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 2, trailing: 20))
+                Text("No Pokemons Founded")
+                    .font(Biotif.extraBold(size: 30).font)
+            }
+        }
     }
 }

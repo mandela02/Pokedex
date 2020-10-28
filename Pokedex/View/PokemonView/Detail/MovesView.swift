@@ -40,6 +40,7 @@ struct MovesView: View {
                 }
                 Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
             }
+            .showErrorView(error: $moveUpdater.error)
             .listStyle(SidebarListStyle())
             .animation(.spring())
         })

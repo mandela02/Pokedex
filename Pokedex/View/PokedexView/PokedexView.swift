@@ -9,23 +9,11 @@ import SwiftUI
 import Combine
 
 struct NavigationPokedexView: View {
-    @State var showDetail: Bool = false
-    @State var showTypeList: Bool = false
-    @State var pokemonUrl: String = ""
-    @State var pokemonType: PokemonType = .non
-    @State var isViewDisplayed = false
-    
     var body: some View {
         VStack {
             PokedexView()
                 .ignoresSafeArea()
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-        }
-        .onAppear {
-            isViewDisplayed = true
-        }
-        .onDisappear {
-            isViewDisplayed = false
         }
     }
 }

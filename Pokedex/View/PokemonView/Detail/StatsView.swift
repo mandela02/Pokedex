@@ -48,6 +48,7 @@ struct StatsView: View {
             Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
+        .showErrorView(error: $updater.error)
     }
 }
 

@@ -9,39 +9,45 @@ import SwiftUI
 
 struct HeaderImageScrollView: View {
     @Binding var index: Int
-    @State var offset: CGFloat = 0.0
     @Binding var items: [String]
-    
-    @State var image: UIImage?
-    
-    @State private var isGestureActive: Bool = false
+    @Binding var isScrollable: Bool
+
     var onScrolling: (DragGesture.Value) -> ()
     var onEndScrolling: (DragGesture.Value, Direction) -> ()
+    
+    @State var image: UIImage?
+    @State private var isGestureActive: Bool = false
+    @State var offset: CGFloat = 0.0
     
     private func drag(in size: CGSize) -> some Gesture {
         return DragGesture().onChanged({ value in
             withAnimation(.spring()) {
-                self.isGestureActive = true
-                self.offset = value.translation.width + -size.width * CGFloat(self.index)
-                onScrolling(value)
+                if isScrollable {
+                    self.isGestureActive = true
+                    self.offset = value.translation.width + -size.width * CGFloat(self.index)
+                    onScrolling(value)
+                }
             }
         }).onEnded({ value in
-            var direction: Direction = .up
-            withAnimation(.spring()) {
-                if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
-                    self.index += 1
-                    direction = .right
-                    
+            if isScrollable {
+                var direction: Direction = .up
+                withAnimation(.spring()) {
+                    if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
+                        self.index += 1
+                        direction = .right
+                        onEndScrolling(value, direction)
+                    } else if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
+                        self.index -= 1
+                        direction = .left
+                        onEndScrolling(value, direction)
+                    } else {
+                        isScrollable = true
+                    }
+                    withAnimation {
+                        self.offset = -size.width * CGFloat(self.index)
+                    }
+                    self.isGestureActive = false
                 }
-                if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
-                    self.index -= 1
-                    direction = .left
-                }
-                withAnimation {
-                    self.offset = -size.width * CGFloat(self.index)
-                }
-                self.isGestureActive = false
-                onEndScrolling(value, direction)
             }
         })
     }

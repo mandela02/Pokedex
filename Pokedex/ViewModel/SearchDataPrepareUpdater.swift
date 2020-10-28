@@ -12,7 +12,9 @@ import CoreData
 class SearchDataPrepareUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let context = PersistenceManager.shared.persistentContainer.viewContext
+    
     @Published var settings = UserSettings()
+    @Published var error: ApiError = .non
 
     init() {
         oldPokemonsCount = settings.pokemonsCount
@@ -86,21 +88,34 @@ class SearchDataPrepareUpdater: ObservableObject {
         Session
             .share
             .pokemons(from: Constants.baseCheckPokemonUrl)
-            .replaceError(with: PokemonResult())
             .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-            .assign(to: \.checkedPokemonResult, on: self)
-            .store(in: &cancellables)
+            .sink(receiveCompletion: {  [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished: self.error = .non
+                case .failure(let message): self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.checkedPokemonResult = result
+            }).store(in: &cancellables)
     }
     
     func loadPokemonResource(limit: Int) {
         Session
             .share
             .pokemons(from: UrlType.getAllPokemonsResource(limit: limit))
-            .replaceError(with: PokemonResult())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-            .assign(to: \.currentPokemonsResult, on: self)
-            .store(in: &cancellables)
+            .sink(receiveCompletion: {  [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished: self.error = .non
+                case .failure(let message): self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.currentPokemonsResult = result
+            }).store(in: &cancellables)
     }
 }

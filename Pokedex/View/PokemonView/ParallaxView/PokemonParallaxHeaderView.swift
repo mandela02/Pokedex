@@ -7,16 +7,17 @@
 
 import SwiftUI
 
-struct HeaderView: View {
+struct PokemonParallaxHeaderView: View {
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     @Binding var opacity: Double
+    @Binding var showLikedNotification: Bool
 
     var pokemon: Pokemon
 
     var body: some View {
         VStack {
-            NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, pokemon: pokemon)
+            NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, showLikedNotification: $showLikedNotification, pokemon: pokemon)
             NewNameView(pokemon: pokemon, opacity: $opacity)
             NewTypeView(pokemon: pokemon, isInExpandeMode: $isInExpandeMode)
             Spacer()
@@ -30,6 +31,8 @@ struct NewButtonView: View {
 
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
+    @Binding var showLikedNotification: Bool
+
     var pokemon: Pokemon
     
     @State var isFavorite = false
@@ -89,6 +92,7 @@ struct NewButtonView: View {
         let favorite = Favorite(context: viewContext)
         favorite.url = UrlType.getPokemonUrl(of: pokemon.pokeId)
         save()
+        showLikedNotification = true
     }
     
     private func dislike(pokemon: Pokemon) {

@@ -23,9 +23,8 @@ struct EvolutionView: View {
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
                 }
-            }
-            .isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-            
+            }.isRemove(evolutionUpdater.evolutionLinks.isEmpty)
+
             Section (header: Text("Mega Evolution")
                         .font(Biotif.extraBold(size: 20).font)
                         .foregroundColor(.black)) {
@@ -33,10 +32,11 @@ struct EvolutionView: View {
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
                 }
-            }
-            .isRemove(!(evolutionUpdater.species?.havingMega ?? true))
+            }.isRemove(!(evolutionUpdater.species?.havingMega ?? true))
+            
             Color.clear.frame(height: 100, alignment: .center)
         }
+        .showErrorView(error: $evolutionUpdater.error)
         .listStyle(SidebarListStyle())
         .animation(.linear)
     }

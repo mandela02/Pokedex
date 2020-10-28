@@ -47,7 +47,7 @@ struct AbilityDetailView: View {
     var pokemon: Pokemon
     @Binding var selectedAbility: String?
     @StateObject var updater = AbilityUpdater(name: "")
-    @State var isLoadingData = false
+
     var body: some View {
         ZStack {
             VStack {
@@ -83,11 +83,13 @@ struct AbilityDetailView: View {
                         .padding(.leading, 20)
                         .padding(.trailing, 20)
             }
+            .showErrorView(error: $updater.error)
             .animation(.linear)
             .transition(.opacity)
             .padding(.leading, 20)
+            .isHidden(updater.isLoadingData)
             
-            if isLoadingData {
+            if updater.isLoadingData {
                 HStack {
                     Spacer()
                     ProgressView()
@@ -99,17 +101,12 @@ struct AbilityDetailView: View {
         }
         .onAppear {
             updater.name = selectedAbility ?? ""
-            isLoadingData = true
         }
         .onChange(of: selectedAbility, perform: { selectedAbility in
             if let selectedAbility = selectedAbility,
                selectedAbility != updater.name {
                 updater.name = selectedAbility
-                isLoadingData = true
             }
-        })
-        .onReceive(updater.$description, perform: { _ in
-            isLoadingData = false
         })
         .background(Color.white)
         .padding()

@@ -9,8 +9,8 @@ import Combine
 import SwiftUI
 
 class PokemonUpdater: ObservableObject {
-    init(url: String) {
-        self.pokemonUrl = url
+    init() {
+        wait()
     }
     
     deinit {
@@ -23,10 +23,13 @@ class PokemonUpdater: ObservableObject {
     @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
     @Published var isScrollingEnable = true
-    
+    @Published var isLoadingNewData = false
+
     @Published var pokemonUrl: String? {
         didSet {
-            initPokemon()
+            if pokemonUrl != "" {
+                initPokemon()
+            }
         }
     }
     
@@ -36,7 +39,7 @@ class PokemonUpdater: ObservableObject {
             speciesUrl = pokemon.species.url
         }
     }
-    
+
     @Published var speciesUrl: String = "" {
         didSet {
             initPokemonSpecies(from: speciesUrl)
@@ -46,14 +49,7 @@ class PokemonUpdater: ObservableObject {
     @Published var species: Species = Species() {
         didSet {
             isScrollingEnable = true
-        }
-    }
-    
-    @Published var images: [String] = []
-    
-    @Published var ids: [Int] = [] {
-        didSet {
-            images = ids.map({UrlType.getImageUrlString(of: $0)})
+            self.isLoadingNewData = false
         }
     }
     
@@ -65,33 +61,63 @@ class PokemonUpdater: ObservableObject {
             }
         }
     }
+
+    @Published var ids: [Int] = [] {
+        didSet {
+            images = ids.map({UrlType.getImageUrlString(of: $0)})
+            
+        }
+    }
+    
+    @Published var images: [String] = []
+    
+    @Published var error: ApiError = .non
     
     private func initPokemon() {
         guard let url = pokemonUrl, !url.isEmpty else { return }
         Session
             .share
             .pokemon(from: url)
-            .replaceError(with: Pokemon())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .assign(to: \.pokemon, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.pokemon = result
+            })
             .store(in: &cancellables)
     }
     
     private func initPokemonSpecies(from url: String) {
         Session.share.species(from: url)
-            .replaceError(with: Species())
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-            .assign(to: \.species, on: self)
+            .sink(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .finished:
+                    self.error = .non
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                }
+            }, receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                self.species = result
+            })
             .store(in: &cancellables)
     }
     
-    func update(onSuccess: () -> ()) {
+    func update() {
         let nextUrl = UrlType.getPokemonUrl(of: currentId)
         if pokemonUrl != nextUrl {
             pokemonUrl = nextUrl
-            onSuccess()
         }
     }
     
@@ -118,7 +144,8 @@ class PokemonUpdater: ObservableObject {
     }
     
     func moveTo(direction: Direction) {
-        isScrollingEnable = false
+        //isScrollingEnable = false
+        isLoadingNewData = true
         var zeroArray = ids
         switch direction {
         case .left:
@@ -132,9 +159,9 @@ class PokemonUpdater: ObservableObject {
                 }
                 zeroArray.removeLast()
                 ids = zeroArray
-                update {}
             } else {
                 currentScrollIndex += 1
+                isLoadingNewData = false
             }
         case .right:
             if currentId != settings.speciesCount {
@@ -144,21 +171,28 @@ class PokemonUpdater: ObservableObject {
                 }
                 zeroArray.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
                 ids = zeroArray
-                update {}
             } else {
                 currentScrollIndex -= 1
+                isLoadingNewData = false
             }
         default:
+            isLoadingNewData = false
             return
         }
     }
     
     private func wait() {
+        // drop when url = ""
+        // drop when first time load
         $images
+            .dropFirst(2)
             .receive(on: RunLoop.main)
             .debounce(for: 1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] result in
-                self?.update {}
+                guard let self = self else {
+                    return
+                }
+                self.update()
             })
             .store(in: &cancellables)
     }

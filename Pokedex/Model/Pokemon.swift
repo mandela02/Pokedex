@@ -39,9 +39,9 @@ enum PokeStat: Int, CaseIterable {
     var maxValue: Int {
         switch self {
         case .total:
-            return (PokeStat.allCases.count - 1) * 100
+            return (PokeStat.allCases.count - 1) * 240
         default:
-            return 100
+            return 240
         }
     }
 }

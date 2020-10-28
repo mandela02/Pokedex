@@ -71,6 +71,11 @@ struct DetailPageView: View {
     var pokemon: Pokemon
     var views: [PageContentView] = []
     
+    init(species: Species, pokemon: Pokemon) {
+        self.species = species
+        self.pokemon = pokemon
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             let views = Tab.allCases
