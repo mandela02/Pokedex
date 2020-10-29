@@ -17,6 +17,21 @@ class MainPokedexUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true
     
+    init() {
+        NotificationCenter.default.publisher(for: .flagsChanged)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                switch Network.reachability.status {
+                case .unreachable:
+                    self.error = .disconnect
+                case .wwan:
+                    self.error = .non
+                case .wifi:
+                    self.error = .non
+                }
+            }.store(in: &cancellables)
+    }
+    
     var url: String = "" {
         didSet {
             loadPokemonResource()

@@ -11,6 +11,7 @@ import SwiftUI
 
 enum ApiError: Equatable {
     case internet(message: String)
+    case disconnect
     case non
 }
 
@@ -37,6 +38,8 @@ struct FailAlert: ViewModifier {
                     showAlert = isTopView
                 case .non:
                     showAlert = false
+                case .disconnect:
+                    showAlert = false
                 }
             }
     }
@@ -58,6 +61,22 @@ extension View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 200, height: 200, alignment: .center)
             }
+        case .disconnect:
+            self
+        }
+    }
+}
+
+struct NoInternetView: View {
+    var body: some View {
+        HStack {
+            Text("No internet connection, please try again later")
+                .font(Biotif.regular(size: 20).font)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background(Color.red)
+            Spacer()
         }
     }
 }

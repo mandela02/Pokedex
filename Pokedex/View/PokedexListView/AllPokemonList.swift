@@ -55,6 +55,7 @@ struct AllPokemonList: View {
             }.onDisappear {
                 isTopView = false
             }.showAlert(error: $updater.error)
+            .showErrorView(error: $updater.error)
 
     }
 }
