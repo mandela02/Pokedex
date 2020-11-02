@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ParallaxView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     @Binding var isShowing: Bool
     var pokemon: Pokemon?
     var url: String?
@@ -100,8 +102,7 @@ struct ParallaxView: View {
             }
         }).onReceive(updater.$pokemon, perform: { pokemon in
             voiceUpdater.pokemon = pokemon
-        })
-        .onReceive(updater.$species, perform: { species in
+        }).onReceive(updater.$species, perform: { species in
             if species.id != 0 {
                 voiceUpdater.species = species
                 
@@ -109,10 +110,11 @@ struct ParallaxView: View {
                     voiceUpdater.isSpeaking = true
                 }
             }
-        })
-        .onAppear {
+        }).onChange(of: reachabilityUpdater.retry, perform: { retry in
+            updater.retry = retry
+        }).onAppear {
             isShowingImage = true
-            
+            updater.isTopView = true
             if isFirstTimeLoadView {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if let pokemon = pokemon, pokemon.pokeId != 0 {
@@ -126,6 +128,7 @@ struct ParallaxView: View {
                 isFirstTimeLoadView = false
             }
         }.onWillDisappear({
+            updater.isTopView = false
             isShowingImage = false
             voiceUpdater.refresh()
         }).showAlert(error: $updater.error)
@@ -133,6 +136,8 @@ struct ParallaxView: View {
 }
 
 struct ParallaxContentView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     private let maxHeight = UIScreen.main.bounds.height * 0.4 - 50
     
     @Binding var isShowing: Bool
@@ -209,6 +214,7 @@ struct ParallaxContentView: View {
                     .scaleEffect(scale)
                     .offset(y: imageOffsetY)
                     .isRemove(!isShowingImage)
+                    .disabled(reachabilityUpdater.showNoInternetMessage)
             } else {
                 DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
                     .scaleEffect(1.5)

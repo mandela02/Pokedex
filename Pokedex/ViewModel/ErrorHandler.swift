@@ -11,7 +11,6 @@ import SwiftUI
 
 enum ApiError: Equatable {
     case internet(message: String)
-    case disconnect
     case non
 }
 
@@ -38,8 +37,6 @@ struct FailAlert: ViewModifier {
                     showAlert = isTopView
                 case .non:
                     showAlert = false
-                case .disconnect:
-                    showAlert = false
                 }
             }
     }
@@ -50,18 +47,11 @@ extension View {
         self.modifier(FailAlert(error: error))
     }
     
-    @ViewBuilder func showErrorView(error: Binding<ApiError>) -> some View {
-        switch error.wrappedValue {
-        case .non:
-            self
-        case .internet(message: _):
-            ZStack {
-                Image(systemName: "wifi.slash")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200, alignment: .center)
-            }
-        case .disconnect:
+    @ViewBuilder func showErrorView() -> some View {
+        switch Network.reachability?.status {
+        case .unreachable:
+            NoWifiImage()
+        default:
             self
         }
     }
@@ -69,14 +59,25 @@ extension View {
 
 struct NoInternetView: View {
     var body: some View {
-        HStack {
-            Text("No internet connection, please try again later")
+        VStack {  
+            Text("No internet connection, please try again later!")
                 .font(Biotif.regular(size: 20).font)
                 .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .background(Color.red)
             Spacer()
+        }
+    }
+}
+
+struct NoWifiImage: View {
+    var body: some View {
+        ZStack {
+            Image(systemName: "wifi.slash")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 200, height: 200, alignment: .center)
         }
     }
 }

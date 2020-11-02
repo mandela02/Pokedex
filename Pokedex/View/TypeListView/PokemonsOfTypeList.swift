@@ -66,7 +66,6 @@ struct PokemonsOfTypeListNavigationView: View {
         .onDisappear {
             isViewDisplayed = false
         }
-        .showErrorView(error: $updater.error)
         .showAlert(error: $updater.error)
         .navigationTitle("")
         .navigationBarHidden(true)

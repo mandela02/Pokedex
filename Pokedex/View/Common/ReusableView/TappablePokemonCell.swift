@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TappablePokemonCell: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     let pokemon: Pokemon
     
     @State var show: Bool = false
@@ -19,6 +21,7 @@ struct TappablePokemonCell: View {
                 .contextMenu(menuItems: {})
         } destination: {
             ParallaxView(pokemon: pokemon, isShowing: $show)
+                .environmentObject(reachabilityUpdater)
             //PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }
         .buttonStyle(PlainButtonStyle())

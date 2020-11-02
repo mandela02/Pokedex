@@ -72,7 +72,15 @@ class PokemonUpdater: ObservableObject {
     @Published var images: [String] = []
     
     @Published var error: ApiError = .non
-    
+    @Published var isTopView = true
+    @Published var retry = false {
+        didSet {
+            if retry && isTopView {
+                initPokemon()
+            }
+        }
+    }
+
     private func initPokemon() {
         guard let url = pokemonUrl, !url.isEmpty else { return }
         Session

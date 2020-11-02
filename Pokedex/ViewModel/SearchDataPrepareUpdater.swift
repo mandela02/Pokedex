@@ -60,6 +60,14 @@ class SearchDataPrepareUpdater: ObservableObject {
         }
     }
     
+    @Published var needRetry = false {
+        didSet {
+            if needRetry && !isDone {
+                loadPokemonResourceToCheck()
+            }
+        }
+    }
+    
     @Published var isDone: Bool = false
     
     private func save() {

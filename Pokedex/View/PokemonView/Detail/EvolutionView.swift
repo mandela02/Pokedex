@@ -36,9 +36,9 @@ struct EvolutionView: View {
             
             Color.clear.frame(height: 100, alignment: .center)
         }
-        .showErrorView(error: $evolutionUpdater.error)
         .listStyle(SidebarListStyle())
         .animation(.linear)
+        .showErrorView()
     }
 }
 
@@ -84,6 +84,8 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     @State var show: Bool = false
     
     var imageURL: String
@@ -116,6 +118,6 @@ struct PokemonCellView: View {
             }
         } destination: {
             ParallaxView(pokemonUrl: pokemonUrl, isShowing: $show)
-        }
+        }.disabled(reachabilityUpdater.showNoInternetMessage)
     }
 }

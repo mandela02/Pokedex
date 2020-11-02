@@ -19,18 +19,16 @@ struct NavigationPokedexView: View {
 }
 
 struct PokedexView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     @State private var selectedMenu = -1
     @State private var showSubView: Bool = false
     @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
     @State private var showFavorite: Bool = false
-    
+
     init() {
-        UITableView.appearance().showsVerticalScrollIndicator = false
-        UITableView.appearance().backgroundColor = .clear
-        UITableView.appearance().allowsSelection = false
-        UITableViewCell.appearance().backgroundColor = .clear
-        UITableViewCell.appearance().selectionStyle = .none
+        initTableView()
     }
     
     var body: some View {
@@ -39,12 +37,17 @@ struct PokedexView: View {
                 AllPokemonList()
                     .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
                     .blur(radius: showSubView ? 3 : 0)
+                
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
                         FloatingMenu(selectedMenu: $selectedMenu)
                     }
+                }
+                
+                if reachabilityUpdater.showNoInternetMessage {
+                    NoInternetView()
                 }
                 
                 if showSubView {
@@ -92,5 +95,13 @@ struct PokedexView: View {
                 }
             })
         })
+    }
+    
+    private func initTableView() {
+        UITableView.appearance().showsVerticalScrollIndicator = false
+        UITableView.appearance().backgroundColor = .clear
+        UITableView.appearance().allowsSelection = false
+        UITableViewCell.appearance().backgroundColor = .clear
+        UITableViewCell.appearance().selectionStyle = .none
     }
 }

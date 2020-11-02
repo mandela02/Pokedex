@@ -83,7 +83,6 @@ struct AbilityDetailView: View {
                         .padding(.leading, 20)
                         .padding(.trailing, 20)
             }
-            .showErrorView(error: $updater.error)
             .animation(.linear)
             .transition(.opacity)
             .padding(.leading, 20)

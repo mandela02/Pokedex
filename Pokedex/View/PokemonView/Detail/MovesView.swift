@@ -15,35 +15,36 @@ struct MovesView: View {
     }
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            let width = geometry.size.width - 80
-            let height = width * 0.2
-            
-            List {
-                ForEach(moveUpdater.groupedMoveCellModels) { section in
-                    Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
-                        ForEach(section.cells) { cell in
-                            let isSelected = cell.move.name == moveUpdater.selected
-                            VStack {
-                                TappableMoveCell(selectedMove: $moveUpdater.selected,
-                                                 moveCellModel: cell)
-                                    .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
-                                    .onDisappear {
-                                        if isSelected {
-                                            moveUpdater.selected = nil
+        ZStack {
+            GeometryReader(content: { geometry in
+                let width = geometry.size.width - 80
+                let height = width * 0.2
+                
+                List {
+                    ForEach(moveUpdater.groupedMoveCellModels) { section in
+                        Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
+                            ForEach(section.cells) { cell in
+                                let isSelected = cell.move.name == moveUpdater.selected
+                                VStack {
+                                    TappableMoveCell(selectedMove: $moveUpdater.selected,
+                                                     moveCellModel: cell)
+                                        .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
+                                        .onDisappear {
+                                            if isSelected {
+                                                moveUpdater.selected = nil
+                                            }
                                         }
-                                    }
-                                Color.clear.frame(height: 5)
+                                    Color.clear.frame(height: 5)
+                                }
                             }
                         }
                     }
+                    Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
                 }
-                Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
-            }
-            .showErrorView(error: $moveUpdater.error)
-            .listStyle(SidebarListStyle())
-            .animation(.spring())
-        })
+                .listStyle(SidebarListStyle())
+                .animation(.spring())
+            })
+        }.showErrorView()
     }
     
     private func getExtraHeight(of cell: MoveCellModel, width: CGFloat) -> CGFloat {
@@ -59,6 +60,8 @@ struct MovesView: View {
 }
 
 struct TappableMoveCell: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     @State var isExtensed = false
     @Binding var selectedMove: String?
     var moveCellModel: MoveCellModel
@@ -73,6 +76,7 @@ struct TappableMoveCell: View {
             isExtensed = selectedMove == moveCellModel.move.name
         })
         .buttonStyle(PlainButtonStyle())
+        .disabled(reachabilityUpdater.showNoInternetMessage)
     }
 }
 

@@ -13,7 +13,7 @@ extension Notification.Name {
 }
 
 struct Network {
-    static var reachability: Reachability!
+    static var reachability: Reachability?
     enum Status: String {
         case unreachable, wifi, wwan
     }

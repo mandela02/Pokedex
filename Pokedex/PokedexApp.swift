@@ -10,48 +10,43 @@ import CoreData
 
 @main
 struct PokedexApp: App {
+    @StateObject var reachabilityUpdater = ReachabilityUpdater()
     var body: some Scene {
         WindowGroup {
             PrepareView()
-                .onAppear {
-                    do {
-                        try Network.reachability = Reachability(hostname: "www.google.com")
-                    }
-                    catch {
-                        switch error as? Network.Error {
-                        case let .failedToCreateWith(hostname)?:
-                            print("Network error:\nFailed to create reachability object With host named:", hostname)
-                        case let .failedToInitializeWith(address)?:
-                            print("Network error:\nFailed to initialize reachability object With address:", address)
-                        case .failedToSetCallout?:
-                            print("Network error:\nFailed to set callout")
-                        case .failedToSetDispatchQueue?:
-                            print("Network error:\nFailed to set DispatchQueue")
-                        case .none:
-                            print(error)
-                        }
-                    }
-                }
+                .environmentObject(reachabilityUpdater)
         }
     }
 }
 
 struct PrepareView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var updater = SearchDataPrepareUpdater()
-
     var body: some View {
-        EmptyView()
-            .fullScreenCover(isPresented: $updater.isDone) {
-                NavigationView {
-                    HomeView()
-                        .statusBar(hidden: true)
-                        .navigationTitle("")
-                        .navigationBarHidden(true)
-                }
-            }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
-            .statusBar(hidden: true)
-            .showErrorView(error: $updater.error)
-            .showAlert(error: $updater.error)
+        ZStack {
+            if reachabilityUpdater.showNoInternetMessage {
+                NoInternetView()
+            } else {
+                EmptyView()
+            }
+        }
+        .onChange(of: reachabilityUpdater.retry, perform: { retry in
+            if retry {
+                updater.needRetry = retry
+                reachabilityUpdater.retry = false
+            }
+        })
+        .fullScreenCover(isPresented: $updater.isDone) {
+            NavigationView {
+                HomeView()
+                    .statusBar(hidden: true)
+                    .navigationTitle("")
+                    .navigationBarHidden(true)
+                    .environmentObject(reachabilityUpdater)
+            }
+        }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
+        .statusBar(hidden: true)
+        .showAlert(error: $updater.error)
     }
 }
 
@@ -78,6 +73,5 @@ struct HomeView: View {
         }.onWillDisappear {
             showBall = false
         }
-
     }
 }
