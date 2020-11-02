@@ -47,7 +47,12 @@ struct PokedexView: View {
                 }
                 
                 if reachabilityUpdater.showNoInternetMessage {
-                    NoInternetView()
+                    VStack {
+                        if UIDevice().hasNotch {
+                            Color.clear.frame(height: 25)
+                        }
+                        NoInternetView()
+                    }
                 }
                 
                 if showSubView {

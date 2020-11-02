@@ -44,7 +44,7 @@ struct MovesView: View {
                 .listStyle(SidebarListStyle())
                 .animation(.spring())
             })
-        }.showErrorView()
+        }
     }
     
     private func getExtraHeight(of cell: MoveCellModel, width: CGFloat) -> CGFloat {

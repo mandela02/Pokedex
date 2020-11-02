@@ -38,7 +38,6 @@ struct EvolutionView: View {
         }
         .listStyle(SidebarListStyle())
         .animation(.linear)
-        .showErrorView()
     }
 }
 

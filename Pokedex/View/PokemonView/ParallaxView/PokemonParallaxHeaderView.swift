@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PokemonParallaxHeaderView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     @Binding var opacity: Double
@@ -18,14 +19,19 @@ struct PokemonParallaxHeaderView: View {
     var body: some View {
         VStack {
             NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, showLikedNotification: $showLikedNotification, pokemon: pokemon)
-            NewNameView(pokemon: pokemon, opacity: $opacity)
-            NewTypeView(pokemon: pokemon, isInExpandeMode: $isInExpandeMode)
+            if reachabilityUpdater.showNoInternetMessage {
+                NoInternetView()
+            } else {
+                NewNameView(pokemon: pokemon, opacity: $opacity)
+                NewTypeView(pokemon: pokemon, isInExpandeMode: $isInExpandeMode)
+            }
             Spacer()
         }
     }
 }
 
 struct NewButtonView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
 
@@ -69,10 +75,11 @@ struct NewButtonView: View {
                     dislike(pokemon: pokemon)
                 }
             })
-                .padding()
-                .background(Color.clear)
-                .clipShape(Circle())
-                .frame(width: 50, height: 50, alignment: .center)
+            .disabled(reachabilityUpdater.showNoInternetMessage)
+            .padding()
+            .background(Color.clear)
+            .clipShape(Circle())
+            .frame(width: 50, height: 50, alignment: .center)
         }
         .padding(.top, UIDevice().hasNotch ? 44 : 8)
         .padding(.horizontal)

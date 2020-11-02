@@ -47,11 +47,10 @@ extension View {
         self.modifier(FailAlert(error: error))
     }
     
-    @ViewBuilder func showErrorView() -> some View {
-        switch Network.reachability?.status {
-        case .unreachable:
+    @ViewBuilder func showErrorView(error: Binding<Bool>) -> some View {
+        if error.wrappedValue {
             NoWifiImage()
-        default:
+        } else {
             self
         }
     }
@@ -59,7 +58,7 @@ extension View {
 
 struct NoInternetView: View {
     var body: some View {
-        VStack {  
+        VStack {
             Text("No internet connection, please try again later!")
                 .font(Biotif.regular(size: 20).font)
                 .foregroundColor(.white)

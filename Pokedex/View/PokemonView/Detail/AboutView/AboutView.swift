@@ -16,7 +16,6 @@ struct AboutView: View {
             AboutContentView(pokemon: pokemon, species: species)
             Color.clear.frame(height: 150, alignment: .center)
         }.background(Color.clear)
-        .showErrorView()
     }
 }
 
