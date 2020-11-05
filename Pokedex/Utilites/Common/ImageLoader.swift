@@ -77,8 +77,11 @@ class ImageLoader: ObservableObject {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
+                if image == UIImage() { return }
+               
                 let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
+                
                 self?.imageCache.set(forKey: urlString, image: smallImage)
                 self?.displayImage = smallImage
             })

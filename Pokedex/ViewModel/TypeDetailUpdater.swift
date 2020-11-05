@@ -46,7 +46,23 @@ class TypeDetailUpdater: ObservableObject {
     }
     
     @Published var hasNoPokemon: Bool = false
-    @Published var error: ApiError = .non
+    
+    @Published var error: ApiError = .non {
+        didSet {
+            if error != .non {
+                isLoading = false
+            }
+        }
+    }
+    
+    @Published var retry = false {
+        didSet {
+            if retry {
+                getTypeDetail(from: url)
+                retry = false
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
     

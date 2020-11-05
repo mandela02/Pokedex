@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct PokemonsOfTypeListNavigationView: View {
-    
     @Binding var show: Bool
     var type : PokemonType
     
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
+
     @State var isFirstTimeLoading = true
     @State var showDetail: Bool = false
     @State var isViewDisplayed = false
-    @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
     
     var body: some View {
         ZStack {
@@ -40,6 +41,16 @@ struct PokemonsOfTypeListNavigationView: View {
                 Spacer()
             }.isRemove(!updater.hasNoPokemon)
             
+            if reachabilityUpdater.hasNoInternet {
+                VStack {
+                    if UIDevice().hasNotch {
+                        Color.clear.frame(height: 25)
+                    }
+                    NoInternetView()
+                    Spacer()
+                }
+            }
+            
             VStack {
                 HStack(alignment: .center) {
                     BackButtonView(isShowing: $show)
@@ -56,6 +67,9 @@ struct PokemonsOfTypeListNavigationView: View {
                     .frame(height: 100, alignment: .center)
             }
         }
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
+            updater.retry = retry
+        })
         .onAppear(perform: {
             isViewDisplayed = true
             if isFirstTimeLoading {
@@ -66,7 +80,6 @@ struct PokemonsOfTypeListNavigationView: View {
         .onDisappear {
             isViewDisplayed = false
         }
-        .showErrorView(error: $updater.error)
         .showAlert(error: $updater.error)
         .navigationTitle("")
         .navigationBarHidden(true)

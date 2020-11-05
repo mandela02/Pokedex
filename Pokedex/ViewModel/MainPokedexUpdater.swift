@@ -13,6 +13,7 @@ class MainPokedexUpdater: ObservableObject {
     @Published var isFinal = false
     @Published var settings = UserSettings()
     @Published var error: ApiError = .non
+    @Published var isTopView = false
 
     private var cancellables = Set<AnyCancellable>()
     private var canLoadMore = true

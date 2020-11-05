@@ -23,10 +23,7 @@ class EvolutionUpdater: ObservableObject {
     
     @Published var species: Species? {
         didSet {
-            if let megas = species?.megas {
-                megaEvolutionLinks = megas.map({EvoLink(from: species?.pokemon ?? NamedAPIResource(), to: $0, detail: [], triggers: "Mega")})
-            }
-            initEvolution(of: species?.evolutionChain?.url ?? "")
+            getEvolutionInformation()
         }
     }
 
@@ -55,8 +52,23 @@ class EvolutionUpdater: ObservableObject {
     @Published var megaEvolutionLinks: [EvoLink] = []
     
     @Published var error: ApiError = .non
+    @Published var retry = false {
+        didSet {
+            if retry {
+//                getEvolutionInformation()
+//                retry = false
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
+    
+    private func getEvolutionInformation() {
+        if let megas = species?.megas {
+            megaEvolutionLinks = megas.map({EvoLink(from: species?.pokemon ?? NamedAPIResource(), to: $0, detail: [], triggers: "Mega")})
+        }
+        initEvolution(of: species?.evolutionChain?.url ?? "")
+    }
     
     private func initEvolution(of url: String) {
         Session.share.evolution(from: url)

@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct AllPokemonList: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+
     @StateObject var updater: MainPokedexUpdater = MainPokedexUpdater()
     @State var isLoading = false
     @State var isFinal = false
     @State var isFirstTimeLoadView = true
-    @State var isTopView = false
 
     var body: some View {
         PokemonList(cells: $updater.pokemons,
@@ -21,7 +22,7 @@ struct AllPokemonList: View {
                     paddingHeader: 50,
                     paddingFooter: 50,
                     onCellAppear: { pokemon in
-                        if isTopView {
+                        if updater.isTopView {
                             updater.loadMorePokemonIfNeeded(current: pokemon)
                         }
                     })
@@ -42,7 +43,7 @@ struct AllPokemonList: View {
                     }
                 }
             }).onAppear {
-                isTopView = true
+                updater.isTopView = true
                 if isFirstTimeLoadView {
                     self.isLoading = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -53,8 +54,7 @@ struct AllPokemonList: View {
                 }
                 isFirstTimeLoadView = false
             }.onDisappear {
-                isTopView = false
+                updater.isTopView = false
             }.showAlert(error: $updater.error)
-
     }
 }

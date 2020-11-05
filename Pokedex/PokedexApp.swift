@@ -10,29 +10,42 @@ import CoreData
 
 @main
 struct PokedexApp: App {
+    @StateObject var reachabilityUpdater = ReachabilityUpdater()
     var body: some Scene {
         WindowGroup {
             PrepareView()
+                .environmentObject(reachabilityUpdater)
         }
     }
 }
 
 struct PrepareView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var updater = SearchDataPrepareUpdater()
-
     var body: some View {
-        EmptyView()
-            .fullScreenCover(isPresented: $updater.isDone) {
-                NavigationView {
-                    HomeView()
-                        .statusBar(hidden: true)
-                        .navigationTitle("")
-                        .navigationBarHidden(true)
-                }
-            }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
-            .statusBar(hidden: true)
-            .showErrorView(error: $updater.error)
-            .showAlert(error: $updater.error)
+        ZStack {
+            if reachabilityUpdater.hasNoInternet {
+                NoInternetView()
+            } else {
+                EmptyView()
+            }
+        }
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
+            if retry {
+                updater.needRetry = retry
+            }
+        })
+        .fullScreenCover(isPresented: $updater.isDone) {
+            NavigationView {
+                HomeView()
+                    .statusBar(hidden: true)
+                    .navigationTitle("")
+                    .navigationBarHidden(true)
+                    .environmentObject(reachabilityUpdater)
+            }
+        }.environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
+        .statusBar(hidden: true)
+        .showAlert(error: $updater.error)
     }
 }
 
@@ -59,6 +72,5 @@ struct HomeView: View {
         }.onWillDisappear {
             showBall = false
         }
-
     }
 }

@@ -47,17 +47,36 @@ extension View {
         self.modifier(FailAlert(error: error))
     }
     
-    @ViewBuilder func showErrorView(error: Binding<ApiError>) -> some View {
-        switch error.wrappedValue {
-        case .non:
+    @ViewBuilder func showErrorView(error: Binding<Bool>) -> some View {
+        if error.wrappedValue {
+            NoWifiImage()
+        } else {
             self
-        case .internet(message: _):
-            ZStack {
-                Image(systemName: "wifi.slash")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200, alignment: .center)
-            }
+        }
+    }
+}
+
+struct NoInternetView: View {
+    var body: some View {
+        VStack {
+            Text("No internet connection, please try again later!")
+                .font(Biotif.regular(size: 20).font)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background(Color.red)
+            Spacer()
+        }
+    }
+}
+
+struct NoWifiImage: View {
+    var body: some View {
+        ZStack {
+            Image(systemName: "wifi.slash")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 200, height: 200, alignment: .center)
         }
     }
 }

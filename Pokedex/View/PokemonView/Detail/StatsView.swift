@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StatsView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @ObservedObject var updater: StatUpdater
     @Binding var selectedIndex: Int
 
@@ -48,7 +49,9 @@ struct StatsView: View {
             Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
-        .showErrorView(error: $updater.error)
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
+            updater.retry = retry
+        })
     }
 }
 
