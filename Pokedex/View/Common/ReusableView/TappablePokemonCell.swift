@@ -20,7 +20,7 @@ struct TappablePokemonCell: View {
             PokedexCardView(pokemon: pokemon, size: (size.width, size.height))
                 .contextMenu(menuItems: {})
         } destination: {
-            ParallaxView(pokemon: pokemon, isShowing: $show)
+            ParallaxView(pokemonUrl: UrlType.getPokemonUrl(of: pokemon.pokeId), isShowing: $show)
                 .environmentObject(reachabilityUpdater)
             //PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }

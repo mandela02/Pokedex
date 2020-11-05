@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MovesView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @ObservedObject var moveUpdater: MovesUpdater
     
     init(pokemon: Pokemon) {
@@ -42,7 +43,10 @@ struct MovesView: View {
                     Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
                 }
                 .listStyle(SidebarListStyle())
-                .animation(.spring())
+                .animation(.default)
+                .onReceive(reachabilityUpdater.$retry, perform: { retry in
+                    moveUpdater.retry = retry
+                })
             })
         }
     }
@@ -76,7 +80,7 @@ struct TappableMoveCell: View {
             isExtensed = selectedMove == moveCellModel.move.name
         })
         .buttonStyle(PlainButtonStyle())
-        .disabled(reachabilityUpdater.showNoInternetMessage)
+        .disabled(reachabilityUpdater.hasNoInternet)
     }
 }
 

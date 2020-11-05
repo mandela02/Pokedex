@@ -40,6 +40,14 @@ class StatUpdater: ObservableObject {
     @Published var descriptions: [String] = []
 
     @Published var error: ApiError = .non
+    @Published var retry: Bool = false {
+        didSet {
+            if retry {
+//                getNumbers(of: pokemon)
+//                retry = false
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
         

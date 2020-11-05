@@ -24,16 +24,15 @@ struct PrepareView: View {
     @StateObject var updater = SearchDataPrepareUpdater()
     var body: some View {
         ZStack {
-            if reachabilityUpdater.showNoInternetMessage {
+            if reachabilityUpdater.hasNoInternet {
                 NoInternetView()
             } else {
                 EmptyView()
             }
         }
-        .onChange(of: reachabilityUpdater.retry, perform: { retry in
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
             if retry {
                 updater.needRetry = retry
-                reachabilityUpdater.retry = false
             }
         })
         .fullScreenCover(isPresented: $updater.isDone) {

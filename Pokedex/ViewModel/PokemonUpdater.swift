@@ -82,7 +82,9 @@ class PokemonUpdater: ObservableObject {
     }
 
     private func initPokemon() {
-        guard let url = pokemonUrl, !url.isEmpty else { return }
+        guard let url = pokemonUrl, !url.isEmpty else {
+            return
+        }
         Session
             .share
             .pokemon(from: url)

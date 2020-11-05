@@ -49,6 +49,9 @@ struct StatsView: View {
             Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
+            updater.retry = retry
+        })
     }
 }
 

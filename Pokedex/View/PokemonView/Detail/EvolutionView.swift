@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EvolutionView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @ObservedObject var evolutionUpdater: EvolutionUpdater
     
     init(species: Species) {
@@ -38,6 +39,9 @@ struct EvolutionView: View {
         }
         .listStyle(SidebarListStyle())
         .animation(.linear)
+        .onReceive(reachabilityUpdater.$retry, perform: { retry in
+            evolutionUpdater.retry = retry
+        })
     }
 }
 
@@ -117,6 +121,6 @@ struct PokemonCellView: View {
             }
         } destination: {
             ParallaxView(pokemonUrl: pokemonUrl, isShowing: $show)
-        }.disabled(reachabilityUpdater.showNoInternetMessage)
+        }.disabled(reachabilityUpdater.hasNoInternet)
     }
 }

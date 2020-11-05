@@ -23,9 +23,8 @@ struct ParallaxView: View {
     @State private var opacity: Double = 1
     @State private var showLikedNotification: Bool = false
 
-    init(pokemon: Pokemon? = Pokemon(), pokemonUrl: String? = nil, isShowing: Binding<Bool>) {
+    init(pokemonUrl: String, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
-        self.pokemon = pokemon
         self.url = pokemonUrl
     }
     
@@ -110,7 +109,7 @@ struct ParallaxView: View {
                     voiceUpdater.isSpeaking = true
                 }
             }
-        }).onChange(of: reachabilityUpdater.retry, perform: { retry in
+        }).onReceive(reachabilityUpdater.$retry, perform: { retry in
             updater.retry = retry
         }).onAppear {
             isShowingImage = true
@@ -214,7 +213,7 @@ struct ParallaxContentView: View {
                     .scaleEffect(scale)
                     .offset(y: imageOffsetY)
                     .isRemove(!isShowingImage)
-                    .disabled(reachabilityUpdater.showNoInternetMessage)
+                    .disabled(reachabilityUpdater.hasNoInternet)
             } else {
                 DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
                     .scaleEffect(1.5)

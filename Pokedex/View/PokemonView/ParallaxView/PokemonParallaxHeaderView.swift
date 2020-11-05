@@ -19,7 +19,7 @@ struct PokemonParallaxHeaderView: View {
     var body: some View {
         VStack {
             NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, showLikedNotification: $showLikedNotification, pokemon: pokemon)
-            if reachabilityUpdater.showNoInternetMessage {
+            if reachabilityUpdater.hasNoInternet {
                 NoInternetView()
             } else {
                 NewNameView(pokemon: pokemon, opacity: $opacity)
@@ -75,7 +75,7 @@ struct NewButtonView: View {
                     dislike(pokemon: pokemon)
                 }
             })
-            .disabled(reachabilityUpdater.showNoInternetMessage)
+            .disabled(reachabilityUpdater.hasNoInternet)
             .padding()
             .background(Color.clear)
             .clipShape(Circle())

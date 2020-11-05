@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AbilitesView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    
     var pokemon: Pokemon
     @Binding var selectedString: String?
 
@@ -31,7 +33,7 @@ struct AbilitesView: View {
                                 } else {
                                     selectedString = text
                                 }
-                            }
+                            }.disabled(reachabilityUpdater.hasNoInternet)
                     })
                     Spacer()
                 }

@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 class ReachabilityUpdater: ObservableObject {
-    @Published var showNoInternetMessage = false {
+    @Published var hasNoInternet = false {
         didSet {
-            retry = !showNoInternetMessage
+            retry = !hasNoInternet
         }
     }
     @Published var retry = false
@@ -21,7 +21,7 @@ class ReachabilityUpdater: ObservableObject {
     init() {
         do {
             try Network.reachability = Reachability(hostname: "www.google.com")
-            showNoInternetMessage = Network.reachability?.status == .unreachable
+            hasNoInternet = Network.reachability?.status == .unreachable
         }
         catch {
             switch error as? Network.Error {
@@ -42,7 +42,7 @@ class ReachabilityUpdater: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.showNoInternetMessage = Network.reachability?.status == .unreachable
+                self.hasNoInternet = Network.reachability?.status == .unreachable
             }.store(in: &cancellables)
     }
 }
