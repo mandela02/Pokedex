@@ -60,7 +60,7 @@ struct NoInternetView: View {
     var body: some View {
         VStack {
             Text("No internet connection, please try again later!")
-                .font(Biotif.regular(size: 20).font)
+                .font(Biotif.regular(size: 15).font)
                 .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)

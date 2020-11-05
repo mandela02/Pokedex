@@ -13,14 +13,26 @@ import func AVFoundation.AVMakeRect
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
     private var cancellables = Set<AnyCancellable>()
-    var imageCache = ImageCache.getImageCache()
-    var url: String
+    private var imageCache = ImageCache.getImageCache()
+    private var url: String
+    private var retry = false {
+        didSet {
+            if retry {
+                loadFrontDefaultUrl(from: url)
+            }
+        }
+    }
+    
     
     init(url: String) {
         self.url = url
         loadImage(from: url)
     }
         
+    deinit {
+        print("deinit - \(url)")
+    }
+    
     private func loadImage(from urlString: String) {
         if let image = imageCache.get(forKey: urlString)  {
             displayImage = image
@@ -48,10 +60,7 @@ class ImageLoader: ObservableObject {
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
                 guard let self = self else { return }
-                if image == UIImage() {
-                    self.loadFrontDefaultUrl(from: key, smallRect: smallRect)
-                    return
-                }
+                if image == UIImage() { return }
                 let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
                 self.imageCache.set(forKey: key, image: smallImage)
@@ -60,14 +69,13 @@ class ImageLoader: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func loadFrontDefaultUrl(from urlString: String, smallRect: CGRect) {
-
+    private func loadFrontDefaultUrl(from urlString: String) {
+        let size = UIScreen.main.bounds
+        let smallRect = CGRect(x: 0, y: 0, width: size.width / 2, height: size.height / 2)
         let imageId = StringHelper.getImageId(from: urlString)
         let frontUrl = String(format: Constants.baseFrontImageUrl, "\(imageId)")
         
-        guard let url = URL(string: frontUrl) else {
-            return
-        }
+        guard let url = URL(string: frontUrl) else { return }
         
         URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }

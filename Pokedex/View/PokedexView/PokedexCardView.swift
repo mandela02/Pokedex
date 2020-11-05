@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PokedexCardView: View {
-    //@ObservedObject var updater: PokemonUpdater
     var pokemon: Pokemon
     var size: (width: CGFloat, height: CGFloat)
     
@@ -39,21 +38,12 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     if viewAppear {
-                        if let imageUrl = pokemon.sprites.other?.artwork.front {
-                            DownloadedImageView(withURL: imageUrl,
-                                                style: .normal)
-                                .frame(width: size.width/2,
-                                       height: size.height,
-                                       alignment: .bottomTrailing)
-                                .padding(.all, 5)
-                        } else {
-                            DownloadedImageView(withURL: pokemon.sprites.front ?? "",
-                                                style: .normal)
-                                .frame(width: size.width/2,
-                                       height: size.height,
-                                       alignment: .bottomTrailing)
-                                .padding(.all, 5)
-                        }
+                        DownloadedImageView(withURL: UrlType.getImageUrlString(of: pokemon.pokeId),
+                                            style: .normal)
+                            .frame(width: size.width/2,
+                                   height: size.height,
+                                   alignment: .bottomTrailing)
+                            .padding(.all, 5)
                     }
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 

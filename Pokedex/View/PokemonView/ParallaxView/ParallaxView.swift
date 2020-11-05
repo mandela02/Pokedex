@@ -11,7 +11,6 @@ struct ParallaxView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
 
     @Binding var isShowing: Bool
-    var pokemon: Pokemon?
     var url: String?
         
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
@@ -116,9 +115,7 @@ struct ParallaxView: View {
             updater.isTopView = true
             if isFirstTimeLoadView {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if let pokemon = pokemon, pokemon.pokeId != 0 {
-                        updater.pokemon = pokemon
-                    } else if let url = url, url != "" {
+                    if let url = url, url != "" {
                         updater.pokemonUrl = url
                     }
                 }
@@ -200,10 +197,8 @@ struct ParallaxContentView: View {
             
             if updater.pokemon.isDefault {
                 HeaderImageScrollView(index: $updater.currentScrollIndex,
-                                      items: $updater.images,
-                                      isScrollable: $updater.isScrollingEnable,
-                                      onScrolling: { gesture in
-                                      }, onEndScrolling: { gesture, direction in
+                                      items: updater.images,
+                                      onEndScrolling: { direction in
                                         updater.moveTo(direction: direction)
                                       })
                     .frame(width: UIScreen.main.bounds.width * 1/2,

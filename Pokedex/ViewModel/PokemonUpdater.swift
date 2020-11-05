@@ -25,7 +25,7 @@ class PokemonUpdater: ObservableObject {
     @Published var isScrollingEnable = true
     @Published var isLoadingNewData = false
 
-    @Published var pokemonUrl: String? {
+    var pokemonUrl: String? {
         didSet {
             if pokemonUrl != "" {
                 initPokemon()
@@ -40,7 +40,7 @@ class PokemonUpdater: ObservableObject {
         }
     }
 
-    @Published var speciesUrl: String = "" {
+    private var speciesUrl: String = "" {
         didSet {
             initPokemonSpecies(from: speciesUrl)
         }
@@ -53,7 +53,7 @@ class PokemonUpdater: ObservableObject {
         }
     }
     
-    @Published var currentId: Int = 0 {
+    private var currentId: Int = 0 {
         didSet {
             if isFirstTimeLoadViewModel {
                 generateIds()
@@ -62,10 +62,9 @@ class PokemonUpdater: ObservableObject {
         }
     }
 
-    @Published var ids: [Int] = [] {
+    private var ids: [Int] = [] {
         didSet {
-            images = ids.map({UrlType.getImageUrlString(of: $0)})
-            
+            images = ids.map({$0 == 0 ? "" : UrlType.getImageUrlString(of: $0)})
         }
     }
     

@@ -9,11 +9,9 @@ import SwiftUI
 
 struct HeaderImageScrollView: View {
     @Binding var index: Int
-    @Binding var items: [String]
-    @Binding var isScrollable: Bool
-
-    var onScrolling: (DragGesture.Value) -> ()
-    var onEndScrolling: (DragGesture.Value, Direction) -> ()
+    
+    var items: [String]
+    var onEndScrolling: (Direction) -> ()
     
     @State var image: UIImage?
     @State private var isGestureActive: Bool = false
@@ -22,38 +20,31 @@ struct HeaderImageScrollView: View {
     private func drag(in size: CGSize) -> some Gesture {
         return DragGesture().onChanged({ value in
             withAnimation(.spring()) {
-                if isScrollable {
-                    self.isGestureActive = true
-                    self.offset = value.translation.width + -size.width * CGFloat(self.index)
-                    onScrolling(value)
-                }
+                self.isGestureActive = true
+                self.offset = value.translation.width + -size.width * CGFloat(self.index)
             }
         }).onEnded({ value in
-            if isScrollable {
-                var direction: Direction = .up
-                withAnimation(.spring()) {
-                    if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
-                        self.index += 1
-                        direction = .right
-                        onEndScrolling(value, direction)
-                    } else if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
-                        self.index -= 1
-                        direction = .left
-                        onEndScrolling(value, direction)
-                    } else {
-                        isScrollable = true
-                    }
-                    withAnimation {
-                        self.offset = -size.width * CGFloat(self.index)
-                    }
-                    self.isGestureActive = false
+            var direction: Direction = .up
+            withAnimation(.spring()) {
+                if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {
+                    self.index += 1
+                    direction = .right
+                    onEndScrolling(direction)
+                } else if value.predictedEndTranslation.width > size.width / 2, self.index > 0 {
+                    self.index -= 1
+                    direction = .left
+                    onEndScrolling(direction)
                 }
+                withAnimation {
+                    self.offset = -size.width * CGFloat(self.index)
+                }
+                self.isGestureActive = false
             }
         })
     }
     
     func ImageView(image: String, tag: Int, size: CGSize) -> AnyView {
-        if image == Constants.emptyImageUrl {
+        if image.isEmpty {
             return AnyView(Color.clear
                             .frame(width: size.width, height: size.height))
             
