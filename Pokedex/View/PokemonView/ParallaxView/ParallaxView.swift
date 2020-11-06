@@ -150,8 +150,7 @@ struct ParallaxContentView: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
-                    GeometryReader { reader -> AnyView in
-                        return AnyView(
+                    GeometryReader { reader in
                             Color.clear
                                 .onChange(of: reader.frame(in: .global).minY, perform:  { minFrameY in
                                     let frameY = minFrameY - 100 + maxHeight
@@ -176,9 +175,7 @@ struct ParallaxContentView: View {
                                 .onAppear {
                                     imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
                                 }
-                        )
-                    }
-                    .frame(height: maxHeight)
+                    }.frame(height: maxHeight)
                     
                     VStack(spacing: 0) {
                         Spacer()

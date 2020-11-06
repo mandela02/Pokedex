@@ -43,26 +43,24 @@ struct HeaderImageScrollView: View {
         })
     }
     
-    func ImageView(image: String, tag: Int, size: CGSize) -> AnyView {
-        if image.isEmpty {
-            return AnyView(Color.clear
-                            .frame(width: size.width, height: size.height))
-            
-        }
-        return AnyView(DownloadedImageView(withURL: image,
-                                           style: index == tag ? .normal : .silhoutte)
-                        .foregroundColor(.black)
-                        .blur(radius: index == tag ? 0 : 4.0)
-                        .scaleEffect(index == tag ? 1.5 : 0.7)
-                        .frame(width: size.width, height: size.height))
-        
+    func ImageView(image: String, tag: Int, size: CGSize) -> some View {
+        return DownloadedImageView(withURL: image,
+                                   style: index == tag ? .normal : .silhoutte)
+            .foregroundColor(.black)
+            .blur(radius: index == tag ? 0 : 4.0)
+            .scaleEffect(index == tag ? 1.5 : 0.7)
+            .frame(width: size.width, height: size.height)
     }
     
     var body: some View {
         GeometryReader { geometry in
             LazyHStack(alignment: .center, spacing: 0) {
                 ForEach(Array(zip(items.indices, items)), id: \.0) { index, item in
-                    ImageView(image: item, tag: index, size: geometry.size)
+                    if item.isEmpty {
+                        Color.clear .frame(width: geometry.size.width, height: geometry.size.height)
+                    } else {
+                        ImageView(image: item, tag: index, size: geometry.size)
+                    }
                 }
             }
             .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))

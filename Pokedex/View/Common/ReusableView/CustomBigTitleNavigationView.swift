@@ -22,8 +22,7 @@ struct CustomBigTitleNavigationView<Content, Header, StickyHeader>: View where C
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
-                    GeometryReader { reader -> AnyView in
-                        return AnyView(
+                    GeometryReader { reader in
                             header()
                                 .onChange(of: reader.frame(in: .global).minY + maxHeight, perform: { y in
                                     let ratio = CGFloat(reader.frame(in: .global).minY/maxHeight)
@@ -42,9 +41,7 @@ struct CustomBigTitleNavigationView<Content, Header, StickyHeader>: View where C
                                 .offset(y: -reader.frame(in: .global).minY)
                                 .opacity(opacity)
                                 .scaleEffect(scale)
-                        )
-                    }
-                    .frame(height: maxHeight)
+                    }.frame(height: maxHeight)
                     
                     content()
                         .padding()
