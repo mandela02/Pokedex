@@ -27,7 +27,7 @@ struct LikedNotificationView: View {
                     }
                     Spacer()
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(name.capitalized)
+                        Text(name.capitalizingFirstLetter())
                             .font(Biotif.regular(size: 20).font)
                         Text(String(format: "#%03d", id))
                             .font(Biotif.regular(size: 15).font)

@@ -48,10 +48,10 @@ struct BreedingView: View {
                         GenderView(gender: .non, rate: rate)
                     }
                 }
-                Text(group.capitalized)
+                Text(group.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
-                Text(habitat.capitalized)
+                Text(habitat.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 12).font)
                     .foregroundColor(.black)
             }

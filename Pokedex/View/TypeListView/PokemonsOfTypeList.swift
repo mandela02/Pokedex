@@ -37,7 +37,7 @@ struct PokemonsOfTypeListNavigationView: View {
                 .isRemove(!updater.hasNoPokemon)
             
             VStack {
-                BigTitle(text: updater.name.capitalized)
+                BigTitle(text: updater.name.capitalizingFirstLetter())
                 Spacer()
             }.isRemove(!updater.hasNoPokemon)
             
@@ -95,7 +95,7 @@ struct PokemonOfTypeHeaderView: View {
     var body: some View {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
-                    Text(typeName.capitalized)
+                    Text(typeName.capitalizingFirstLetter())
                         .font(Biotif.extraBold(size: 30).font)
                         .foregroundColor(.black)
                     

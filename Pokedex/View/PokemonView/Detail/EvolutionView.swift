@@ -115,7 +115,7 @@ struct PokemonCellView: View {
                     DownloadedImageView(withURL: imageURL,
                                         style: .normal)
                 }
-                Text(name.capitalized)
+                Text(name.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }

@@ -23,7 +23,7 @@ struct MovesView: View {
                 
                 List {
                     ForEach(moveUpdater.groupedMoveCellModels) { section in
-                        Section(header: Text(section.name.capitalized).font(Biotif.extraBold(size: 25).font)) {
+                        Section(header: Text(section.name.capitalizingFirstLetter()).font(Biotif.extraBold(size: 25).font)) {
                             ForEach(section.cells) { cell in
                                 let isSelected = cell.move.name == moveUpdater.selected
                                 VStack {
@@ -125,7 +125,7 @@ struct SkillNameView: View {
     
     var body: some View {
         HStack(alignment: .lastTextBaseline){
-            Text(move.name?.capitalized ?? "")
+            Text(move.name?.capitalizingFirstLetter() ?? "")
                 .font(Biotif.bold(size: 25).font)
                 .foregroundColor(.black)
             Spacer()
@@ -145,7 +145,7 @@ struct SkillPowerView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             let type = PokemonType.type(from: move.type?.name ?? "")
-            TypeBubbleCellView(text: type.rawValue.capitalized,
+            TypeBubbleCellView(text: type.rawValue.capitalizingFirstLetter(),
                                foregroundColor: type.color.text,
                                backgroundColor: type.color.background,
                                font: Biotif.book(size: 12).font)
@@ -171,7 +171,7 @@ struct TextInformationView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text("How to learn: \(pokemonMove.versionGroupDetails.first?.moveLearnMethod.name.capitalized ?? "")")
+            Text("How to learn: \(pokemonMove.versionGroupDetails.first?.moveLearnMethod.name.capitalizingFirstLetter() ?? "")")
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(Color(.black))
                 .padding(.leading, 20)
@@ -212,7 +212,7 @@ struct MachineSubView: View {
                         .font(Biotif.medium(size: 10).font)
                         .foregroundColor(Color(.darkGray))
                         .frame(width: 50, alignment: .leading)
-                    Text(target.capitalized)
+                    Text(target.capitalizingFirstLetter())
                         .font(Biotif.medium(size: 10).font)
                         .foregroundColor(Color.black)
                 }
@@ -222,7 +222,7 @@ struct MachineSubView: View {
                         .foregroundColor(Color(.darkGray))
                         .isRemove(machine.item.name.isEmpty)
                         .frame(width: 50, alignment: .leading)
-                    Text(machine.item.name.capitalized)
+                    Text(machine.item.name.capitalizingFirstLetter())
                         .font(Biotif.medium(size: 10).font)
                         .foregroundColor(.black)
                         .isRemove(machine.item.name.isEmpty)

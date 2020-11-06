@@ -11,6 +11,7 @@ import SwiftUI
 class PokemonUpdater: ObservableObject {
     init() {
         wait()
+        print("init \(pokemonUrl)")
     }
     
     deinit {

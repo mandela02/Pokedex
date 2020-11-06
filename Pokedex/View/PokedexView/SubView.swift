@@ -136,7 +136,7 @@ struct SeachResultCell: View {
     @State var show = false
     var body: some View {
         TapToPushView(show: $show) {
-            Text(name.capitalized)
+            Text(name.capitalizingFirstLetter())
         } destination: {
             ParallaxView(pokemonUrl: url, isShowing: $show)
         }
