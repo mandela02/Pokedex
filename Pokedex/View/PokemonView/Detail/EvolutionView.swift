@@ -39,9 +39,6 @@ struct EvolutionView: View {
         }
         .listStyle(SidebarListStyle())
         .animation(.linear)
-        .onReceive(reachabilityUpdater.$retry, perform: { retry in
-            evolutionUpdater.retry = retry
-        })
     }
 }
 

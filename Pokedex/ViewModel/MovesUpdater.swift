@@ -57,14 +57,6 @@ class MovesUpdater: ObservableObject {
     @Published var groupedMoveCellModels: [GroupedMoveCellModel] = []
     @Published var selected: String?
     @Published var error: ApiError = .non
-    @Published var retry = false {
-        didSet {
-            if retry {
-//                pokemonMoves = pokemon.moves ?? []
-//                retry = false
-            }
-        }
-    }
 
     private var cancellables = Set<AnyCancellable>()
     

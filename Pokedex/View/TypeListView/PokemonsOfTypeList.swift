@@ -30,7 +30,6 @@ struct PokemonsOfTypeListNavigationView: View {
                 .isRemove(updater.hasNoPokemon)
             
             LoadingView(background: .white)
-                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 .isRemove(!updater.isLoading)
 
             PokemonsOfTypeEmptyView()

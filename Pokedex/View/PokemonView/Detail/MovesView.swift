@@ -44,9 +44,6 @@ struct MovesView: View {
                 }
                 .listStyle(SidebarListStyle())
                 .animation(.default)
-                .onReceive(reachabilityUpdater.$retry, perform: { retry in
-                    moveUpdater.retry = retry
-                })
             })
         }
     }

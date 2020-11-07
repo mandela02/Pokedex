@@ -197,7 +197,7 @@ class PokemonUpdater: ObservableObject {
         $images
             .dropFirst(2)
             .receive(on: RunLoop.main)
-            .debounce(for: 1, scheduler: RunLoop.main)
+            .debounce(for: 0.75, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] result in
                 guard let self = self else {
                     return

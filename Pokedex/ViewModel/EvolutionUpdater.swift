@@ -52,14 +52,6 @@ class EvolutionUpdater: ObservableObject {
     @Published var megaEvolutionLinks: [EvoLink] = []
     
     @Published var error: ApiError = .non
-    @Published var retry = false {
-        didSet {
-            if retry {
-//                getEvolutionInformation()
-//                retry = false
-            }
-        }
-    }
 
     private var cancellables = Set<AnyCancellable>()
     

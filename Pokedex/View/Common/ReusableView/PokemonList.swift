@@ -59,7 +59,6 @@ struct PokemonList: View {
                 
                 if isLoading {
                     LoadingView(background: .white)
-                        .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 }
             }
         })
