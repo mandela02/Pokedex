@@ -24,10 +24,17 @@ class TypeDetailUpdater: ObservableObject {
 
     @Published var type: PokeType = PokeType() {
         didSet {
-            merge()
+            //merge()
+            pokemonUrls = type.pokemon.map({$0.pokemon.url})
+            getDamage()
         }
     }
 
+    @Published var pokemonUrls: [String] = [] {
+        didSet {
+            isLoading = false
+        }
+    }
 
     @Published var pokemons: [Pokemon] = [] {
         didSet {
@@ -98,23 +105,19 @@ class TypeDetailUpdater: ObservableObject {
             .replaceError(with: MoveDamageClass())
             .eraseToAnyPublisher()
     }
-        
-    private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Never> {
-        return  Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
-            .collect()
-            .receive(on: DispatchQueue.main)
-            .handleEvents(receiveCompletion: { [weak self] complete in
-                guard let self = self else { return }
-                switch complete {
-                case .failure(let error): self.error = .internet(message: error.localizedDescription)
-                case .finished: self.error = .non
-                }
-            })
-            .replaceEmpty(with: [])
-            .replaceError(with: [])
-            .eraseToAnyPublisher()
-    }
     
+    private func getDamage() {
+        getDamageDetail()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] damage in
+                guard let self = self else { return }
+                self.damage = damage
+            }
+            .store(in: &cancellables)
+    }
+}
+
+extension TypeDetailUpdater {
     private func merge() {
         if type.pokemon.isEmpty {
             hasNoPokemon = true
@@ -132,5 +135,21 @@ class TypeDetailUpdater: ObservableObject {
                 self?.pokemons = pokemons.filter({$0.isDefault})
             }
             .store(in: &cancellables)
+    }
+    
+    private func loadPokemonDetailData() -> AnyPublisher<[Pokemon], Never> {
+        return  Publishers.MergeMany(type.pokemon.map({Session.share.pokemon(from: $0.pokemon.url)}))
+            .collect()
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveCompletion: { [weak self] complete in
+                guard let self = self else { return }
+                switch complete {
+                case .failure(let error): self.error = .internet(message: error.localizedDescription)
+                case .finished: self.error = .non
+                }
+            })
+            .replaceEmpty(with: [])
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
     }
 }

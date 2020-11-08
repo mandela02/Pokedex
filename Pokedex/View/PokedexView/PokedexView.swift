@@ -23,7 +23,6 @@ struct PokedexView: View {
 
     @State private var selectedMenu = -1
     @State private var showSubView: Bool = false
-    @State private var subViewOffset: CGSize = CGSize.zero
     @State private var keyboardHeight: CGFloat = 0
     @State private var showFavorite: Bool = false
 
@@ -35,7 +34,6 @@ struct PokedexView: View {
         GeometryReader (content: { geometry in
             ZStack {
                 AllPokemonList()
-                    .transition(AnyTransition.move(edge: .leading).combined(with: .opacity))
                     .blur(radius: showSubView ? 3 : 0)
                 
                 VStack {
@@ -65,7 +63,6 @@ struct PokedexView: View {
                     VStack {
                         Spacer()
                         TypeSubView(isShowing: $showSubView,
-                                    offset: $subViewOffset,
                                     kind: SubViewKind.getKind(from: selectedMenu))
                             .onDisappear { self.keyboardHeight = 0 }
                             .frame(height: geometry.size.height/2)
@@ -75,7 +72,6 @@ struct PokedexView: View {
                             }
                     }
                     .transition(.move(edge: .bottom))
-                    .offset(y: subViewOffset.height)
                 }
                 PushOnSigalView(show: $showFavorite,
                                 destination:  {
@@ -96,7 +92,6 @@ struct PokedexView: View {
             .onChange(of: showSubView, perform: { showTypeView in
                 if showTypeView == false {
                     selectedMenu = -1
-                    subViewOffset = CGSize.zero
                 }
             })
         })

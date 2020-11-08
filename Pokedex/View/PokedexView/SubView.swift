@@ -46,61 +46,50 @@ enum SubViewKind: Int, CaseIterable {
 
 struct SubView<Content: View>: View {
     @Binding var isShowing: Bool
-    @Binding var offset: CGSize
+    @State var offset: CGSize = CGSize.zero
     
     let view: () ->  Content
     
-    private func drag(in size: CGSize) -> some Gesture {
-        let collapseValue = size.height / 4 - 100
+    private func drag() -> some Gesture {
+        let collapseValue = UIScreen.main.bounds.height / 3
         
         return DragGesture()
             .onChanged({ gesture in
                 if gesture.translation.height > 0 {
-                    withAnimation(.spring()) {
-                        self.offset = gesture.translation
-                    }
+                    self.offset = gesture.translation
                 }
-            }).onEnded({ _ in
-                if offset.height > collapseValue {
-                    self.isShowing = false
+            }).onEnded({ gesture in
+                withAnimation(Animation.easeIn(duration: 0.2)) {
+                    if gesture.translation.height > collapseValue / 1.5 {
+                        isShowing = false
+                    }
+                    self.offset = CGSize.zero
                 }
             })
     }
     
     var body: some View {
-        GeometryReader(content: { geometry in
-            ZStack {
-                VStack {
-                    HexColor.white
-                        .frame(height: 100, alignment: .center)
-                        .cornerRadius(25)
-                        .offset(y: 50)
-                        .gesture(drag(in: geometry.size))
-                    view()
-                }
-                VStack {
-                    Capsule().fill(Color(.systemGray3))
-                        .frame(width: 100, height: 5, alignment: .center)
-                        .offset(y: 60)
-                    Spacer()
-                }
-            }
-        })
+        VStack(spacing: 20) {
+            Spacer()
+            Capsule().fill(Color(.systemGray3))
+                .frame(width: 60, height: 4, alignment: .center)
+            view()
+        }
+        .background(Color.white.clipShape(CustomCorner(corner: [.topLeft, .topRight])))
+        .offset(y: offset.height)
+        .gesture(drag())
     }
 }
 
 struct TypeSubView: View {
     @Binding var isShowing: Bool
-    @Binding var offset: CGSize
     var kind: SubViewKind
     
     var body: some View {
         SubView(isShowing: $isShowing,
-                offset: $offset, view: {
+                view: {
                     getView()
                 })
-            .transition(AnyTransition
-                            .move(edge: .bottom))
     }
     
     private func getView() -> AnyView {
@@ -136,7 +125,7 @@ struct SeachResultCell: View {
     @State var show = false
     var body: some View {
         TapToPushView(show: $show) {
-            Text(name.capitalized)
+            Text(name.capitalizingFirstLetter())
         } destination: {
             ParallaxView(pokemonUrl: url, isShowing: $show)
         }

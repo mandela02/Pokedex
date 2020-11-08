@@ -30,7 +30,6 @@ struct ParallaxView: View {
     var body: some View {
         ZStack {
             updater.pokemon.mainType.color.background.ignoresSafeArea()
-                .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
                 .animation(.linear)
             
             if isShowingImage {
@@ -68,7 +67,7 @@ struct ParallaxView: View {
                                         about: $updater.pokemon)
                         .padding(.trailing, 30)
                         .padding(.bottom, 30)
-                        .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
+                        .transition(.opacity)
                 }
             }.blur(radius: showLikedNotification ? 3 : 0)
             
@@ -83,7 +82,6 @@ struct ParallaxView: View {
             
             if showLikedNotification {
                 LikedNotificationView(id: updater.pokemon.pokeId, name: updater.pokemon.name, image: updater.pokemon.sprites.other?.artwork.front ?? "")
-                    .transition(.opacity)
                     .animation(.default)
             }
         }
@@ -151,34 +149,24 @@ struct ParallaxContentView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
                     GeometryReader { reader -> AnyView in
-                        return AnyView(
-                            Color.clear
-                                .onChange(of: reader.frame(in: .global).minY, perform:  { minFrameY in
-                                    let frameY = minFrameY - 100 + maxHeight
-                                    
-                                    opacity = 1 + Double(minFrameY/(maxHeight - 50))
-                                    scale = 1 + CGFloat(minFrameY/(maxHeight - 50))
-                                    imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
-                                    
-                                    if frameY <= 0 {
-                                        withAnimation(.linear) { isMinimized = true }
-                                    } else {
-                                        withAnimation(.linear) {
-                                            if isMinimized == true {
-                                                isMinimized = false
-                                            }
-                                        }
-                                    }
-                                })
-                                .onChange(of: reader.frame(in: .global).maxY, perform:  { maxFrameY in
-                                    imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
-                                })
-                                .onAppear {
-                                    imageOffsetY = reader.frame(in: .global).maxY + 100 - maxHeight * 4 / 5
-                                }
-                        )
-                    }
-                    .frame(height: maxHeight)
+                        let minFrameY = reader.frame(in: .global).minY
+                        let maxFrameY = reader.frame(in: .global).maxY
+                        
+                        DispatchQueue.main.async {
+                            imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
+                            let frameY = minFrameY - 100 + maxHeight
+                            
+                            opacity = 1 + Double(minFrameY/(maxHeight - 50))
+                            scale = 1 + CGFloat(minFrameY/(maxHeight - 50))
+                            
+                            if frameY <= 0 {
+                                withAnimation(.linear) { isMinimized = true }
+                            } else {
+                                withAnimation(.linear) { isMinimized = false }
+                            }
+                        }
+                        return AnyView(Color.clear)
+                    }.frame(height: maxHeight)
                     
                     VStack(spacing: 0) {
                         Spacer()

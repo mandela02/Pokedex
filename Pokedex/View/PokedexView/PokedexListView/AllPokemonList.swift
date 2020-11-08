@@ -16,7 +16,7 @@ struct AllPokemonList: View {
     @State var isFirstTimeLoadView = true
 
     var body: some View {
-        PokemonList(cells: $updater.pokemons,
+        PokemonList(cells: $updater.pokemonUrls,
                     isLoading: $isLoading,
                     isFinal: $isFinal,
                     paddingHeader: 50,

@@ -24,7 +24,14 @@ class FavoriteUpdater: ObservableObject {
     @Published var isEmpty: Bool = false
     @Published var favorites: [Favorite] = [] {
         didSet {
-            loadPokemonDetailData()
+            //loadPokemonDetailData()
+            pokemonUrls = favorites.map({$0.url ?? ""})
+            isEmpty = favorites.isEmpty
+        }
+    }
+    
+    @Published var pokemonUrls: [String] = [] {
+        didSet {
             isEmpty = favorites.isEmpty
         }
     }

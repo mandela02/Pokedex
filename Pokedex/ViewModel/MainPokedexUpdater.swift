@@ -35,7 +35,18 @@ class MainPokedexUpdater: ObservableObject {
                 canLoadMore = false
                 isFinal = true
             }
-            loadPokemonsData()
+            //loadPokemonsData()
+            pokemonUrls = pokemonUrls +
+                pokemonResult
+                .results
+                .map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
+        }
+    }
+    
+    @Published var pokemonUrls: [String] = [] {
+        didSet {
+            self.isLoadingPage = false
+            isFinal = pokemonResult.next == nil
         }
     }
     
@@ -46,9 +57,9 @@ class MainPokedexUpdater: ObservableObject {
         }
     }
             
-    func loadMorePokemonIfNeeded(current pokemon: Pokemon) {
-        let thresholdIndex = pokemons.index(pokemons.endIndex, offsetBy: -5)
-        if pokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
+    func loadMorePokemonIfNeeded(current url: String) {
+        let thresholdIndex = pokemonUrls.index(pokemonUrls.endIndex, offsetBy: -5)
+        if pokemonUrls.firstIndex(where: { $0 == url}) == thresholdIndex {
             loadPokemonResource()
         }
     }
@@ -78,7 +89,17 @@ class MainPokedexUpdater: ObservableObject {
                 self.pokemonResult = result
             }).store(in: &cancellables)
     }
+}
+
+extension MainPokedexUpdater {
+    func loadMorePokemonIfNeeded(current pokemon: Pokemon) {
+        let thresholdIndex = pokemons.index(pokemons.endIndex, offsetBy: -5)
+        if pokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
+            loadPokemonResource()
+        }
+    }
     
+
     private func loadPokemonsData() {
         let pokemonUrls = pokemonResult.results.map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
         Publishers.MergeMany(pokemonUrls.map({Session.share.pokemon(from: $0)}))
@@ -97,4 +118,5 @@ class MainPokedexUpdater: ObservableObject {
                 self.pokemons = self.pokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})
             }).store(in: &cancellables)
     }
+
 }

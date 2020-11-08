@@ -56,7 +56,5 @@ struct TypeCardView: View {
         .frame(width: size.width, height: size.height)
         .background(Color.clear)
         .cornerRadius(25)
-        .transition(.opacity)
-        .animation(.spring())
     }
 }

@@ -13,7 +13,7 @@ struct NamedHeaderView: View {
     var body: some View {
         HStack {
             Spacer()
-            Text(name.capitalized)
+            Text(name.capitalizingFirstLetter())
                 .font(Biotif.extraBold(size: 20).font)
                 .foregroundColor(.black)
             Spacer()

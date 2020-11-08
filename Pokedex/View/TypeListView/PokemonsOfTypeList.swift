@@ -21,7 +21,7 @@ struct PokemonsOfTypeListNavigationView: View {
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
-                ParallaxPokemonsList(pokemons: updater.pokemons)
+                ParallaxPokemonsList(pokemons: updater.pokemonUrls)
             }, header: {
                 PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
             }, stickyHeader: {
@@ -30,14 +30,13 @@ struct PokemonsOfTypeListNavigationView: View {
                 .isRemove(updater.hasNoPokemon)
             
             LoadingView(background: .white)
-                .transition(.asymmetric(insertion: .opacity, removal: .opacity))
                 .isRemove(!updater.isLoading)
 
             PokemonsOfTypeEmptyView()
                 .isRemove(!updater.hasNoPokemon)
             
             VStack {
-                BigTitle(text: updater.name.capitalized)
+                BigTitle(text: updater.name.capitalizingFirstLetter())
                 Spacer()
             }.isRemove(!updater.hasNoPokemon)
             
@@ -95,7 +94,7 @@ struct PokemonOfTypeHeaderView: View {
     var body: some View {
             VStack {
                 HStack(alignment: .lastTextBaseline) {
-                    Text(typeName.capitalized)
+                    Text(typeName.capitalizingFirstLetter())
                         .font(Biotif.extraBold(size: 30).font)
                         .foregroundColor(.black)
                     

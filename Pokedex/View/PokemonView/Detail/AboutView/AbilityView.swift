@@ -22,7 +22,7 @@ struct AbilitesView: View {
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 10)
                 HStack(alignment: .center, spacing: 30) {
-                    ForEach(abilities.map({$0.ability.name.capitalized}), content: { text in
+                    ForEach(abilities.map({$0.ability.name.capitalizingFirstLetter()}), content: { text in
                         TypeBubbleCellView(text: text,
                                            foregroundColor: text == selectedString ? .white : .gray,
                                            backgroundColor: text == selectedString ? .gray : .white,

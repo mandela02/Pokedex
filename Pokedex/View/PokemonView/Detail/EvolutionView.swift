@@ -39,9 +39,6 @@ struct EvolutionView: View {
         }
         .listStyle(SidebarListStyle())
         .animation(.linear)
-        .onReceive(reachabilityUpdater.$retry, perform: { retry in
-            evolutionUpdater.retry = retry
-        })
     }
 }
 
@@ -115,7 +112,7 @@ struct PokemonCellView: View {
                     DownloadedImageView(withURL: imageURL,
                                         style: .normal)
                 }
-                Text(name.capitalized)
+                Text(name.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 15).font)
                     .foregroundColor(.black)
             }

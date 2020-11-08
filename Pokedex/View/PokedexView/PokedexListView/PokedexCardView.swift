@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct PokedexCardView: View {
-    var pokemon: Pokemon
+    var url: String
     var size: (width: CGFloat, height: CGFloat)
     
     @State var viewAppear: Bool = false
+    @StateObject var cellUpdater = PokedexCellUpdater()
 
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center,
                                     vertical: .center),
                content: {
-                if pokemon.mainType == .non {
+                if cellUpdater.pokemon.mainType == .non {
                     Color.white
                         .blur(radius: 1)
                 } else {
-                    pokemon.mainType.color.background
+                    cellUpdater.pokemon.mainType.color.background
                         .blur(radius: 1)
                 }
                 
@@ -30,15 +31,15 @@ struct PokedexCardView: View {
                     .resizable()
                     .scaledToFit()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(pokemon.mainType == .non ? pokemon.mainType.color.background : Color.white.opacity(0.3))
+                    .foregroundColor(cellUpdater.pokemon.mainType == .non ? cellUpdater.pokemon.mainType.color.background : Color.white.opacity(0.3))
                     .frame(width: size.height * 4/5, height: size.height * 4/5, alignment: .bottomTrailing)
                     .offset(x: size.width * 1/4, y: size.height * 1/4 )
                     .blur(radius: 1)
                 
                 VStack {
                     Spacer()
-                    if viewAppear {
-                        DownloadedImageView(withURL: UrlType.getImageUrlString(of: pokemon.pokeId),
+                    if viewAppear && cellUpdater.pokemon.pokeId != 0 {
+                        DownloadedImageView(withURL: UrlType.getImageUrlString(of: cellUpdater.pokemon.pokeId),
                                             style: .normal)
                             .frame(width: size.width/2,
                                    height: size.height,
@@ -48,15 +49,15 @@ struct PokedexCardView: View {
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 
                 VStack(alignment: .leading, spacing: 0, content: {
-                    Text(pokemon.name.capitalized)
+                    Text(cellUpdater.pokemon.name.capitalizingFirstLetter())
                         .font(Biotif.bold(size: 25).font)
-                        .foregroundColor(pokemon.mainType.color.text)
+                        .foregroundColor(cellUpdater.pokemon.mainType.color.text)
                         .frame(alignment: .topLeading)
                         .lineLimit(1)
                         .padding(.bottom, 10)
-                    ForEach(pokemon.types.map({$0.type}).prefix(2)) { type in
+                    ForEach(cellUpdater.pokemon.types.map({$0.type}).prefix(2)) { type in
                         TypeBubbleCellView(text: type.name,
-                                           foregroundColor: pokemon.mainType.color.text,
+                                           foregroundColor: cellUpdater.pokemon.mainType.color.text,
                                            backgroundColor: Color.white.opacity(0.3),
                                            font: Biotif.semiBold(size: 10).font)
                             .padding(.bottom, 15)
@@ -71,10 +72,11 @@ struct PokedexCardView: View {
             .cornerRadius(25)
             .overlay(
                 RoundedRectangle(cornerRadius: 25)
-                    .stroke(pokemon.mainType.color.background, lineWidth: 5)
+                    .stroke(cellUpdater.pokemon.mainType.color.background, lineWidth: 5)
             )
             .onAppear {
                 viewAppear = true
+                cellUpdater.url = url
             }
             .onDisappear {
                 viewAppear = false

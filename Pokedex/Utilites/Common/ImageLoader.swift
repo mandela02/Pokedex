@@ -28,11 +28,7 @@ class ImageLoader: ObservableObject {
         self.url = url
         loadImage(from: url)
     }
-        
-    deinit {
-        print("deinit - \(url)")
-    }
-    
+
     private func loadImage(from urlString: String) {
         if let image = imageCache.get(forKey: urlString)  {
             displayImage = image
@@ -60,7 +56,10 @@ class ImageLoader: ObservableObject {
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
                 guard let self = self else { return }
-                if image == UIImage() { return }
+                if image == UIImage() {
+                    self.retry = true
+                    return
+                }
                 let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
                 self.imageCache.set(forKey: key, image: smallImage)
