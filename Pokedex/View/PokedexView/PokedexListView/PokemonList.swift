@@ -38,16 +38,13 @@ struct PokemonList: View {
                                     onCellAppear(cell)
                                 }
                         }
-                    }
-                    .animation(.linear)
+                    }.animation(.linear)
                     
                     if isFinal {
                         CompleteView().frame(height: 200)
                     }
                     
                     Color.clear.frame(height: paddingFooter, alignment: .center)
-                        .animation(.linear)
-                        .listStyle(SidebarListStyle())
                 })
                 .blur(radius: isLoading ? 3.0 : 0)
                 
