@@ -43,7 +43,7 @@ struct FavoriteView: View {
                 }
             } else {
                 CustomBigTitleNavigationView(content: {
-                    ParallaxPokemonsList(pokemons: favoriteUpdater.pokemons)
+                    ParallaxPokemonsList(pokemons: favoriteUpdater.pokemonUrls)
                 }, header: {
                     BigTitle(text: "Your Favorite Pokemon")
                 }, stickyHeader: {

@@ -10,19 +10,18 @@ import SwiftUI
 struct TappablePokemonCell: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
 
-    let pokemon: Pokemon
+    let url: String
     
     @State var show: Bool = false
     
     let size: CGSize
     var body: some View {
         TapToPushView(show: $show) {
-            PokedexCardView(pokemon: pokemon, size: (size.width, size.height))
+            PokedexCardView(url: url, size: (size.width, size.height))
                 .contextMenu(menuItems: {})
         } destination: {
-            ParallaxView(pokemonUrl: UrlType.getPokemonUrl(of: pokemon.pokeId), isShowing: $show)
+            ParallaxView(pokemonUrl: url, isShowing: $show)
                 .environmentObject(reachabilityUpdater)
-            //PokemonInformationView(pokemon: pokemon, isShowing: $show)
         }
         .buttonStyle(PlainButtonStyle())
     }

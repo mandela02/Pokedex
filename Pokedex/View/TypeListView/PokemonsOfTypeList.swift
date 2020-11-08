@@ -21,7 +21,7 @@ struct PokemonsOfTypeListNavigationView: View {
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
-                ParallaxPokemonsList(pokemons: updater.pokemons)
+                ParallaxPokemonsList(pokemons: updater.pokemonUrls)
             }, header: {
                 PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
             }, stickyHeader: {
