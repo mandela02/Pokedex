@@ -26,9 +26,8 @@ struct PrepareView: View {
         ZStack {
             if reachabilityUpdater.hasNoInternet {
                 NoInternetView()
-            } else {
-                EmptyView()
             }
+            MovingDot()
         }
         .onReceive(reachabilityUpdater.$retry, perform: { retry in
             if retry {
