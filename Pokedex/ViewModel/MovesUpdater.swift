@@ -23,10 +23,6 @@ struct GroupedMoveCellModel: Identifiable {
 }
 
 class MovesUpdater: ObservableObject {
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-    }
-    
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
             pokemonMoves = pokemon.moves ?? []
@@ -50,6 +46,7 @@ class MovesUpdater: ObservableObject {
             moveCellModels = list
         }
     }
+    
     @Published var moveCellModels: [MoveCellModel] = [] {
         didSet {
             groupedMoveCellModels = Dictionary(grouping: moveCellModels,
@@ -57,6 +54,7 @@ class MovesUpdater: ObservableObject {
                 .map({GroupedMoveCellModel(name: $0.key, cells: $0.value)})
         }
     }
+    
     @Published var groupedMoveCellModels: [GroupedMoveCellModel] = []
     @Published var selected: String?
     @Published var error: ApiError = .non

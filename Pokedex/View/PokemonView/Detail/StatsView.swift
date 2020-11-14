@@ -9,12 +9,13 @@ import SwiftUI
 
 struct StatsView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-    @ObservedObject var updater: StatUpdater
+    @StateObject var updater: StatUpdater = StatUpdater()
     @Binding var selectedIndex: Int
-
+    var pokemon: Pokemon
+    
     init(pokemon: Pokemon, selectedIndex: Binding<Int>) {
-        self.updater = StatUpdater(of: pokemon)
         self._selectedIndex = selectedIndex
+        self.pokemon = pokemon
     }
     
     var body: some View {
@@ -49,6 +50,9 @@ struct StatsView: View {
             Color.clear.frame(height: 150, alignment: .center)
         }
         .animation(.linear)
+        .onAppear {
+            updater.pokemon = pokemon
+        }
     }
 }
 

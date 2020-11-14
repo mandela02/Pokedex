@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokemonList: View {
-    @Binding var cells: [String]
+    var cells: [String]
     @Binding var isLoading: Bool
     @Binding var isFinal: Bool
         

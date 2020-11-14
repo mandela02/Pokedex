@@ -9,11 +9,8 @@ import SwiftUI
 
 struct MovesView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-    @ObservedObject var moveUpdater: MovesUpdater
-    
-    init(pokemon: Pokemon) {
-        moveUpdater = MovesUpdater(of: pokemon)
-    }
+    @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
+    var pokemon: Pokemon
     
     var body: some View {
         ZStack {
@@ -45,7 +42,10 @@ struct MovesView: View {
                     Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
                 }
                 .listStyle(SidebarListStyle())
-                .animation(.default)
+                .animation(.linear)
+                .onAppear {
+                    moveUpdater.pokemon = pokemon
+                }
             })
         }
     }
@@ -77,9 +77,10 @@ struct TappableMoveCell: View {
             selectedMove = isExtensed ? move.name : nil
         } label: {
             MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
-        }
-        .onChange(of: selectedMove, perform: { value in
-            isExtensed = selectedMove == move.name
+        }.onChange(of: selectedMove, perform: { value in
+            withAnimation(.spring()) {
+                isExtensed = selectedMove == move.name
+            }
         })
         .buttonStyle(PlainButtonStyle())
         .disabled(reachabilityUpdater.hasNoInternet)
@@ -87,15 +88,15 @@ struct TappableMoveCell: View {
 }
 
 struct MoveCell: View {
+    @StateObject var updater = MoveDetailUpdater()
+
     var pokemonMove: PokemonMove
     var move: Move
     @Binding var isExtensed: Bool
-    
-    @StateObject var updater = MoveDetailUpdater()
 
     var body: some View {
         GeometryReader(content: { geometry in
-            let type = PokemonType.type(from: updater.move.type?.name ?? "")
+            let type = PokemonType.type(from: updater.move?.type?.name ?? "")
             let width = geometry.size.width
             let height = width * 0.2 + 10
             VStack {
@@ -125,6 +126,9 @@ struct MoveCell: View {
             .onAppear {
                 updater.pokemonMove = pokemonMove
                 updater.move = move
+            }.onDisappear {
+                updater.pokemonMove = nil
+                updater.move = nil
             }
         })
     }

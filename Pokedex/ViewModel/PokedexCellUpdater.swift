@@ -9,9 +9,13 @@ import Foundation
 import Combine
 
 class PokedexCellUpdater: ObservableObject {
-    private var cancellables = Set<AnyCancellable>()
+    private var cancellable: Cancellable?
     @Published var error: ApiError = .non
-    @Published var pokemon: Pokemon = Pokemon()
+    @Published var pokemon = Pokemon()
+    
+    deinit {
+        cancellable?.cancel()
+    }
     
     var url: String = "" {
         didSet {
@@ -21,9 +25,11 @@ class PokedexCellUpdater: ObservableObject {
     
     private func getPokemon(from url: String) {
         if url.isEmpty {
+            pokemon = Pokemon()
+            cancellable?.cancel()
             return
         }
-        Session.share.pokemon(from: url)
+        cancellable = Session.share.pokemon(from: url)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveCompletion: { [weak self] complete in
@@ -38,6 +44,5 @@ class PokedexCellUpdater: ObservableObject {
                 guard let self = self else { return }
                 self.pokemon = result
             })
-            .store(in: &cancellables)
     }
 }

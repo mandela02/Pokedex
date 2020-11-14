@@ -19,18 +19,19 @@ struct DetailMoveCellModel: Identifiable {
 }
 
 class MoveDetailUpdater: ObservableObject {
-    var pokemonMove = PokemonMove() {
+    var pokemonMove: PokemonMove? {
         didSet {
-            moveLearnMethodUrl = pokemonMove.versionGroupDetails.first?.moveLearnMethod.url ?? ""
+            moveLearnMethodUrl = pokemonMove?.versionGroupDetails.first?.moveLearnMethod.url ?? ""
         }
     }
     
-    var move: Move = Move() {
+    var move: Move? {
         didSet {
-            machineUrl = move.machines?.first?.machine.url ?? ""
-            targetUrl = move.target?.url ?? ""
+                machineUrl = move?.machines?.first?.machine.url ?? ""
+                targetUrl = move?.target?.url ?? ""
         }
     }
+    
     @Published var moveLearnMethodUrl = ""
     @Published var machineUrl = ""
     @Published var targetUrl = ""
@@ -86,24 +87,34 @@ extension MoveDetailUpdater {
                                   $machineUrl,
                                   $targetUrl)
             .flatMap { [weak self] (moveLearnMethodUrl, machineUrl, targetUrl) -> AnyPublisher<(MoveLearnMethod, Machine, MoveTarget), Never>  in
-                guard let self = self else {
+                
+                let moveLearnMethodUrl = String(moveLearnMethodUrl)
+                let machineUrl = String(machineUrl)
+                let targetUrl = String(targetUrl)
+                
+                guard let self = self,
+                      !moveLearnMethodUrl.isEmpty,
+                      !machineUrl.isEmpty,
+                      !targetUrl.isEmpty
+                else {
                     return CurrentValueSubject<(MoveLearnMethod, Machine, MoveTarget), Never>((MoveLearnMethod(), Machine(), MoveTarget()))
                         .eraseToAnyPublisher()
                 }
                 
-                return self.zip(moveLearnMethodUrl: String(moveLearnMethodUrl),
-                                machineUrl: String(machineUrl),
-                                targetUrl: String(targetUrl))
+                return self.zip(moveLearnMethodUrl: moveLearnMethodUrl,
+                                machineUrl: machineUrl,
+                                targetUrl: targetUrl)
             }
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] moveLearnMethod, machine, moveTarget in
                 guard let self = self else { return }
-                self.moveCellModel = DetailMoveCellModel(pokemonMove: self.pokemonMove,
-                                                         move: self.move,
-                                                         learnMethod: moveLearnMethod ,
-                                                         machine: machine,
-                                                         target: moveTarget)
-            })
-            .store(in: &cancellables)
+                if let move = self.move, let pokemonMove = self.pokemonMove {
+                    self.moveCellModel = DetailMoveCellModel(pokemonMove: pokemonMove,
+                                                             move: move,
+                                                             learnMethod: moveLearnMethod ,
+                                                             machine: machine,
+                                                             target: moveTarget)
+                }
+            }).store(in: &cancellables)
     }
 }

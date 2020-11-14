@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PokedexCardView: View {
     var url: String
-    var size: (width: CGFloat, height: CGFloat)
+    var size: CGSize
     
     @State var viewAppear: Bool = false
     @StateObject var cellUpdater = PokedexCellUpdater()
@@ -80,6 +80,7 @@ struct PokedexCardView: View {
             }
             .onDisappear {
                 viewAppear = false
+                cellUpdater.url = ""
             }
     }
 }
