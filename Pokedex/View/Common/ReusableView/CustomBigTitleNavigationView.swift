@@ -57,6 +57,8 @@ struct CustomBigTitleNavigationView<Content, Header, StickyHeader>: View where C
                         .padding()
                         .background(Color.clear)
                         .cornerRadius(15)
+                    
+                    Color.clear.frame(height: 100)
                 }
             }
             

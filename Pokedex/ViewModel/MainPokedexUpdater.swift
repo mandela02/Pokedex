@@ -13,10 +13,10 @@ class MainPokedexUpdater: ObservableObject {
     @Published var isFinal = false
     @Published var settings = UserSettings()
     @Published var error: ApiError = .non
-    @Published var isTopView = false
-
-    private var cancellables = Set<AnyCancellable>()
+    
+    private var cancellable: Cancellable?
     private var canLoadMore = true
+    var isTopView = false
     
     var url: String = "" {
         didSet {
@@ -24,7 +24,7 @@ class MainPokedexUpdater: ObservableObject {
         }
     }
 
-    @Published var pokemonResult: PokemonResult = PokemonResult() {
+    private var pokemonResult: PokemonResult = PokemonResult() {
         didSet {
             if pokemonResult.count != settings.speciesCount {
                 settings.speciesCount = pokemonResult.count
@@ -35,7 +35,6 @@ class MainPokedexUpdater: ObservableObject {
                 canLoadMore = false
                 isFinal = true
             }
-            //loadPokemonsData()
             pokemonUrls = pokemonUrls +
                 pokemonResult
                 .results
@@ -43,21 +42,14 @@ class MainPokedexUpdater: ObservableObject {
         }
     }
     
-    @Published var pokemonUrls: [String] = [] {
+    var pokemonUrls: [String] = [] {
         didSet {
             self.isLoadingPage = false
-            isFinal = pokemonResult.next == nil
         }
     }
-    
-    @Published var pokemons: [Pokemon] = [] {
-        didSet {
-            self.isLoadingPage = false
-            isFinal = pokemonResult.next == nil
-        }
-    }
-            
+                
     func loadMorePokemonIfNeeded(current url: String) {
+        guard isTopView else { return }
         let thresholdIndex = pokemonUrls.index(pokemonUrls.endIndex, offsetBy: -5)
         if pokemonUrls.firstIndex(where: { $0 == url}) == thresholdIndex {
             loadPokemonResource()
@@ -71,7 +63,7 @@ class MainPokedexUpdater: ObservableObject {
         
         isLoadingPage = true
         
-        Session
+        cancellable =  Session
             .share
             .pokemons(from: url)
             .receive(on: DispatchQueue.main)
@@ -87,36 +79,6 @@ class MainPokedexUpdater: ObservableObject {
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
                 self.pokemonResult = result
-            }).store(in: &cancellables)
+            })
     }
-}
-
-extension MainPokedexUpdater {
-    func loadMorePokemonIfNeeded(current pokemon: Pokemon) {
-        let thresholdIndex = pokemons.index(pokemons.endIndex, offsetBy: -5)
-        if pokemons.firstIndex(where: { $0.pokeId == pokemon.pokeId}) == thresholdIndex {
-            loadPokemonResource()
-        }
-    }
-    
-
-    private func loadPokemonsData() {
-        let pokemonUrls = pokemonResult.results.map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
-        Publishers.MergeMany(pokemonUrls.map({Session.share.pokemon(from: $0)}))
-            .collect()
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self] complete in
-                guard let self = self else { return }
-                switch complete {
-                case .finished: self.error = .non
-                case .failure(let message):
-                    self.isLoadingPage = false
-                    self.error = .internet(message: message.localizedDescription)
-                }
-            }, receiveValue: { [weak self] pokemons in
-                guard let self = self else { return }
-                self.pokemons = self.pokemons + pokemons.sorted(by: {$0.pokeId < $1.pokeId})
-            }).store(in: &cancellables)
-    }
-
 }

@@ -21,7 +21,7 @@ class ReachabilityUpdater: ObservableObject {
     init() {
         do {
             try Network.reachability = Reachability(hostname: "www.google.com")
-            hasNoInternet = Network.reachability?.status == .unreachable
+            hasNoInternet = false
         }
         catch {
             switch error as? Network.Error {
@@ -42,7 +42,7 @@ class ReachabilityUpdater: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.hasNoInternet = Network.reachability?.status == .unreachable
+                self.hasNoInternet = false
             }.store(in: &cancellables)
     }
 }

@@ -9,11 +9,8 @@ import SwiftUI
 
 struct MovesView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-    @ObservedObject var moveUpdater: MovesUpdater
-    
-    init(pokemon: Pokemon) {
-        moveUpdater = MovesUpdater(of: pokemon)
-    }
+    @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
+    var pokemon: Pokemon
     
     var body: some View {
         ZStack {
@@ -23,12 +20,14 @@ struct MovesView: View {
                 
                 List {
                     ForEach(moveUpdater.groupedMoveCellModels) { section in
-                        Section(header: Text(section.name.capitalizingFirstLetter()).font(Biotif.extraBold(size: 25).font)) {
+                        Section(header: Text(section.name.capitalizingFirstLetter())
+                                    .font(Biotif.extraBold(size: 25).font)) {
                             ForEach(section.cells) { cell in
                                 let isSelected = cell.move.name == moveUpdater.selected
                                 VStack {
                                     TappableMoveCell(selectedMove: $moveUpdater.selected,
-                                                     moveCellModel: cell)
+                                                     pokemonMove: cell.pokemonMove,
+                                                     move: cell.move)
                                         .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
                                         .onDisappear {
                                             if isSelected {
@@ -43,7 +42,10 @@ struct MovesView: View {
                     Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
                 }
                 .listStyle(SidebarListStyle())
-                .animation(.default)
+                .animation(.linear)
+                .onAppear {
+                    moveUpdater.pokemon = pokemon
+                }
             })
         }
     }
@@ -64,17 +66,21 @@ struct TappableMoveCell: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
 
     @State var isExtensed = false
+    
     @Binding var selectedMove: String?
-    var moveCellModel: MoveCellModel
+    var pokemonMove: PokemonMove
+    var move: Move
+    
     var body: some View {
         Button {
             isExtensed.toggle()
-            selectedMove = isExtensed ? moveCellModel.move.name : nil
+            selectedMove = isExtensed ? move.name : nil
         } label: {
-            MoveCell(moveCellModel: moveCellModel, isExtensed: $isExtensed)
-        }
-        .onChange(of: selectedMove, perform: { value in
-            isExtensed = selectedMove == moveCellModel.move.name
+            MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
+        }.onChange(of: selectedMove, perform: { value in
+            withAnimation(.spring()) {
+                isExtensed = selectedMove == move.name
+            }
         })
         .buttonStyle(PlainButtonStyle())
         .disabled(reachabilityUpdater.hasNoInternet)
@@ -82,26 +88,31 @@ struct TappableMoveCell: View {
 }
 
 struct MoveCell: View {
-    var moveCellModel: MoveCellModel
+    @StateObject var updater = MoveDetailUpdater()
+
+    var pokemonMove: PokemonMove
+    var move: Move
     @Binding var isExtensed: Bool
+
     var body: some View {
         GeometryReader(content: { geometry in
-            let type = PokemonType.type(from: moveCellModel.move.type?.name ?? "")
+            let type = PokemonType.type(from: updater.move?.type?.name ?? "")
             let width = geometry.size.width
             let height = width * 0.2 + 10
             VStack {
                 SmallMoveCellView(height: height,
-                                  move: moveCellModel.move,
-                                  level: moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
+                                  move: updater.moveCellModel.move,
+                                  level: updater.moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
                                   isExtensed: $isExtensed)
                 if isExtensed {
                     VStack(spacing: 5) {
-                        MachineSubView(move: moveCellModel.move, machine: moveCellModel.machine,
-                                       target: StringHelper.getEnglishText(from: moveCellModel.target.descriptions))
+                        MachineSubView(move: updater.moveCellModel.move,
+                                       machine: updater.moveCellModel.machine,
+                                       target: StringHelper.getEnglishText(from: updater.moveCellModel.target.descriptions))
                             .padding(.leading, 20)
-                        TextInformationView(move: moveCellModel.move,
-                                            pokemonMove: moveCellModel.pokemonMove,
-                                            learnMethod: StringHelper.getEnglishText(from: moveCellModel.learnMethod.descriptions))
+                        TextInformationView(move: updater.moveCellModel.move,
+                                            pokemonMove: updater.moveCellModel.pokemonMove,
+                                            learnMethod: StringHelper.getEnglishText(from: updater.moveCellModel.learnMethod.descriptions))
                             .padding(.all, 5)
                     }
                 }
@@ -112,6 +123,13 @@ struct MoveCell: View {
                     .stroke(type.color.background.opacity(0.5), lineWidth: 5)
             )
             .cornerRadius(25)
+            .onAppear {
+                updater.pokemonMove = pokemonMove
+                updater.move = move
+            }.onDisappear {
+                updater.pokemonMove = nil
+                updater.move = nil
+            }
         })
     }
 }

@@ -10,12 +10,11 @@ import Combine
 
 class StatUpdater: ObservableObject {
     
-    init(of pokemon: Pokemon) {
-        self.pokemon = pokemon
-        getNumbers(of: pokemon)
+    @Published var pokemon: Pokemon = Pokemon() {
+        didSet {
+            getNumbers(of: pokemon)
+        }
     }
-
-    @Published var pokemon: Pokemon = Pokemon()
     
     @Published var numbers: [PokeStatUrl] = [] {
         didSet {
