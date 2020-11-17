@@ -12,21 +12,24 @@ struct ParallaxPokemonsList: View {
     
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
     
-    private func calculateGridItem(width: CGFloat) -> [GridItem] {
+    var width: CGFloat {
+        return (UIScreen.main.bounds.width - 80) / numberOfColumns
+    }
+    var height: CGFloat {
+        width * 0.7
+    }
+    
+    private func calculateGridItem() -> [GridItem] {
         let gridItem = GridItem(.fixed(width), spacing: 10)
         return Array(repeating: gridItem, count: Int(numberOfColumns))
     }
     
     var body: some View {
-        GeometryReader { reader in
-            let width = (reader.size.width - 80) / numberOfColumns
-            let height = width * 0.7
-            LazyVGrid(columns: calculateGridItem(width: width)) {
-                ForEach(pokemons) { cell in
-                    TappablePokemonCell(url: cell, size: CGSize(width: width, height: height))
-                        .background(Color.clear)
-                }
-            }.animation(.linear)
-        }
+        LazyVGrid(columns: calculateGridItem()) {
+            ForEach(pokemons) { cell in
+                TappablePokemonCell(url: cell, size: CGSize(width: width, height: height))
+                    .background(Color.clear)
+            }
+        }.animation(.linear)
     }
 }

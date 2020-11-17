@@ -12,17 +12,6 @@ struct FavoriteView: View {
 
     @Binding var show: Bool
     @StateObject var favoriteUpdater: FavoriteUpdater = FavoriteUpdater()
-    var width: CGFloat {
-        return (UIScreen.main.bounds.width - 80) / numberOfColumns
-    }
-    var height: CGFloat {
-        width * 0.7
-    }
-    
-    private func calculateGridItem() -> [GridItem] {
-        let gridItem = GridItem(.fixed(width), spacing: 10)
-        return Array(repeating: gridItem, count: Int(numberOfColumns))
-    }
     
     var body: some View {
         ZStack {
