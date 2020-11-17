@@ -11,39 +11,49 @@ struct GeneralDetailView: View {
     var pokemon: Pokemon
     var species: Species
     @Binding var selectedString: String?
-
-    @State var showGif = false
-
+    
+    
     var body: some View {
-        GeometryReader(content: { geometry in
+        VStack {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 10) {
+                    SpeciesNameView(species: species)
+                    DescriptionView(species: species)
+                }.padding(.leading, 10)
+                Spacer()
+                GifWithProgressView(url: pokemon.sprites.versions?.generationV?.blackWhite?.animated?.front ?? "",
+                                    color: pokemon.mainType.color.background)
+            }
+            .frame(height: 120, alignment: .center)
             if !(pokemon.abilities?.isEmpty ?? true) {
-                HStack(alignment: .center, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 20) {
-                        SpeciesNameView(species: species)
-                        AbilitesView(pokemon: pokemon, selectedString: $selectedString)
-                            .frame(width: abs(geometry.size.width - 100))
-                    }
+                AbilitesView(pokemon: pokemon, selectedString: $selectedString)
+            }
+        }.padding(.bottom, 10)
+    }
+}
 
-                    if showGif {
-                        GIFView(gifName: pokemon.sprites.versions?.generationV?.blackWhite?.animated?.front ?? "")
-                            .frame(width: 80, height: 80, alignment: .center)
-                            .padding(.trailing, 10)
-                    } else {
-                        ZStack {
-                            ProgressView().progressViewStyle(CircularProgressViewStyle(tint: pokemon.mainType.color.background))
-                                .frame(width: 80, height: 80, alignment: .center)
-                                .padding(.trailing, 10)
-                        }
-                    }
-                }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation(.linear) {
-                            showGif = true
-                        }
-                    }
+struct GifWithProgressView: View {
+    var url: String
+    var color: Color
+    @State var showGif = false
+    
+    var body: some View {
+        Group {
+            if showGif {
+                GIFView(gifName: url)
+            } else {
+                ZStack {
+                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: color))
                 }
             }
-        })
+        }
+        .frame(width: 80, height: 80, alignment: .center)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation(.linear) {
+                    showGif = true
+                }
+            }
+        }
     }
 }

@@ -118,9 +118,24 @@ struct SpeciesNameView: View {
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.black)
                 .padding(.leading, 5)
-            Spacer()
         }
-        .padding(.leading, 10)
-        .frame(height: 30, alignment: .center)
+    }
+}
+
+
+struct DescriptionView: View {
+    var species: Species
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Description")
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.gray)
+                .frame(alignment: .leading)
+            Text(StringHelper.getEnglishText(from: species.flavorTextEntries ?? []))
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.black)
+                .padding(.leading, 10)
+        }
     }
 }

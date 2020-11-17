@@ -13,10 +13,14 @@ class GIFPlayerView: UIView {
     
     convenience init(gifName: String) {
         self.init()
-        let gif = UIImage.gifImageWithURL(gifName)
-        imageView.image = gif
-        imageView.contentMode = .scaleAspectFit
-        self.addSubview(imageView)
+        DispatchQueue.global().async {
+            let gif = UIImage.gifImageWithURL(gifName)
+            DispatchQueue.main.async {
+                self.imageView.image = gif
+                self.imageView.contentMode = .scaleAspectFit
+                self.addSubview(self.imageView)
+            }
+        }
     }
     
     override init(frame: CGRect) {

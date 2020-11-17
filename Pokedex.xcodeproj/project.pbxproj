@@ -433,6 +433,30 @@
 			path = PokedexView;
 			sourceTree = "<group>";
 		};
+		84C50A942564350D00FAD90D /* StatsView */ = {
+			isa = PBXGroup;
+			children = (
+				90F0BBE8252F185B00A37B3C /* StatsView.swift */,
+			);
+			path = StatsView;
+			sourceTree = "<group>";
+		};
+		84C50A952564351600FAD90D /* EvolutionView */ = {
+			isa = PBXGroup;
+			children = (
+				847A125325316BF300146D24 /* EvolutionView.swift */,
+			);
+			path = EvolutionView;
+			sourceTree = "<group>";
+		};
+		84C50A962564352300FAD90D /* MovesView */ = {
+			isa = PBXGroup;
+			children = (
+				908678292538239F0064B02C /* MovesView.swift */,
+			);
+			path = MovesView;
+			sourceTree = "<group>";
+		};
 		84D9AFE3252B761C00E4C9D5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -654,10 +678,10 @@
 		90DF66EE252F0EBE000284A6 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				84C50A962564352300FAD90D /* MovesView */,
+				84C50A952564351600FAD90D /* EvolutionView */,
+				84C50A942564350D00FAD90D /* StatsView */,
 				846F3C46253CCAFD003A30C6 /* AboutView */,
-				90F0BBE8252F185B00A37B3C /* StatsView.swift */,
-				847A125325316BF300146D24 /* EvolutionView.swift */,
-				908678292538239F0064B02C /* MovesView.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";

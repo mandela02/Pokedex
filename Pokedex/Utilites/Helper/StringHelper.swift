@@ -24,8 +24,10 @@ class StringHelper {
     }
     
     static func getEnglishText(from texts: [FlavorTextEntry]) -> String {
-        let englishText = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.first
-        return englishText ?? ""
+        guard let text = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.randomElement() else {
+            return ""
+        }
+        return text.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)
     }
     
     static func getEnglishText(from texts: [FlavorTextEntryVersionGroup]) -> String {
