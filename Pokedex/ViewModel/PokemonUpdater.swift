@@ -11,7 +11,6 @@ import SwiftUI
 class PokemonUpdater: ObservableObject {
     init() {
         wait()
-        print("init \(pokemonUrl)")
     }
     
     deinit {
@@ -23,7 +22,6 @@ class PokemonUpdater: ObservableObject {
     
     @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
-    @Published var isScrollingEnable = true
     @Published var isLoadingNewData = false
 
     var pokemonUrl: String? {
@@ -49,7 +47,6 @@ class PokemonUpdater: ObservableObject {
     
     @Published var species: Species = Species() {
         didSet {
-            isScrollingEnable = true
             self.isLoadingNewData = false
         }
     }
@@ -72,8 +69,8 @@ class PokemonUpdater: ObservableObject {
     @Published var images: [String] = []
     
     @Published var error: ApiError = .non
-    @Published var isTopView = true
-    @Published var retry = false {
+    var isTopView = true
+    var retry = false {
         didSet {
             if retry && isTopView {
                 initPokemon()
@@ -154,7 +151,6 @@ class PokemonUpdater: ObservableObject {
     }
     
     func moveTo(direction: Direction) {
-        //isScrollingEnable = false
         isLoadingNewData = true
         var zeroArray = ids
         switch direction {

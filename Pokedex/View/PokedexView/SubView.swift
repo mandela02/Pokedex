@@ -77,6 +77,7 @@ struct SubView<Content: View>: View {
         }
         .background(Color.white.clipShape(CustomCorner(corner: [.topLeft, .topRight])))
         .offset(y: offset.height)
+        .frame(height: UIScreen.main.bounds.height/2)
         .gesture(drag())
     }
 }

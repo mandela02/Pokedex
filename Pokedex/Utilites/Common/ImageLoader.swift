@@ -81,7 +81,7 @@ class ImageLoader: ObservableObject {
             .replaceError(with: UIImage())
             .replaceEmpty(with: UIImage())
             .replaceNil(with: UIImage())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global())
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
                 if image == UIImage() { return }
@@ -92,7 +92,7 @@ class ImageLoader: ObservableObject {
                 self?.imageCache.set(forKey: urlString, image: smallImage)
                 self?.displayImage = smallImage
             })
-            .store(in: &cancellables)
+            .store(in: &self.cancellables)
     }
 }
 

@@ -62,7 +62,7 @@ class TypeDetailUpdater: ObservableObject {
         }
     }
     
-    @Published var retry = false {
+    var retry = false {
         didSet {
             if retry {
                 getTypeDetail(from: url)

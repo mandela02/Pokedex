@@ -71,7 +71,7 @@ struct ParallaxView: View {
                 }
             }.blur(radius: showLikedNotification ? 3 : 0)
             
-            PokemonParallaxHeaderView(isShowing: $isShowing,
+            PokemonHeaderView(isShowing: $isShowing,
                                       isInExpandeMode: $isMinimized,
                                       opacity: $opacity,
                                       showLikedNotification: $showLikedNotification,
