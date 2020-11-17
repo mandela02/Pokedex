@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PokemonParallaxHeaderView: View {
+struct PokemonHeaderView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
