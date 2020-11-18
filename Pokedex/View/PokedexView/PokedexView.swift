@@ -72,9 +72,7 @@ struct PokedexView: View {
                 .transition(.move(edge: .bottom))
             }
             PushOnSigalView(show: $showFavorite,
-                            destination:  {
-                                FavoriteView(show: $showFavorite)
-                            })
+                            destination:  { FavoriteView(show: $showFavorite) })
         }
         .onChange(of: selectedMenu, perform: { active in
             withAnimation(.default) {

@@ -13,7 +13,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let context = PersistenceManager.shared.persistentContainer.viewContext
     
-    @Published var settings = UserSettings()
+    private var settings = UserSettings()
     @Published var error: ApiError = .non
 
     init() {
@@ -21,21 +21,21 @@ class SearchDataPrepareUpdater: ObservableObject {
         check = true
     }
     
-    @Published var oldPokemonsCount: Int = 0
+    private var oldPokemonsCount: Int = 0
     
-    @Published var check: Bool = false {
+    private var check: Bool = false {
         didSet {
             loadPokemonResourceToCheck()
         }
     }
     
-    @Published var checkedPokemonResult: PokemonResult = PokemonResult() {
+    private var checkedPokemonResult: PokemonResult = PokemonResult() {
         didSet {
             currentlyPokemonCount = checkedPokemonResult.count
         }
     }
     
-    @Published var currentlyPokemonCount: Int = 0 {
+    private var currentlyPokemonCount: Int = 0 {
         didSet {
             if currentlyPokemonCount != oldPokemonsCount {
                 delete()
@@ -46,7 +46,7 @@ class SearchDataPrepareUpdater: ObservableObject {
         }
     }
     
-    @Published var currentPokemonsResult: PokemonResult = PokemonResult() {
+    private var currentPokemonsResult: PokemonResult = PokemonResult() {
         didSet {
             settings.pokemonsCount = currentPokemonsResult.count
             for resource in currentPokemonsResult.results {
@@ -60,7 +60,7 @@ class SearchDataPrepareUpdater: ObservableObject {
         }
     }
     
-    @Published var needRetry = false {
+    var needRetry = false {
         didSet {
             if needRetry && !isDone {
                 loadPokemonResourceToCheck()
@@ -92,7 +92,7 @@ class SearchDataPrepareUpdater: ObservableObject {
         }
     }
     
-    func loadPokemonResourceToCheck() {
+    private func loadPokemonResourceToCheck() {
         Session
             .share
             .pokemons(from: Constants.baseCheckPokemonUrl)
@@ -109,7 +109,7 @@ class SearchDataPrepareUpdater: ObservableObject {
             }).store(in: &cancellables)
     }
     
-    func loadPokemonResource(limit: Int) {
+    private func loadPokemonResource(limit: Int) {
         Session
             .share
             .pokemons(from: UrlType.getAllPokemonsResource(limit: limit))

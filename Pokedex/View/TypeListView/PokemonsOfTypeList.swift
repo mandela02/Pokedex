@@ -12,7 +12,7 @@ struct PokemonsOfTypeListNavigationView: View {
     var type : PokemonType
     
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-    @StateObject var updater: TypeDetailUpdater = TypeDetailUpdater()
+    @StateObject var updater = TypeDetailUpdater()
 
     @State var isFirstTimeLoading = true
     @State var showDetail: Bool = false
@@ -21,7 +21,7 @@ struct PokemonsOfTypeListNavigationView: View {
     var body: some View {
         ZStack {
             CustomBigTitleNavigationView(content: {
-                ParallaxPokemonsList(pokemons: updater.pokemonUrls)
+                ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
             }, header: {
                 PokemonOfTypeHeaderView(show: $show, typeName: updater.name, damage: updater.damage)
             }, stickyHeader: {

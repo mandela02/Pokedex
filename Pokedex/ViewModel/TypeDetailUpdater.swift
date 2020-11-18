@@ -24,12 +24,13 @@ class TypeDetailUpdater: ObservableObject {
 
     @Published var type: PokeType = PokeType() {
         didSet {
-            pokemonUrls = type.pokemon.map({$0.pokemon.url})
+            pokedexCellModels = type.pokemon.map({PokedexCellModel(pokemonUrl: $0.pokemon.url,
+                                                                   speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)))})
             getDamage()
         }
     }
 
-    @Published var pokemonUrls: [String] = [] {
+    @Published var pokedexCellModels: [PokedexCellModel] = [] {
         didSet {
             isLoading = false
             hasNoPokemon = pokemonUrls.isEmpty

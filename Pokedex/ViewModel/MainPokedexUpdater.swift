@@ -8,6 +8,19 @@
 import Foundation
 import Combine
 
+struct PokedexCellModel: Identifiable, Equatable {
+    var id: String {
+        return pokemonUrl
+    }
+    
+    var pokemonUrl: String = ""
+    var speciesUrl: String = ""
+    
+    var isEmpty: Bool {
+        pokemonUrl.isEmpty && speciesUrl.isEmpty
+    }
+}
+
 class MainPokedexUpdater: ObservableObject {
     @Published var isLoadingPage = false
     @Published var isFinal = false
@@ -35,23 +48,24 @@ class MainPokedexUpdater: ObservableObject {
                 canLoadMore = false
                 isFinal = true
             }
-            pokemonUrls = pokemonUrls +
+            pokedexCellModels = pokedexCellModels +
                 pokemonResult
                 .results
-                .map({UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url))})
+                .map({PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url)),
+                                       speciesUrl: $0.url)})
         }
     }
     
-    var pokemonUrls: [String] = [] {
+    var pokedexCellModels: [PokedexCellModel] = [] {
         didSet {
             self.isLoadingPage = false
         }
     }
                 
-    func loadMorePokemonIfNeeded(current url: String) {
+    func loadMorePokemonIfNeeded(current pokedexCellModel: PokedexCellModel) {
         guard isTopView else { return }
-        let thresholdIndex = pokemonUrls.index(pokemonUrls.endIndex, offsetBy: -5)
-        if pokemonUrls.firstIndex(where: { $0 == url}) == thresholdIndex {
+        let thresholdIndex = pokedexCellModels.index(pokedexCellModels.endIndex, offsetBy: -5)
+        if pokedexCellModels.firstIndex(where: { $0 == pokedexCellModel}) == thresholdIndex {
             loadPokemonResource()
         }
     }
@@ -71,7 +85,8 @@ class MainPokedexUpdater: ObservableObject {
             .sink(receiveCompletion: { [weak self] complete in
                 guard let self = self else { return }
                 switch complete {
-                case .finished: self.error = .non
+                case .finished:
+                    self.error = .non
                 case .failure(let message):
                     self.error = .internet(message: message.localizedDescription)
                     self.isLoadingPage = false

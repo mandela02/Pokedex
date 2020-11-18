@@ -24,19 +24,18 @@ class FavoriteUpdater: ObservableObject {
     @Published var isEmpty: Bool = false
     @Published var favorites: [Favorite] = [] {
         didSet {
-            //loadPokemonDetailData()
-            pokemonUrls = favorites.map({$0.url ?? ""})
+            pokemonUrls = favorites.compactMap({$0.url}).map({PokedexCellModel(pokemonUrl: $0,
+                                                                               speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0)))})
             isEmpty = favorites.isEmpty
         }
     }
     
-    @Published var pokemonUrls: [String] = [] {
+    @Published var pokemonUrls: [PokedexCellModel] = [] {
         didSet {
             isEmpty = favorites.isEmpty
         }
     }
     
-    @Published var pokemons: [Pokemon] = []
     var didChange =  NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange)
     private var cancellables = Set<AnyCancellable>()
 
@@ -44,20 +43,6 @@ class FavoriteUpdater: ObservableObject {
         fetchEntries()
     }
         
-    private func loadPokemonDetailData() {
-        if favorites.isEmpty {
-            pokemons = []
-            return
-        }
-        Publishers.MergeMany(favorites.map({Session.share.pokemon(from: $0.url ?? "")}))
-            .collect()
-            .replaceError(with: [])
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-            .assign(to: \.pokemons, on: self)
-            .store(in: &cancellables)
-    }
-
     private func fetchEntries() {
         let context = PersistenceManager.shared.persistentContainer.viewContext
         let request : NSFetchRequest<Favorite> = Favorite.fetchRequest()

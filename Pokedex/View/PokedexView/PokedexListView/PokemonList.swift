@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct PokemonList: View {
-    var cells: [String]
+    var cells: [PokedexCellModel]
     @Binding var isLoading: Bool
     @Binding var isFinal: Bool
         
     var paddingHeader: CGFloat
     var paddingFooter: CGFloat
     
-    let onCellAppear: (String) -> ()
+    let onCellAppear: (PokedexCellModel) -> ()
     
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
     
@@ -38,7 +38,7 @@ struct PokemonList: View {
                     
                     LazyVGrid(columns: columns) {
                         ForEach(cells) { cell in
-                            TappablePokemonCell(url: cell, size: CGSize(width: width, height: height))
+                            TappablePokemonCell(pokedexCellModel: cell, size: CGSize(width: width, height: height))
                                 .background(Color.clear)
                                 .onAppear {
                                     onCellAppear(cell)

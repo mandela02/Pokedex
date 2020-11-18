@@ -8,45 +8,47 @@
 import Combine
 import SwiftUI
 
+struct PokemonModel {
+    var pokemon: Pokemon = Pokemon()
+    var species: Species = Species()
+}
+
 class PokemonUpdater: ObservableObject {
     init() {
-        wait()
+        initObservers()
     }
     
     deinit {
         cancellables.removeAll()
+        pokedexCellModel.send(completion: .finished)
     }
     
-    private var isFirstTimeLoadViewModel = true
     private var cancellables = Set<AnyCancellable>()
+
+    @Published var error: ApiError = .non
+    var isTopView = true
+    var retry = false {
+        didSet {
+            if retry && isTopView {
+                //initPokemon()
+            }
+        }
+    }
+        
+    private var isFirstTimeLoadViewModel = true
     
     @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
     @Published var isLoadingNewData = false
-
-    var pokemonUrl: String? {
+    
+    var pokedexCellModel = CurrentValueSubject<PokedexCellModel, Never>(PokedexCellModel())
+    
+    @Published var pokemonModel: PokemonModel = PokemonModel() {
         didSet {
-            if pokemonUrl != "" {
-                initPokemon()
+            if pokemonModel.pokemon.pokeId != 0 {
+                updateCurrentId(of: pokemonModel.pokemon)
             }
-        }
-    }
-    
-    @Published var pokemon: Pokemon = Pokemon() {
-        didSet {
-            updateCurrentId(of: pokemon)
-            speciesUrl = pokemon.species.url
-        }
-    }
-
-    private var speciesUrl: String = "" {
-        didSet {
-            initPokemonSpecies(from: speciesUrl)
-        }
-    }
-    
-    @Published var species: Species = Species() {
-        didSet {
+            
             self.isLoadingNewData = false
         }
     }
@@ -68,63 +70,69 @@ class PokemonUpdater: ObservableObject {
     
     @Published var images: [String] = []
     
-    @Published var error: ApiError = .non
-    var isTopView = true
-    var retry = false {
-        didSet {
-            if retry && isTopView {
-                initPokemon()
-            }
-        }
+    func initPokedexCellModel(model: PokedexCellModel) {
+        pokedexCellModel.send(model)
     }
+    
+    private func initObservers() {
+        // drop when url = ""
+        // drop when first time load
+        $images
+            .dropFirst(2)
+            .receive(on: RunLoop.main)
+            .debounce(for: 0.75, scheduler: RunLoop.main)
+            .sink(receiveValue: { [weak self] result in
+                guard let self = self else {
+                    return
+                }
+                self.update()
+            })
+            .store(in: &cancellables)
+        
+        pokedexCellModel.dropFirst().map({ [weak self] pokedexCellModel -> AnyPublisher<(Pokemon, Species), Never>? in
+            guard let self = self, !pokedexCellModel.isEmpty else { return nil }
+            return self.zip(pokemonUrl: pokedexCellModel.pokemonUrl, speciesUrl: pokedexCellModel.speciesUrl)
+        })
+        .compactMap({ $0 })
+        .flatMap({ $0 })
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] pokemon, species in
+            guard let self = self else { return }
+            self.pokemonModel = PokemonModel(pokemon: pokemon, species: species)
+        }.store(in: &cancellables)
+    }
+}
 
-    private func initPokemon() {
-        guard let url = pokemonUrl, !url.isEmpty else {
-            return
-        }
-        Session
-            .share
-            .pokemon(from: url)
-            .receive(on: RunLoop.main)
+extension PokemonUpdater {
+    private func getPokemon(from url: String) -> AnyPublisher<Pokemon, Never> {
+        guard !url.isEmpty else { return PassthroughSubject<Pokemon, Never>().eraseToAnyPublisher() }
+        return Session.share.pokemon(from: url)
+            .replaceError(with: Pokemon())
             .eraseToAnyPublisher()
-            .sink(receiveCompletion: { [weak self] complete in
-                guard let self = self else { return }
-                switch complete {
-                case .finished:
-                    self.error = .non
-                case .failure(let message):
-                    self.error = .internet(message: message.localizedDescription)
-                }
-            }, receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                self.pokemon = result
-            })
-            .store(in: &cancellables)
     }
     
-    private func initPokemonSpecies(from url: String) {
-        Session.share.species(from: url)
-            .receive(on: RunLoop.main)
+    private func getSpecies(from url: String) -> AnyPublisher<Species, Never> {
+        guard !url.isEmpty else { return PassthroughSubject<Species, Never>().eraseToAnyPublisher() }
+        return Session.share.species(from: url)
+            .replaceError(with: Species())
             .eraseToAnyPublisher()
-            .sink(receiveCompletion: { [weak self] complete in
-                guard let self = self else { return }
-                switch complete {
-                case .finished:
-                    self.error = .non
-                case .failure(let message):
-                    self.error = .internet(message: message.localizedDescription)
-                }
-            }, receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                self.species = result
-            })
-            .store(in: &cancellables)
     }
     
+    private func zip(pokemonUrl: String, speciesUrl: String) -> AnyPublisher<(Pokemon, Species), Never> {
+        Publishers.Zip(getPokemon(from: pokemonUrl),
+                       getSpecies(from: speciesUrl))
+            .eraseToAnyPublisher()
+    }
+}
+
+extension PokemonUpdater {
     func update() {
-        let nextUrl = UrlType.getPokemonUrl(of: currentId)
-        if pokemonUrl != nextUrl {
-            pokemonUrl = nextUrl
+        let nextUpdate = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: currentId),
+                                          speciesUrl: UrlType.getSpeciesUrl(of: currentId))
+        if pokedexCellModel.value != nextUpdate {
+            pokedexCellModel.send(nextUpdate)
+        } else {
+            isLoadingNewData = false
         }
     }
     
@@ -185,21 +193,5 @@ class PokemonUpdater: ObservableObject {
             isLoadingNewData = false
             return
         }
-    }
-    
-    private func wait() {
-        // drop when url = ""
-        // drop when first time load
-        $images
-            .dropFirst(2)
-            .receive(on: RunLoop.main)
-            .debounce(for: 0.75, scheduler: RunLoop.main)
-            .sink(receiveValue: { [weak self] result in
-                guard let self = self else {
-                    return
-                }
-                self.update()
-            })
-            .store(in: &cancellables)
     }
 }
