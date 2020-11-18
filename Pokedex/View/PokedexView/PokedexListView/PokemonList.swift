@@ -30,6 +30,12 @@ struct PokemonList: View {
                 ScrollView(.vertical, showsIndicators: false, content: {
                     Color.clear.frame(height: paddingHeader, alignment: .center)
                     
+                    Text("Pokedex")
+                        .font(Biotif.bold(size: 50).font)
+                        .foregroundColor(.black)
+                        .padding(.all, 20)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    
                     LazyVGrid(columns: columns) {
                         ForEach(cells) { cell in
                             TappablePokemonCell(url: cell, size: CGSize(width: width, height: height))

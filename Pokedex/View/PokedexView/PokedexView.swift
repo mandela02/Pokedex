@@ -95,6 +95,8 @@ struct PokedexView: View {
     }
     
     private func initTableView() {
+        UITableView.appearance().separatorStyle = .none
+        UITableView.appearance().separatorColor = .clear
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().backgroundColor = .clear
         UITableView.appearance().allowsSelection = false

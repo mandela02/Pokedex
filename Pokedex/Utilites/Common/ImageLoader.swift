@@ -15,6 +15,7 @@ class ImageLoader: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var imageCache = ImageCache.getImageCache()
     private var url: String
+    private let defaultImage = UIImage(named: "pokeball")
     private var retry = false {
         didSet {
             if retry {
@@ -36,6 +37,7 @@ class ImageLoader: ObservableObject {
         }
 
         guard let url = URL(string: urlString) else {
+            displayImage = defaultImage
             return
         }
         
@@ -86,7 +88,13 @@ class ImageLoader: ObservableObject {
             .receive(on: DispatchQueue.global())
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
-                if image == UIImage() { return }
+                if image == UIImage() {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        self.displayImage = self.defaultImage
+                    }
+                    return
+                }
                
                 let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
