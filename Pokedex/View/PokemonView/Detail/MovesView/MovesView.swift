@@ -42,7 +42,7 @@ struct MovesView: View {
                     Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
                 }
                 .listStyle(SidebarListStyle())
-                .animation(.linear)
+                .animation(.default)
                 .onAppear {
                     moveUpdater.pokemon = pokemon
                 }

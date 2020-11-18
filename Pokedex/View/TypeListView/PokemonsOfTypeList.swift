@@ -126,7 +126,7 @@ struct PokemonOfTypeHeaderView: View {
 struct PokemonsOfTypeEmptyView: View {
     var body: some View {
         ZStack {
-            VStack(spacing: 0) {
+            VStack(spacing: 20) {
                 Image("suprise_pikachu")
                     .resizable()
                     .aspectRatio(contentMode: .fit)

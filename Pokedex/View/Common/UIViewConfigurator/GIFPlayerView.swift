@@ -13,7 +13,8 @@ class GIFPlayerView: UIView {
     
     convenience init(gifName: String) {
         self.init()
-        DispatchQueue.global().async {
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
             let gif = UIImage.gifImageWithURL(gifName)
             DispatchQueue.main.async {
                 self.imageView.image = gif
