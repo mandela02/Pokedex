@@ -52,7 +52,7 @@ class ImageLoader: ObservableObject {
             .replaceError(with: UIImage())
             .replaceEmpty(with: UIImage())
             .replaceNil(with: UIImage())
-            .receive(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global())
             .eraseToAnyPublisher()
             .sink(receiveValue: { [weak self] image in
                 guard let self = self else { return }
@@ -63,7 +63,9 @@ class ImageLoader: ObservableObject {
                 let rect = AVMakeRect(aspectRatio: image.size, insideRect: smallRect)
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
                 self.imageCache.set(forKey: key, image: smallImage)
-                self.displayImage = smallImage
+                DispatchQueue.main.async {
+                    self.displayImage = smallImage
+                }
             })
             .store(in: &cancellables)
     }
@@ -90,7 +92,9 @@ class ImageLoader: ObservableObject {
                 guard let smallImage = image.resizedImage(for: rect.size) else { return }
                 
                 self?.imageCache.set(forKey: urlString, image: smallImage)
-                self?.displayImage = smallImage
+                DispatchQueue.main.async {
+                    self?.displayImage = smallImage
+                }
             })
             .store(in: &self.cancellables)
     }
