@@ -117,7 +117,7 @@ struct Session {
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
-            return PassthroughSubject<T, Error>().eraseToAnyPublisher()
+            return Empty(completeImmediately: true).eraseToAnyPublisher()
         }
         let publisher = URLSession.shared.dataTaskPublisher(for: url)
             .mapError { $0 as Error }

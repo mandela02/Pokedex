@@ -61,12 +61,6 @@ class PokemonUpdater: ObservableObject {
             }
         }
     }
-
-    private var ids: [Int] = [] {
-        didSet {
-            images = ids.map({$0 == 0 ? "" : UrlType.getImageUrlString(of: $0)})
-        }
-    }
     
     @Published var images: [String] = []
     
@@ -89,12 +83,10 @@ class PokemonUpdater: ObservableObject {
             })
             .store(in: &cancellables)
         
-        pokedexCellModel.dropFirst().map({ [weak self] pokedexCellModel -> AnyPublisher<(Pokemon, Species), Never>? in
-            guard let self = self, !pokedexCellModel.isEmpty else { return nil }
+        pokedexCellModel.dropFirst().flatMap({ [weak self] pokedexCellModel -> AnyPublisher<(Pokemon, Species), Never> in
+            guard let self = self, !pokedexCellModel.isEmpty else { return Empty(completeImmediately: true).eraseToAnyPublisher() }
             return self.zip(pokemonUrl: pokedexCellModel.pokemonUrl, speciesUrl: pokedexCellModel.speciesUrl)
         })
-        .compactMap({ $0 })
-        .flatMap({ $0 })
         .receive(on: DispatchQueue.main)
         .sink { [weak self] pokemon, species in
             guard let self = self else { return }
@@ -103,6 +95,7 @@ class PokemonUpdater: ObservableObject {
     }
 }
 
+//get data
 extension PokemonUpdater {
     private func getPokemon(from url: String) -> AnyPublisher<Pokemon, Never> {
         guard !url.isEmpty else { return PassthroughSubject<Pokemon, Never>().eraseToAnyPublisher() }
@@ -125,6 +118,7 @@ extension PokemonUpdater {
     }
 }
 
+//create scrollable images
 extension PokemonUpdater {
     func update() {
         let nextUpdate = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: currentId),
@@ -155,24 +149,24 @@ extension PokemonUpdater {
         zeroArray[currentId] = currentId
         zeroArray[currentId + 1] = currentId + 1 > settings.speciesCount ? 0 : currentId + 1
         zeroArray[currentId + 2] = currentId + 2 > settings.speciesCount ? 0 : currentId + 2
-        ids = zeroArray
+        images = zeroArray.map({$0 == 0 ? "" : UrlType.getImageUrlString(of: $0)})
     }
     
     func moveTo(direction: Direction) {
         isLoadingNewData = true
-        var zeroArray = ids
+        var zeroArray = images
         switch direction {
         case .left:
             if currentId != 1 {
                 currentId -= 1
                 if currentId > 1 {
-                    zeroArray[currentId - 1] = currentId - 1
+                    zeroArray[currentId - 1] = getImage(from: currentId - 1)
                 }
                 if currentId > 2 {
-                    zeroArray[currentId - 2] = currentId - 2
+                    zeroArray[currentId - 2] = getImage(from: currentId - 2)
                 }
                 zeroArray.removeLast()
-                ids = zeroArray
+                images = zeroArray
             } else {
                 currentScrollIndex += 1
                 isLoadingNewData = false
@@ -181,10 +175,10 @@ extension PokemonUpdater {
             if currentId != settings.speciesCount {
                 currentId += 1
                 if currentId > 3 {
-                    zeroArray[currentId - 3] = 0
+                    zeroArray[currentId - 3] = ""
                 }
-                zeroArray.append( currentId + 2 > settings.speciesCount ? 0 : currentId + 2)
-                ids = zeroArray
+                zeroArray.append( currentId + 2 > settings.speciesCount ? "" : getImage(from: currentId + 2))
+                images = zeroArray
             } else {
                 currentScrollIndex -= 1
                 isLoadingNewData = false
@@ -193,5 +187,9 @@ extension PokemonUpdater {
             isLoadingNewData = false
             return
         }
+    }
+    
+    private func getImage(from id: Int) -> String {
+        return UrlType.getImageUrlString(of: id)
     }
 }
