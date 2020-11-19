@@ -33,7 +33,7 @@ class TypeDetailUpdater: ObservableObject {
     @Published var pokedexCellModels: [PokedexCellModel] = [] {
         didSet {
             isLoading = false
-            hasNoPokemon = pokemonUrls.isEmpty
+            hasNoPokemon = pokedexCellModels.isEmpty
         }
     }
 

@@ -184,30 +184,34 @@ struct ParallaxContentView: View {
                 }
             }
             
-            if updater.pokemonModel.pokemon.isDefault {
-                HeaderImageScrollView(index: $updater.currentScrollIndex,
-                                      items: updater.images,
-                                      onEndScrolling: { direction in
-                                        updater.moveTo(direction: direction)
-                                      })
-                    .frame(width: UIScreen.main.bounds.width * 1/2,
-                           height: maxHeight * 2/3,
-                           alignment: .center)
-                    .opacity(opacity)
-                    .scaleEffect(scale)
-                    .offset(y: imageOffsetY)
-                    .isRemove(!isShowingImage)
-                    .disabled(reachabilityUpdater.hasNoInternet)
-            } else {
-                DownloadedImageView(withURL: updater.pokemonModel.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
-                    .scaleEffect(1.5)
-                    .frame(width: UIScreen.main.bounds.width * 1/2,
-                           height: maxHeight * 2/3,
-                           alignment: .center)
-                    .opacity(opacity)
-                    .scaleEffect(scale)
-                    .offset(y: imageOffsetY)
+            if !updater.isLoadingInitialData {
+                if updater.pokemonModel.pokemon.isDefault {
+                    HeaderImageScrollView(index: $updater.currentScrollIndex,
+                                          isAllowScroll: $updater.isAllowScroll,
+                                          items: updater.images,
+                                          onEndScrolling: { direction in
+                                            updater.moveTo(direction: direction)
+                                          })
+                        .frame(width: UIScreen.main.bounds.width * 1/2,
+                               height: maxHeight * 2/3,
+                               alignment: .center)
+                        .opacity(opacity)
+                        .scaleEffect(scale)
+                        .offset(y: imageOffsetY)
+                        .isRemove(!isShowingImage)
+                        .disabled(reachabilityUpdater.hasNoInternet)
+                } else {
+                    DownloadedImageView(withURL: updater.pokemonModel.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
+                        .scaleEffect(1.5)
+                        .frame(width: UIScreen.main.bounds.width * 1/2,
+                               height: maxHeight * 2/3,
+                               alignment: .center)
+                        .opacity(opacity)
+                        .scaleEffect(scale)
+                        .offset(y: imageOffsetY)
+                }
             }
+            
         })
     }
 }

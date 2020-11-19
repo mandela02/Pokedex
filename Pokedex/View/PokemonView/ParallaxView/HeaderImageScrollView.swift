@@ -9,7 +9,8 @@ import SwiftUI
 
 struct HeaderImageScrollView: View {
     @Binding var index: Int
-    
+    @Binding var isAllowScroll: Bool
+
     var items: [String]
     var onEndScrolling: (Direction) -> ()
     
@@ -19,11 +20,13 @@ struct HeaderImageScrollView: View {
     
     private func drag(in size: CGSize) -> some Gesture {
         return DragGesture().onChanged({ value in
+            guard isAllowScroll else { return }
             withAnimation(.spring()) {
                 self.isGestureActive = true
                 self.offset = value.translation.width + -size.width * CGFloat(self.index)
             }
         }).onEnded({ value in
+            guard isAllowScroll else { return }
             var direction: Direction = .up
             withAnimation(.spring()) {
                 if -value.predictedEndTranslation.width > size.width / 2, self.index < self.items.endIndex - 1 {

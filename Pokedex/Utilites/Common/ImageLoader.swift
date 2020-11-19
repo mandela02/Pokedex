@@ -12,10 +12,13 @@ import func AVFoundation.AVMakeRect
 
 class ImageLoader: ObservableObject {
     @Published var displayImage: UIImage?
+    var isSuccess = true
+
     private var cancellables = Set<AnyCancellable>()
     private var imageCache = ImageCache.getImageCache()
     private var url: String
     private let defaultImage = UIImage(named: "pokeball")
+        
     private var retry = false {
         didSet {
             if retry {
@@ -92,6 +95,7 @@ class ImageLoader: ObservableObject {
                     DispatchQueue.main.async { [weak self] in
                         guard let self = self else { return }
                         self.displayImage = self.defaultImage
+                        self.isSuccess = false
                     }
                     return
                 }

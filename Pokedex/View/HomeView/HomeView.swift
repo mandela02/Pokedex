@@ -13,7 +13,7 @@ struct EmptyPresentView: View {
         EmptyView()
             .fullScreenCover(isPresented: .constant(true)) {
                 PrepareView()
-            }
+            }.statusBar(hidden: true)
     }
 }
 

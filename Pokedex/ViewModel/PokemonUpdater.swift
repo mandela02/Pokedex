@@ -35,18 +35,27 @@ class PokemonUpdater: ObservableObject {
         }
     }
         
-    private var isFirstTimeLoadViewModel = true
+    var isLoadingInitialData = true
+    private var settings = UserSettings()
     
-    @Published var settings = UserSettings()
     @Published var currentScrollIndex = 0
-    @Published var isLoadingNewData = false
-    
+    @Published var isLoadingNewData = false {
+        didSet {
+            if !isLoadingNewData {
+                isAllowScroll = true
+            }
+        }
+    }
+    @Published var isAllowScroll = true
+
     var pokedexCellModel = CurrentValueSubject<PokedexCellModel, Never>(PokedexCellModel())
     
     @Published var pokemonModel: PokemonModel = PokemonModel() {
         didSet {
             if pokemonModel.pokemon.pokeId != 0 {
-                updateCurrentId(of: pokemonModel.pokemon)
+                if currentId != pokemonModel.pokemon.pokeId {
+                    currentId = pokemonModel.pokemon.pokeId
+                }
             }
             
             self.isLoadingNewData = false
@@ -55,9 +64,9 @@ class PokemonUpdater: ObservableObject {
     
     private var currentId: Int = 0 {
         didSet {
-            if isFirstTimeLoadViewModel {
+            if isLoadingInitialData {
                 generateIds()
-                isFirstTimeLoadViewModel = false
+                isLoadingInitialData = false
             }
         }
     }
@@ -121,6 +130,7 @@ extension PokemonUpdater {
 //create scrollable images
 extension PokemonUpdater {
     func update() {
+        isAllowScroll = false
         let nextUpdate = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: currentId),
                                           speciesUrl: UrlType.getSpeciesUrl(of: currentId))
         if pokedexCellModel.value != nextUpdate {
@@ -129,13 +139,7 @@ extension PokemonUpdater {
             isLoadingNewData = false
         }
     }
-    
-    private func updateCurrentId(of pokemon: Pokemon) {
-        if currentId != pokemon.pokeId {
-            currentId = pokemon.pokeId
-        }
-    }
-    
+        
     private func generateIds() {
         var zeroArray = Array(repeating: 0, count: currentId + 3)
         currentScrollIndex = currentId
