@@ -74,6 +74,12 @@ struct LocationPickerView: View {
             .font(Biotif.bold(size: 20).font)
             .foregroundColor(.blue)
     }
+    
+    var selectedAreaLabel: some View {
+        Text(updater.selectedArea)
+            .font(Biotif.bold(size: 20).font)
+            .foregroundColor(.blue)
+    }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -103,6 +109,25 @@ struct LocationPickerView: View {
                     Picker(selection: $updater.selectedPokedex,
                            label: selectedPokedexLabel) {
                         ForEach(updater.pokedexNames) {
+                            Text($0)
+                        }
+                    }.pickerStyle(MenuPickerStyle())
+                }.frame(minWidth: 0, maxWidth: .infinity)
+                .padding()
+                .background(Color.white)
+                .cornerRadius(10)
+                .shadow(radius: 2)
+            }
+            
+            if updater.isHavingMultiArea {
+                HStack {
+                    Text("Area")
+                        .font(Biotif.regular(size: 20).font)
+                        .foregroundColor(.black)
+                    Spacer()
+                    Picker(selection: $updater.selectedArea,
+                           label: selectedAreaLabel) {
+                        ForEach(updater.areaNames) {
                             Text($0)
                         }
                     }.pickerStyle(MenuPickerStyle())

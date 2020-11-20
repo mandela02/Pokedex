@@ -122,6 +122,14 @@ struct Session {
         return call(url)
     }
 
+    func location(from url: String) -> AnyPublisher<Location, Error> {
+        return call(url)
+    }
+
+    func area(from url: String) -> AnyPublisher<LocationArea, Error> {
+        return call(url)
+    }
+
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return Empty(completeImmediately: true).eraseToAnyPublisher()

@@ -36,6 +36,10 @@ class RegionDetailUpdater: ObservableObject {
                 getPokedex(from: region)
             } else {
                 pokedexNames.removeAll()
+                selectedPokedex = ""
+                if let url = region?.locations.first(where: {$0.name.eliminateDash == selectedLocation.lowercased()})?.url {
+                    getLocation(from: url)
+                }
             }
         }
     }
@@ -60,7 +64,33 @@ class RegionDetailUpdater: ObservableObject {
     }
     @Published var pokedexCellModels: [PokedexCellModel] = []
 
-    func getRegion(from url: String?) {
+    @Published var location: Location? {
+        didSet {
+            guard let location = location else { return }
+            self.areaNames = location.areas.map({$0.name.eliminateDash.capitalizingFirstLetter()})
+            self.selectedArea = self.areaNames.first ?? ""
+        }
+    }
+
+    @Published var areaNames: [String] = [] {
+        didSet {
+            isHavingMultiArea = areaNames.count > 1
+        }
+    }
+    @Published var isHavingMultiArea = false
+    @Published var selectedArea = "" {
+        didSet {
+            guard let location = location else { return }
+            let areas = location.areas
+            if areas.isEmpty { return }
+            let currentArea = selectedArea.lowercased()
+            if let pokedexUrl = areas.first(where: {$0.name.eliminateDash == currentArea})?.url {
+                getArea(from: pokedexUrl)
+            }
+        }
+    }
+
+    private func getRegion(from url: String?) {
         guard let url = url else { return }
         Session.share.region(from: url)
             .replaceError(with: Region())
@@ -70,7 +100,7 @@ class RegionDetailUpdater: ObservableObject {
             }.store(in: &cancellables)
     }
     
-    func getPokedex(from region: Region?) {
+    private func getPokedex(from region: Region?) {
         guard let region = region else { return }
         let dexs = region.pokedexes
         if dexs.isEmpty { return }
@@ -78,7 +108,7 @@ class RegionDetailUpdater: ObservableObject {
         selectedPokedex = pokedexNames.first ?? ""
     }
     
-    func getPokemons(from url: String) {
+    private func getPokemons(from url: String) {
         if url.isEmpty { return }
         Session.share.pokedex(from: url)
             .replaceError(with: Pokedex())
@@ -93,5 +123,35 @@ class RegionDetailUpdater: ObservableObject {
         return pokedex.pokemons
             .map({PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.species.url)),
                                    speciesUrl: $0.species.url)})
+    }
+    
+    private func getLocation(from url: String) {
+        if url.isEmpty { return }
+        Session.share.location(from: url)
+            .replaceError(with: Location())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] location in
+                guard let self = self else { return }
+                self.location = location
+            }.store(in: &cancellables)
+    }
+    
+    private func getArea(from url: String) {
+        if url.isEmpty { return }
+        Session.share.area(from: url)
+            .replaceError(with: LocationArea())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] area in
+                guard let self = self else { return }
+                self.pokedexCellModels = self.getPokemonCellModels(form: area)
+            }.store(in: &cancellables)
+    }
+    
+    private func getPokemonCellModels(form area: LocationArea) -> [PokedexCellModel] {
+        if area.pokemons.isEmpty { return [] }
+        return area.pokemons
+            .map({PokedexCellModel(pokemonUrl: $0.pokemon.url,
+                                   speciesUrl: UrlType
+                                    .getPokemonUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)))})
     }
 }
