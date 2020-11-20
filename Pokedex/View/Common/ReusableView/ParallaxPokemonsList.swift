@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ParallaxPokemonsList: View {
-    var pokemons: [String]
+    var pokemons: [PokedexCellModel]
     
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
     
@@ -27,7 +27,7 @@ struct ParallaxPokemonsList: View {
     var body: some View {
         LazyVGrid(columns: calculateGridItem()) {
             ForEach(pokemons) { cell in
-                TappablePokemonCell(url: cell, size: CGSize(width: width, height: height))
+                TappablePokemonCell(pokedexCellModel: cell, size: CGSize(width: width, height: height))
                     .background(Color.clear)
             }
         }.animation(.linear)

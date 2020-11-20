@@ -90,13 +90,14 @@ struct PokemonCellView: View {
     
     var imageURL: String
     var name: String
-    var pokemonUrl: String
+    var pokedexCellModel: PokedexCellModel
     
     var canTap: Bool = true
     
     init(pokemon: NamedAPIResource) {
         let pokeId = StringHelper.getPokemonId(from: pokemon.url)
-        pokemonUrl = UrlType.getPokemonUrl(of: pokeId)
+        self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: pokeId),
+                                                 speciesUrl: UrlType.getSpeciesUrl(of: pokeId))
         self.name = pokemon.name
         self.imageURL = UrlType.getImageUrlString(of: pokeId)
     }
@@ -117,7 +118,7 @@ struct PokemonCellView: View {
                     .foregroundColor(.black)
             }
         } destination: {
-            ParallaxView(pokemonUrl: pokemonUrl, isShowing: $show)
+            ParallaxView(pokedexCellModel: pokedexCellModel, isShowing: $show)
         }.disabled(reachabilityUpdater.hasNoInternet)
     }
 }

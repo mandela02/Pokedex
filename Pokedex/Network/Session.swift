@@ -40,6 +40,10 @@ enum UrlType: String, CaseIterable {
         return Constants.baseUrl + "pokemon/\(order)/"
     }
     
+    static func getSpeciesUrl(of order: Int) -> String {
+        return Constants.baseUrl + "pokemon-species/\(order)/"
+    }
+
     static func getAbilityUrl(of name: String) -> String {
         return Constants.baseAbilityUrl + name.lowercased()
     }
@@ -113,7 +117,7 @@ struct Session {
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
-            return PassthroughSubject<T, Error>().eraseToAnyPublisher()
+            return Empty(completeImmediately: true).eraseToAnyPublisher()
         }
         let publisher = URLSession.shared.dataTaskPublisher(for: url)
             .mapError { $0 as Error }

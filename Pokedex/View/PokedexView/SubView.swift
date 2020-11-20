@@ -128,7 +128,9 @@ struct SeachResultCell: View {
         TapToPushView(show: $show) {
             Text(name.capitalizingFirstLetter())
         } destination: {
-            ParallaxView(pokemonUrl: url, isShowing: $show)
+            ParallaxView(pokedexCellModel: PokedexCellModel(pokemonUrl: url,
+                                                            speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: url))),
+                         isShowing: $show)
         }
     }
 }

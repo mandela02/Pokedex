@@ -11,7 +11,7 @@ struct ParallaxView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
 
     @Binding var isShowing: Bool
-    var url: String?
+    var pokedexCellModel: PokedexCellModel?
         
     @StateObject var voiceUpdater: VoiceHelper = VoiceHelper()
     @StateObject var updater: PokemonUpdater = PokemonUpdater()
@@ -22,14 +22,14 @@ struct ParallaxView: View {
     @State private var opacity: Double = 1
     @State private var showLikedNotification: Bool = false
 
-    init(pokemonUrl: String, isShowing: Binding<Bool>) {
+    init(pokedexCellModel: PokedexCellModel, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
-        self.url = pokemonUrl
+        self.pokedexCellModel = pokedexCellModel
     }
     
     var body: some View {
         ZStack {
-            updater.pokemon.mainType.color.background.ignoresSafeArea()
+            updater.pokemonModel.pokemon.mainType.color.background.ignoresSafeArea()
                 .animation(.linear)
             
             if isShowingImage {
@@ -64,7 +64,7 @@ struct ParallaxView: View {
                 HStack {
                     Spacer()
                     PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
-                                        about: $updater.pokemon)
+                                        about: updater.pokemonModel.pokemon)
                         .padding(.trailing, 30)
                         .padding(.bottom, 30)
                         .transition(.opacity)
@@ -75,13 +75,15 @@ struct ParallaxView: View {
                                       isInExpandeMode: $isMinimized,
                                       opacity: $opacity,
                                       showLikedNotification: $showLikedNotification,
-                                      pokemon: updater.pokemon)
+                                      pokemon: updater.pokemonModel.pokemon)
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
                 .blur(radius: showLikedNotification ? 3 : 0)
             
             
             if showLikedNotification {
-                LikedNotificationView(id: updater.pokemon.pokeId, name: updater.pokemon.name, image: updater.pokemon.sprites.other?.artwork.front ?? "")
+                LikedNotificationView(id: updater.pokemonModel.pokemon.pokeId,
+                                      name: updater.pokemonModel.pokemon.name,
+                                      image: updater.pokemonModel.pokemon.sprites.other?.artwork.front ?? "")
                     .animation(.default)
             }
         }
@@ -96,11 +98,10 @@ struct ParallaxView: View {
                     }
                 }
             }
-        }).onReceive(updater.$pokemon, perform: { pokemon in
-            voiceUpdater.pokemon = pokemon
-        }).onReceive(updater.$species, perform: { species in
-            if species.id != 0 {
-                voiceUpdater.species = species
+        }).onReceive(updater.$pokemonModel, perform: { pokemonModel in
+            voiceUpdater.pokemon = pokemonModel.pokemon
+            if pokemonModel.species.id != 0 {
+                voiceUpdater.species = pokemonModel.species
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     voiceUpdater.isSpeaking = true
@@ -113,8 +114,8 @@ struct ParallaxView: View {
             updater.isTopView = true
             if isFirstTimeLoadView {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if let url = url, url != "" {
-                        updater.pokemonUrl = url
+                    if let model = pokedexCellModel, !model.isEmpty {
+                        updater.initPokedexCellModel(model: model)
                     }
                 }
             }
@@ -174,8 +175,8 @@ struct ParallaxContentView: View {
                             .frame(height: 100, alignment: .center)
                             .cornerRadius(25)
                             .offset(y: 50)
-                        DetailPageView(species: updater.species,
-                                       pokemon: updater.pokemon)
+                        DetailPageView(species: updater.pokemonModel.species,
+                                       pokemon: updater.pokemonModel.pokemon)
                             .background(Color.white)
                     }
                     .blur(radius: updater.isLoadingNewData ? 3 : 0)
@@ -183,30 +184,34 @@ struct ParallaxContentView: View {
                 }
             }
             
-            if updater.pokemon.isDefault {
-                HeaderImageScrollView(index: $updater.currentScrollIndex,
-                                      items: updater.images,
-                                      onEndScrolling: { direction in
-                                        updater.moveTo(direction: direction)
-                                      })
-                    .frame(width: UIScreen.main.bounds.width * 1/2,
-                           height: maxHeight * 2/3,
-                           alignment: .center)
-                    .opacity(opacity)
-                    .scaleEffect(scale)
-                    .offset(y: imageOffsetY)
-                    .isRemove(!isShowingImage)
-                    .disabled(reachabilityUpdater.hasNoInternet)
-            } else {
-                DownloadedImageView(withURL: updater.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
-                    .scaleEffect(1.5)
-                    .frame(width: UIScreen.main.bounds.width * 1/2,
-                           height: maxHeight * 2/3,
-                           alignment: .center)
-                    .opacity(opacity)
-                    .scaleEffect(scale)
-                    .offset(y: imageOffsetY)
+            if !updater.isLoadingInitialData {
+                if updater.pokemonModel.pokemon.isDefault {
+                    HeaderImageScrollView(index: $updater.currentScrollIndex,
+                                          isAllowScroll: $updater.isAllowScroll,
+                                          items: updater.images,
+                                          onEndScrolling: { direction in
+                                            updater.moveTo(direction: direction)
+                                          })
+                        .frame(width: UIScreen.main.bounds.width * 1/2,
+                               height: maxHeight * 2/3,
+                               alignment: .center)
+                        .opacity(opacity)
+                        .scaleEffect(scale)
+                        .offset(y: imageOffsetY)
+                        .isRemove(!isShowingImage)
+                        .disabled(reachabilityUpdater.hasNoInternet)
+                } else {
+                    DownloadedImageView(withURL: updater.pokemonModel.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
+                        .scaleEffect(1.5)
+                        .frame(width: UIScreen.main.bounds.width * 1/2,
+                               height: maxHeight * 2/3,
+                               alignment: .center)
+                        .opacity(opacity)
+                        .scaleEffect(scale)
+                        .offset(y: imageOffsetY)
+                }
             }
+            
         })
     }
 }

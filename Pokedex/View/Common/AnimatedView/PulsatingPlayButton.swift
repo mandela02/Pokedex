@@ -11,7 +11,7 @@ struct PulsatingPlayButton: View {
     @State private var pulstate: Bool = false
     @State private var showWaves: Bool = false
     @Binding private var isSpeaking: Bool
-    @Binding private var pokemon: Pokemon
+    private var pokemon: Pokemon
 
     private var size: CGFloat = 50
 
@@ -27,9 +27,9 @@ struct PulsatingPlayButton: View {
                         .speed(1)
     }
     
-    init(isSpeaking: Binding<Bool>, about pokemon: Binding<Pokemon>) {
+    init(isSpeaking: Binding<Bool>, about pokemon: Pokemon) {
         self._isSpeaking = isSpeaking
-        self._pokemon = pokemon
+        self.pokemon = pokemon
         self.pulstate = isSpeaking.wrappedValue
         self.showWaves = isSpeaking.wrappedValue
     }

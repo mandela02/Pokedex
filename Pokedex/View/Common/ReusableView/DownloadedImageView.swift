@@ -79,6 +79,7 @@ struct NormalImageView: View {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
+                .scaleEffect(imageLoader.isSuccess ? 1 : 0.8)
         } else {
             Image("pokeball")
                 .resizable()
@@ -95,14 +96,14 @@ struct NormalImageView: View {
 
 struct AnimatedImageView: View {
     @ObservedObject var imageLoader: ImageLoader
-    @State var image: UIImage?
-    @State private var trigger: Bool = false
-    @State private var needHidden: Bool  = false
+    @State private var isDoneLoading = false
+    @State private var trigger = false
+    @State private var needHidden = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                if let image = image {
+                if isDoneLoading {
                     ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
                         .onAppear {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
@@ -110,10 +111,10 @@ struct AnimatedImageView: View {
                             })
                         }
                 } else {
-                    WigglePokeBallView(image: $image, imageLoader: imageLoader)
+                    WigglePokeBallView(imageLoader: imageLoader)
                         .onReceive(imageLoader.$displayImage, perform: { displayImage in
                             if displayImage != nil {
-                                self.image = displayImage
+                                self.isDoneLoading = true
                                 self.trigger = true
                             }
                         })
@@ -166,7 +167,6 @@ struct ExposionView: View {
 }
 
 struct WigglePokeBallView: View {
-    @Binding var image: UIImage?
     @ObservedObject var imageLoader: ImageLoader
     
     @State private var isStartWigle: Bool = false

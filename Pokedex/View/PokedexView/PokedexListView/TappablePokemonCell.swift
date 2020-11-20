@@ -11,15 +11,15 @@ struct TappablePokemonCell: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @State var show: Bool = false
 
-    let url: String
+    let pokedexCellModel: PokedexCellModel
     let size: CGSize
     
     var body: some View {
         TapToPushView(show: $show) {
-            PokedexCardView(url: url, size: size)
+            PokedexCardView(url: pokedexCellModel.pokemonUrl, size: size)
                 .contextMenu(menuItems: {})
         } destination: {
-            ParallaxView(pokemonUrl: url, isShowing: $show)
+            ParallaxView(pokedexCellModel: pokedexCellModel, isShowing: $show)
                 .environmentObject(reachabilityUpdater)
         }.buttonStyle(PlainButtonStyle())
     }
