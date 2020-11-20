@@ -74,6 +74,7 @@
 		8483127D2538B006006FBCD6 /* Publishers+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483127C2538B005006FBCD6 /* Publishers+Extension.swift */; };
 		8489E44B25657A1D0017821E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8489E44A25657A1D0017821E /* HomeView.swift */; };
 		8489E47F256809740017821E /* Pokedex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8489E47E256809740017821E /* Pokedex.swift */; };
+		8489E484256815510017821E /* LocationPokemonGridCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8489E483256815510017821E /* LocationPokemonGridCellView.swift */; };
 		8493589D2557344B00A782A9 /* CustomCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8493589C2557344B00A782A9 /* CustomCorner.swift */; };
 		8497FE132547C085006B7100 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8497FE122547C085006B7100 /* ErrorHandler.swift */; };
 		84CF1781253DD75400FF312B /* TappablePokemonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF1780253DD75400FF312B /* TappablePokemonCell.swift */; };
@@ -224,6 +225,7 @@
 		8483127C2538B005006FBCD6 /* Publishers+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publishers+Extension.swift"; sourceTree = "<group>"; };
 		8489E44A25657A1D0017821E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		8489E47E256809740017821E /* Pokedex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokedex.swift; sourceTree = "<group>"; };
+		8489E483256815510017821E /* LocationPokemonGridCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPokemonGridCellView.swift; sourceTree = "<group>"; };
 		8493589C2557344B00A782A9 /* CustomCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCorner.swift; sourceTree = "<group>"; };
 		8497FE122547C085006B7100 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		84CF1780253DD75400FF312B /* TappablePokemonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TappablePokemonCell.swift; sourceTree = "<group>"; };
@@ -717,6 +719,7 @@
 			children = (
 				90866E462567D31D00EACA4B /* RegionDetailUpdater.swift */,
 				90866E4B2567D3FF00EACA4B /* RegionDetailView.swift */,
+				8489E483256815510017821E /* LocationPokemonGridCellView.swift */,
 			);
 			path = RegionDetail;
 			sourceTree = "<group>";
@@ -941,6 +944,7 @@
 				847A125F2531EF0500146D24 /* Stat.swift in Sources */,
 				8489E44B25657A1D0017821E /* HomeView.swift in Sources */,
 				847A125425316BF300146D24 /* EvolutionView.swift in Sources */,
+				8489E484256815510017821E /* LocationPokemonGridCellView.swift in Sources */,
 				8483127D2538B006006FBCD6 /* Publishers+Extension.swift in Sources */,
 				90866E4C2567D3FF00EACA4B /* RegionDetailView.swift in Sources */,
 				907D5F52252B130100E30748 /* ImageLoader.swift in Sources */,

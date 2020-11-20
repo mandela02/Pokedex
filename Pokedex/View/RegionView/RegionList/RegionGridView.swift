@@ -27,6 +27,9 @@ struct RegionGridView: View {
                     }
                 }
                 Color.clear.frame(height: height)
+
+                MovingDot()
+                    .isRemove(!updater.isLoadingData)
             }
         })
     }

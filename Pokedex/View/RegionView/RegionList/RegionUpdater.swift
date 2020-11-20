@@ -25,6 +25,7 @@ class RegionUpdater: ObservableObject {
             guard let regionResult = regionResult else {
                 return
             }
+            isLoadingData = false
             regionCellModels = regionResult.results
                 .map({RegionCellModel(name: $0.name,
                                       url: $0.url,
@@ -34,7 +35,8 @@ class RegionUpdater: ObservableObject {
     }
     
     @Published var regionCellModels: [RegionCellModel] = []
-    
+    @Published var isLoadingData = true
+
     init() {
         getAllRegion()
     }
