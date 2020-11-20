@@ -118,6 +118,10 @@ struct Session {
         return call(url)
     }
 
+    func pokedex(from url: String) -> AnyPublisher<Pokedex, Error> {
+        return call(url)
+    }
+
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
             return Empty(completeImmediately: true).eraseToAnyPublisher()

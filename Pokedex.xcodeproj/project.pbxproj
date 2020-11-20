@@ -73,6 +73,7 @@
 		847A5AF3253BD4DC00496D8F /* BackButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847A5AF2253BD4DC00496D8F /* BackButtonView.swift */; };
 		8483127D2538B006006FBCD6 /* Publishers+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483127C2538B005006FBCD6 /* Publishers+Extension.swift */; };
 		8489E44B25657A1D0017821E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8489E44A25657A1D0017821E /* HomeView.swift */; };
+		8489E47F256809740017821E /* Pokedex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8489E47E256809740017821E /* Pokedex.swift */; };
 		8493589D2557344B00A782A9 /* CustomCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8493589C2557344B00A782A9 /* CustomCorner.swift */; };
 		8497FE132547C085006B7100 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8497FE122547C085006B7100 /* ErrorHandler.swift */; };
 		84CF1781253DD75400FF312B /* TappablePokemonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF1780253DD75400FF312B /* TappablePokemonCell.swift */; };
@@ -222,6 +223,7 @@
 		847A5AF2253BD4DC00496D8F /* BackButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButtonView.swift; sourceTree = "<group>"; };
 		8483127C2538B005006FBCD6 /* Publishers+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publishers+Extension.swift"; sourceTree = "<group>"; };
 		8489E44A25657A1D0017821E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8489E47E256809740017821E /* Pokedex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokedex.swift; sourceTree = "<group>"; };
 		8493589C2557344B00A782A9 /* CustomCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCorner.swift; sourceTree = "<group>"; };
 		8497FE122547C085006B7100 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		84CF1780253DD75400FF312B /* TappablePokemonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TappablePokemonCell.swift; sourceTree = "<group>"; };
@@ -686,6 +688,7 @@
 				8440593425374B69009D4385 /* Font.swift */,
 				9086781B2538064A0064B02C /* MoveDamageClass.swift */,
 				90866DF82567A79A00EACA4B /* RegionAvatars.swift */,
+				8489E47E256809740017821E /* Pokedex.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -901,6 +904,7 @@
 				8415A9F22558495600325B8C /* Array+Extension.swift in Sources */,
 				84F55604253398B900F09E84 /* CompleteView.swift in Sources */,
 				901E633F2537E5D600F75BF3 /* PokemonList.swift in Sources */,
+				8489E47F256809740017821E /* Pokedex.swift in Sources */,
 				847A12902533871200146D24 /* PulsatingPlayButton.swift in Sources */,
 				846F3C3F253CC026003A30C6 /* AbilityUpdater.swift in Sources */,
 				90F942FF2536FAD5003C23FF /* LoadingHorizontalView.swift in Sources */,

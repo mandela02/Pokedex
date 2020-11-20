@@ -47,7 +47,18 @@ class RegionDetailUpdater: ObservableObject {
         }
     }
     @Published var isHavingMultiDex = false
-    @Published var selectedPokedex: String = ""
+    @Published var selectedPokedex: String = "" {
+        didSet {
+            guard let region = region else { return }
+            let pokedexs = region.pokedexes
+            if pokedexs.isEmpty { return }
+            let currentDex = selectedPokedex.lowercased()
+            if let pokedexUrl = pokedexs.first(where: {$0.name.eliminateDash == currentDex})?.url {
+                getPokemons(from: pokedexUrl)
+            }
+        }
+    }
+    @Published var pokedexCellModels: [PokedexCellModel] = []
 
     func getRegion(from url: String?) {
         guard let url = url else { return }
@@ -65,5 +76,22 @@ class RegionDetailUpdater: ObservableObject {
         if dexs.isEmpty { return }
         pokedexNames = dexs.map({$0.name.eliminateDash.capitalizingFirstLetter()})
         selectedPokedex = pokedexNames.first ?? ""
+    }
+    
+    func getPokemons(from url: String) {
+        if url.isEmpty { return }
+        Session.share.pokedex(from: url)
+            .replaceError(with: Pokedex())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] pokedex in
+                guard let self = self else { return }
+                self.pokedexCellModels = self.getPokemonCellModels(form: pokedex)
+            }.store(in: &cancellables)
+    }
+    
+    private func getPokemonCellModels(form pokedex: Pokedex) -> [PokedexCellModel] {
+        return pokedex.pokemons
+            .map({PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.species.url)),
+                                   speciesUrl: $0.species.url)})
     }
 }

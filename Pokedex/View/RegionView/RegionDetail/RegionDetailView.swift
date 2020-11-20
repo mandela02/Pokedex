@@ -15,32 +15,48 @@ struct RegionDetailView: View {
     @Binding var isShowing: Bool
     
     var body: some View {
-        ZStack {
-            CustomBigTitleNavigationView(content: {
-                LocationPickerView(updater: updater)
-            }, header: {
-                BigTitle(text: "The region of " + regionModel.name.capitalizingFirstLetter())
-            }, stickyHeader: {
-                NamedHeaderView(name: regionModel.name.capitalizingFirstLetter())
-            }, maxHeight: 150)
-
-            VStack {
-                HStack(alignment: .center) {
-                    BackButtonView(isShowing: $isShowing)
-                    Spacer()
-                }
+        VStack {
+            HStack {
+                BackButtonView(isShowing: $isShowing)
                 Spacer()
-            }
-            .padding(.top, 30)
+            }.padding(.top, 30)
             .padding(.leading, 20)
+            
+            Text("The region of " + regionModel.name.capitalizingFirstLetter())
+                .font(Biotif.extraBold(size: 30).font)
+                .foregroundColor(.black)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 35)
+
+            RegionContentView(updater: updater)
         }
         .onAppear {
             updater.url = regionModel.url
             updater.selectedLocation = regionModel.name.capitalizingFirstLetter()
         }
-        .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
+    }
+}
+
+struct RegionContentView: View {
+    @ObservedObject var updater: RegionDetailUpdater
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            LocationPickerView(updater: updater)
+            ZStack {
+                ScrollView(content: {
+                    Color.clear.frame(height: 10)
+                    ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
+                    Color.clear.frame(height: 10)
+                })
+                VStack {
+                    Spacer()
+                    GradienView(atTop: false).frame(height: 50)
+                }
+            }
+        }
     }
 }
 
@@ -99,5 +115,7 @@ struct LocationPickerView: View {
         }
         .transition(.opacity)
         .animation(Animation.easeIn(duration: 0.2))
+        .padding(.leading, 20)
+        .padding(.trailing, 20)
     }
 }
