@@ -40,9 +40,3 @@ struct AllTypeList: View {
         })
     }
 }
-
-struct TypeListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AllTypeList()
-    }
-}

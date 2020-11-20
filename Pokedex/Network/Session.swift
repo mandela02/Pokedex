@@ -113,6 +113,10 @@ struct Session {
     func ability(from url: String) -> AnyPublisher<Ability, Error> {
         return call(url)
     }
+    
+    func region(from url: String) -> AnyPublisher<Region, Error> {
+        return call(url)
+    }
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {

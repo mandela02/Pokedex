@@ -28,7 +28,7 @@ class RegionUpdater: ObservableObject {
             regionCellModels = regionResult.results
                 .map({RegionCellModel(name: $0.name,
                                       url: $0.url,
-                                      avatars: Region.region(from: $0.name).avatar)})
+                                      avatars: RegionAvatars.region(from: $0.name).avatar)})
                 .filter({!$0.avatars.isEmpty})
         }
     }

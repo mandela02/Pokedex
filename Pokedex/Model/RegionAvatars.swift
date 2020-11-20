@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Region: String, CaseIterable {
+enum RegionAvatars: String, CaseIterable {
     case kanto
     case johto
     case hoenn
@@ -41,7 +41,19 @@ enum Region: String, CaseIterable {
         }
     }
     
-    static func region(from name: String) -> Region {
+    static func region(from name: String) -> RegionAvatars {
         return self.allCases.first(where: {$0.rawValue.contains(name)}) ?? .non
     }
+}
+
+struct Region: Codable {
+    var id: Int = 0
+    var locations: [NamedAPIResource] = []
+    var pokedexes: [NamedAPIResource] = []
+    var names: [RegionName] = []
+}
+
+struct RegionName: Codable {
+    var name: String
+    var language: NamedAPIResource
 }

@@ -8,6 +8,10 @@
 import Foundation
 
 extension String {
+    var eliminateDash: String {
+        return self.replacingOccurrences(of: "-", with: " ", options: .literal, range: nil)
+    }
+    
     func capitalizingFirstLetter() -> String {
         return prefix(1).uppercased() + dropFirst()
     }

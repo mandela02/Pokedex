@@ -80,7 +80,6 @@ struct PokedexCardView: View {
             }
             .onDisappear {
                 viewAppear = false
-                cellUpdater.url = ""
             }
     }
 }

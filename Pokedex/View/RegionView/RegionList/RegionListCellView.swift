@@ -16,7 +16,7 @@ struct RegionListCellView: View {
         TapToPushView(show: $isShow) {
             RegionListCellContentView(size: size, region: region)
         } destination: {
-            EmptyView()
+            RegionDetailView(regionModel: region, isShowing: $isShow)
         }
 
     }
@@ -85,6 +85,7 @@ struct RegionListCellContentView: View {
                     .foregroundColor(.white)
                     .font(Biotif.bold(size: 30).font)
                     .frame(height: size.height - 20, alignment: .center)
+                    .shadow(color: .red, radius: 1)
             }
             
         }.frame(width: size.width, height: size.height, alignment: .center)
