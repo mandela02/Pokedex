@@ -95,7 +95,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     private func loadPokemonResourceToCheck() {
         Session
             .share
-            .pokemons(from: Constants.baseCheckPokemonUrl)
+            .overallResult(from: Constants.baseCheckPokemonUrl)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: {  [weak self] complete in
                 guard let self = self else { return }
@@ -112,7 +112,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     private func loadPokemonResource(limit: Int) {
         Session
             .share
-            .pokemons(from: UrlType.getAllPokemonsResource(limit: limit))
+            .overallResult(from: UrlType.getAllPokemonsResource(limit: limit))
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveCompletion: {  [weak self] complete in

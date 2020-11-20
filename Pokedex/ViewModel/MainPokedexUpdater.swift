@@ -79,7 +79,7 @@ class MainPokedexUpdater: ObservableObject {
         
         cancellable =  Session
             .share
-            .pokemons(from: url)
+            .overallResult(from: url)
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveCompletion: { [weak self] complete in

@@ -119,9 +119,3 @@ struct EvolutionDetail: Codable {
         case turnUpsideDown = "turn_upside_down"
     }
 }
-
-struct EvolutionTriggers: Codable {
-    var count: Int = 0
-    var next, previous: String?
-    var results: [NamedAPIResource] = []
-}

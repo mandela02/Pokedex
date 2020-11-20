@@ -13,6 +13,7 @@ enum UrlType: String, CaseIterable {
     case trigger
     case type
     case species
+    case region
 
     var urlString: String {
         switch self {
@@ -25,6 +26,8 @@ enum UrlType: String, CaseIterable {
             return Constants.baseUrl + "type/"
         case .species:
             return Constants.baseUrl + "pokemon-species/?limit=50"
+        case .region:
+            return Constants.baseUrl + "region/"
         }
     }
     
@@ -58,7 +61,7 @@ struct Session {
 
     private init() {}
     
-    func pokemons(from url: String) -> AnyPublisher<PokemonResult, Error> {
+    func overallResult(from url: String) -> AnyPublisher<PokemonResult, Error> {
         return call(url)
     }
     
@@ -82,10 +85,6 @@ struct Session {
         return call(url)
     }
     
-    func allTriggers(from url: String) -> AnyPublisher<EvolutionTriggers, Error> {
-        return call(url)
-    }
-
     func type(from url: String) -> AnyPublisher<PokeType, Error> {
         return call(url)
     }
