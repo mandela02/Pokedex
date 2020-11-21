@@ -34,9 +34,11 @@ class RegionDetailUpdater: ObservableObject {
     }
     
     @Published var locations: [String] = []
+    
     @Published var selectedLocation: String = "default" {
         didSet {
             guard selectedLocation != oldValue else { return }
+            isLoadingData = true
 
             if firstTimeLoading && selectedLocation != "default" {
                 regionName = selectedLocation
@@ -67,13 +69,18 @@ class RegionDetailUpdater: ObservableObject {
     @Published var pokedexNames: [String] = [] {
         didSet {
             isHavingMultiDex = pokedexNames.count > 0
+            if pokedexNames.isEmpty {
+                isLoadingData = false
+                isHavingNoData = true
+            }
         }
     }
     @Published var isHavingMultiDex = false
+    
     @Published var selectedPokedex: String = "" {
         didSet {
             guard selectedPokedex != oldValue else { return }
-
+            isLoadingData = true
             guard let region = region else { return }
             let pokedexs = region.pokedexes
             if pokedexs.isEmpty { return }
@@ -83,8 +90,29 @@ class RegionDetailUpdater: ObservableObject {
             }
         }
     }
-    @Published var pokedexCellModels: [PokedexCellModel] = []
-    @Published var areaPokedexCellModels: [AreaPokedexCellModel] = []
+    @Published var pokedexCellModels: [PokedexCellModel] = [] {
+        didSet {
+            if neededToShowDex {
+                isLoadingData = false
+            }
+            if pokedexCellModels.isEmpty {
+                isLoadingData = false
+                isHavingNoData = true
+            }
+        }
+    }
+    
+    @Published var areaPokedexCellModels: [AreaPokedexCellModel] = [] {
+        didSet {
+            if !neededToShowDex {
+                isLoadingData = false
+            }
+            if areaPokedexCellModels.isEmpty {
+                isLoadingData = false
+                isHavingNoData = true
+            }
+        }
+    }
 
     @Published var location: Location? {
         didSet {
@@ -97,13 +125,19 @@ class RegionDetailUpdater: ObservableObject {
     @Published var areaNames: [String] = [] {
         didSet {
             isHavingMultiArea = areaNames.count > 0
+            if areaNames.isEmpty {
+                isLoadingData = false
+                isHavingNoData = true
+            }
         }
     }
     @Published var isHavingMultiArea = false
+    
     @Published var selectedArea = "" {
         didSet {
             guard selectedArea != oldValue else { return }
-            
+            isLoadingData = true
+
             guard let location = location else { return }
             let areas = location.areas
             if areas.isEmpty { return }
@@ -113,6 +147,9 @@ class RegionDetailUpdater: ObservableObject {
             }
         }
     }
+
+    @Published var isLoadingData = false
+    @Published var isHavingNoData = false
 
     private func getRegion(from url: String?) {
         guard let url = url else { return }
@@ -133,7 +170,11 @@ class RegionDetailUpdater: ObservableObject {
     }
     
     private func getPokemons(from url: String) {
-        if url.isEmpty { return }
+        if url.isEmpty {
+            isLoadingData = false
+            isHavingNoData = true
+            return
+        }
         Session.share.pokedex(from: url)
             .replaceError(with: Pokedex())
             .receive(on: DispatchQueue.main)
@@ -150,7 +191,11 @@ class RegionDetailUpdater: ObservableObject {
     }
     
     private func getLocation(from url: String) {
-        if url.isEmpty { return }
+        if url.isEmpty {
+            isLoadingData = false
+            isHavingNoData = true
+            return
+        }
         Session.share.location(from: url)
             .replaceError(with: Location())
             .receive(on: DispatchQueue.main)
@@ -161,7 +206,11 @@ class RegionDetailUpdater: ObservableObject {
     }
     
     private func getArea(from url: String) {
-        if url.isEmpty { return }
+        if url.isEmpty {
+            isLoadingData = false
+            isHavingNoData = true
+            return
+        }
         Session.share.area(from: url)
             .replaceError(with: LocationArea())
             .receive(on: DispatchQueue.main)
@@ -172,7 +221,11 @@ class RegionDetailUpdater: ObservableObject {
     }
     
     private func getPokemonCellModels(form area: LocationArea) -> [AreaPokedexCellModel] {
-        if area.pokemons.isEmpty { return [] }
+        if area.pokemons.isEmpty {
+            isLoadingData = false
+            isHavingNoData = true
+            return []
+        }
         return area.pokemons.map { [weak self] in
             guard let self = self else { return nil }
             return AreaPokedexCellModel(encounter: $0,

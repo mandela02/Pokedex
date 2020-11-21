@@ -59,12 +59,14 @@ struct EncounterDetails: Codable {
     var maxLvl: Int = 0
     var minLvl: Int = 0
     var method: NamedAPIResource = NamedAPIResource()
+    var condition: [NamedAPIResource] = []
     
     enum CodingKeys: String, CodingKey {
         case chance
         case maxLvl = "max_level"
         case minLvl = "min_level"
         case method
+        case condition = "condition_values"
     }
 }
 
@@ -75,3 +77,9 @@ struct EncounterMethod: Codable {
 }
 
 
+struct Condition: Codable {
+    var condition: NamedAPIResource = NamedAPIResource()
+    var id: Int = 0
+    var name: String = ""
+    var names: [Name] = []
+}

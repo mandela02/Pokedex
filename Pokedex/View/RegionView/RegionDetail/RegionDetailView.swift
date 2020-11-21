@@ -43,7 +43,7 @@ struct RegionContentView: View {
     @ObservedObject var updater: RegionDetailUpdater
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 2) {
             LocationPickerView(updater: updater)
             ZStack {
                 ScrollView(content: {
@@ -54,10 +54,13 @@ struct RegionContentView: View {
                         RegionPokemonList(pokemons: updater.areaPokedexCellModels)
                     }
                     Color.clear.frame(height: 10)
-                })
+                }).blur(radius: updater.isLoadingData ? 3.0 : 0.0)
                 VStack {
                     Spacer()
                     GradienView(atTop: false).frame(height: 50)
+                }
+                if updater.isLoadingData {
+                    LoadingView(background: .white)
                 }
             }
         }

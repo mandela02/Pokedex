@@ -74,16 +74,11 @@ struct PokemonLocationNameAndNumberView: View {
                     .lineLimit(1)
                     .shadow(color: .black, radius: 2)
             }
-            HStack {
+            HStack(alignment: .center, spacing: 30, content: {
                 ForEach(pokemon.types.map({$0.type})) { type in
-                    TypeBubbleCellView(text: type.name,
-                                       foregroundColor: Color.white,
-                                       backgroundColor: Color.white.opacity(0.3),
-                                       font: Biotif.semiBold(size: 15).font)
-                        .padding(.leading, 15)
+                    TappableNewTypeView(type: type)
                 }
-            }
-            
+            })
         }
         .padding()
     }
@@ -145,7 +140,7 @@ struct EncounterListCellView: View {
         VStack(alignment: .leading, spacing: 0) {
             EncounterChangeView(model: model)
             MinMaxLevelView(model: model)
-            EncounterView(model: model)
+            HowToCatchView(model: model)
         }
         .shadow(color: .black, radius: 1)
         .padding()
@@ -173,7 +168,7 @@ struct EncounterChangeView: View {
             Text(" \(model.chance)%")
                 .foregroundColor(.white)
                 .font(Biotif.bold(size: fontSize).font)
-        }.shadow(color: .red, radius: 1)
+        }.shadow(color: model.color, radius: 1)
     }
 }
 
@@ -191,7 +186,7 @@ struct MinMaxLevelView: View {
                     .foregroundColor(.white)
                     .font(Biotif.bold(size: fontSize).font)
                 Spacer()
-            }.shadow(color: .red, radius: 1)
+            }.shadow(color: model.color, radius: 1)
             
             HStack {
                 Text("Max Level: ")
@@ -201,7 +196,7 @@ struct MinMaxLevelView: View {
                     .foregroundColor(.white)
                     .font(Biotif.bold(size: fontSize).font)
                 Spacer()
-            }.shadow(color: .red, radius: 1)
+            }.shadow(color: model.color, radius: 1)
         }.padding(.top, 10)
     }
 }
@@ -220,14 +215,37 @@ struct EncounterView: View {
                     .foregroundColor(.white)
                     .font(Biotif.medium(size: 15).font)
             }
-            .shadow(color: .red, radius: 1)
+            .shadow(color: model.color, radius: 1)
             
             Text(model.description)
                 .foregroundColor(Color.white.opacity(0.8))
                 .font(Biotif.medium(size: fontSize).font)
                 .padding(.leading, 10)
-                .shadow(color: .red, radius: 1)
+                .shadow(color: model.color, radius: 1)
         }
         .padding(.top, 10)
     }
 }
+
+struct ConditionView: View {
+    var model: EncounterChanceCellModel
+
+    var body: some View {
+        FlexibleGridView(characteristics: .constant(model.conditions),
+                         background: Color.white.opacity(0.5))
+    }
+}
+
+struct HowToCatchView: View {
+    var model: EncounterChanceCellModel
+    
+    var body: some View {
+        HStack {
+            EncounterView(model: model)
+            ConditionView(model: model)
+        }
+    }
+}
+
+
+

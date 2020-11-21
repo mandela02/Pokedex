@@ -9,6 +9,8 @@ import SwiftUI
 
 struct FlexibleGridView: View {
     @Binding var characteristics: [String]
+    var background: Color = HexColor.lightGrey
+    var foreground: Color = HexColor.white
 
     @State private var totalHeight
     //      = CGFloat.zero       // << variant for ScrollView/List
@@ -62,8 +64,8 @@ struct FlexibleGridView: View {
             .font(Biotif.regular(size: 12).font)
             .padding(.all, 5)
             .font(.body)
-            .background(HexColor.lightGrey)
-            .foregroundColor(Color.white)
+            .background(background)
+            .foregroundColor(foreground)
             .cornerRadius(6)
     }
 

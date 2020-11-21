@@ -133,6 +133,10 @@ struct Session {
     func encounterMethod(from url: String) -> AnyPublisher<EncounterMethod, Error> {
         return call(url)
     }
+    
+    func condition(from url: String) -> AnyPublisher<Condition, Error> {
+        return call(url)
+    }
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {
