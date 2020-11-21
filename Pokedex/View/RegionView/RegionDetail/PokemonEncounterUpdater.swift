@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct EncounterChanceCellModel: Identifiable {
     var id = UUID()
@@ -16,11 +17,14 @@ struct EncounterChanceCellModel: Identifiable {
     var min: Int
     var name: String
     var description: String
+    var color: Color
 }
 
 struct PokemonEncounterModel {
     var pokemon: Pokemon
     var encounter: [EncounterChanceCellModel]
+    var location: String
+    var area: String
 }
 
 class PokemonEncounterUpdater: ObservableObject {
@@ -28,14 +32,14 @@ class PokemonEncounterUpdater: ObservableObject {
     
     @Published var error: ApiError = .non
     
-    var pokemonEncounter: PokemonEncounters? {
+    var pokemonEncounter: AreaPokedexCellModel? {
         didSet {
             guard let pokemonEncounter = pokemonEncounter else { return }
-            combineResult(of: pokemonEncounter)
+            combineResult(of: pokemonEncounter.encounter)
         }
     }
     
-    @Published var pokemonEncounterModel = PokemonEncounterModel(pokemon: Pokemon(), encounter: [])
+    @Published var pokemonEncounterModel = PokemonEncounterModel(pokemon: Pokemon(), encounter: [], location: "", area: "")
     
     private func getPokemon(from url: String) -> AnyPublisher<Pokemon, Error> {
         if url.isEmpty {
@@ -58,6 +62,9 @@ class PokemonEncounterUpdater: ObservableObject {
     }
     
     private func combineResult(of encounter: PokemonEncounters) {
+        guard let pokemonEncounter = pokemonEncounter  else {
+            return
+        }
         if encounter.pokemon.url.isEmpty,
            encounter.detail.isEmpty {
             return
@@ -83,14 +90,18 @@ class PokemonEncounterUpdater: ObservableObject {
                 let models = encounterDetail.detail.map { detail -> EncounterChanceCellModel in
                     let currentMethod = methods.first(where: {$0.name == detail.method.name})
                     
-                    return EncounterChanceCellModel(chance: Double(detail.chance) / Double(maxChance),
+                    return EncounterChanceCellModel(chance: Double(detail.chance) / Double(maxChance) * 100,
                                                     max: detail.maxLvl,
                                                     min: detail.minLvl,
                                                     name: detail.method.name,
-                                                    description: StringHelper.getEnglishText(from: currentMethod?.names ?? []))
+                                                    description: StringHelper.getEnglishText(from: currentMethod?.names ?? []),
+                                                    color: pokemon.mainType.color.background)
                 }
                 
-                self.pokemonEncounterModel = PokemonEncounterModel(pokemon: pokemon, encounter: models)
+                self.pokemonEncounterModel = PokemonEncounterModel(pokemon: pokemon,
+                                                                   encounter: models,
+                                                                   location: pokemonEncounter.location,
+                                                                   area: pokemonEncounter.area)
             }.store(in: &cancellables)
         
     }

@@ -12,6 +12,8 @@ struct AreaPokedexCellModel: Identifiable {
     var id = UUID()
     var encounter: PokemonEncounters
     var url: String
+    var location: String
+    var area: String
 }
 
 class RegionDetailUpdater: ObservableObject {
@@ -171,6 +173,12 @@ class RegionDetailUpdater: ObservableObject {
     
     private func getPokemonCellModels(form area: LocationArea) -> [AreaPokedexCellModel] {
         if area.pokemons.isEmpty { return [] }
-        return area.pokemons.map {AreaPokedexCellModel(encounter: $0, url: $0.pokemon.url)}
+        return area.pokemons.map { [weak self] in
+            guard let self = self else { return nil }
+            return AreaPokedexCellModel(encounter: $0,
+                                 url: $0.pokemon.url,
+                                 location: self.selectedLocation,
+                                 area: self.selectedArea)
+        }.compactMap( {$0} )
     }
 }

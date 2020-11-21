@@ -192,7 +192,7 @@ struct TappableRegionPokemonCell: View {
             PokedexCardView(url: pokedexCellModel.url, size: size)
                 .contextMenu(menuItems: {})
         } destination: {
-            PokemonEncounterView(encounter: pokedexCellModel.encounter)
+            PokemonEncounterView(encounter: pokedexCellModel)
         }.buttonStyle(PlainButtonStyle())
     }
 }

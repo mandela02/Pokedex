@@ -10,14 +10,13 @@ import SwiftUI
 struct PokemonEncounterView: View {
     @StateObject var updater = PokemonEncounterUpdater()
     
-    var encounter: PokemonEncounters
+    var encounter: AreaPokedexCellModel
     
     var body: some View {
         GeometryReader(content: { geometry in
             let width = geometry.size.width - 60
             let height = width * 0.4
-            Color.red.ignoresSafeArea()
-            //background ball
+            updater.pokemonEncounterModel.pokemon.mainType.color.background.ignoresSafeArea()
             HStack {
                 Spacer()
                 Image("ic_pokeball")
@@ -27,37 +26,40 @@ struct PokemonEncounterView: View {
                     .foregroundColor(Color.white.opacity(0.5))
                     .offset(x: geometry.size.width / 3, y: -geometry.size.height/5)
             }
-            // pokemon image
             HStack {
                 Spacer()
-                Image("pokeball")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                DownloadedImageView(withURL: updater.pokemonEncounterModel.pokemon.sprites.other?.artwork.front ?? "",
+                                    style: .animated)
                     .offset(x: geometry.size.width/6)
+                    .padding()
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                PokemonLocationNameAndNumberView()
-                PokemonPositionView()
+                PokemonLocationNameAndNumberView(pokemon: updater.pokemonEncounterModel.pokemon)
+                PokemonPositionView(location: updater.pokemonEncounterModel.location,
+                                    area: updater.pokemonEncounterModel.area)
                 ScrollView(content: {
                     LazyVStack {
-                        ForEach((0...10), id: \.self) { index in
-                            EncounterListCellView(size: CGSize(width: width, height: height))
+                        ForEach(updater.pokemonEncounterModel.encounter) { model in
+                            EncounterListCellView(size: CGSize(width: width, height: height),
+                                                  model: model)
                         }
                     }
                 })
             }
         }).onAppear(perform: {
             updater.pokemonEncounter = encounter
-        })
+        }).transition(.opacity)
+        .animation(.default)
     }
 }
 
 struct PokemonLocationNameAndNumberView: View {
+    var pokemon: Pokemon
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Charmander")
+                Text(pokemon.name.capitalizingFirstLetter())
                     .font(Biotif.extraBold(size: 35).font)
                     .foregroundColor(.white)
                     .frame(alignment: .topLeading)
@@ -65,20 +67,21 @@ struct PokemonLocationNameAndNumberView: View {
                 
                 Spacer()
                 
-                Text("#005")
+                Text(String(format: "#%03d", pokemon.pokeId))
                     .font(Biotif.extraBold(size: 20).font)
                     .foregroundColor(Color(.systemGray3))
                     .frame(alignment: .topLeading)
                     .lineLimit(1)
                     .shadow(color: .black, radius: 2)
             }
-            
-            ForEach(["Fire"]) { type in
-                TypeBubbleCellView(text: type,
-                                   foregroundColor: Color.white,
-                                   backgroundColor: Color.white.opacity(0.3),
-                                   font: Biotif.semiBold(size: 20).font)
-                    .padding(.leading, 15)
+            HStack {
+                ForEach(pokemon.types.map({$0.type})) { type in
+                    TypeBubbleCellView(text: type.name,
+                                       foregroundColor: Color.white,
+                                       backgroundColor: Color.white.opacity(0.3),
+                                       font: Biotif.semiBold(size: 15).font)
+                        .padding(.leading, 15)
+                }
             }
             
         }
@@ -87,6 +90,8 @@ struct PokemonLocationNameAndNumberView: View {
 }
 
 struct PokemonLocationView: View {
+    var location: String
+
     var body: some View {
         HStack {
             Text("Location")
@@ -94,7 +99,7 @@ struct PokemonLocationView: View {
                 .foregroundColor(.white)
                 .frame(alignment: .leading)
                 .frame(width: 100, alignment: .leading)
-            Text("Celadon City")
+            Text(location)
                 .font(Biotif.medium(size: 15).font)
                 .foregroundColor(.white)
                 .frame(alignment: .leading)
@@ -103,6 +108,8 @@ struct PokemonLocationView: View {
 }
 
 struct PokemonAreaView: View {
+    var area: String
+
     var body: some View {
         HStack {
             Text("Area")
@@ -110,7 +117,7 @@ struct PokemonAreaView: View {
                 .foregroundColor(.white)
                 .frame(alignment: .leading)
                 .frame(width: 100, alignment: .leading)
-            Text("Celadon City Area")
+            Text(area)
                 .font(Biotif.medium(size: 15).font)
                 .foregroundColor(.white)
                 .frame(alignment: .leading)
@@ -119,22 +126,26 @@ struct PokemonAreaView: View {
 }
 
 struct PokemonPositionView: View {
+    var location: String
+    var area: String
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            PokemonLocationView()
-            PokemonAreaView()
+            PokemonLocationView(location: location)
+            PokemonAreaView(area: area)
         }.padding()
     }
 }
 
 struct EncounterListCellView: View {
     var size: CGSize
-
+    var model: EncounterChanceCellModel
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            EncounterChangeView()
-            MinMaxLevelView()
-            EncounterView()
+            EncounterChangeView(model: model)
+            MinMaxLevelView(model: model)
+            EncounterView(model: model)
         }
         .shadow(color: .black, radius: 1)
         .padding()
@@ -143,7 +154,7 @@ struct EncounterListCellView: View {
                 .stroke(Color.white.opacity(0.5),
                         lineWidth: 5)
         )
-        .background(Color.red.opacity(0.7))
+        .background(model.color.opacity(0.7))
         .cornerRadius(20)
         .padding(.leading, 10)
         .padding(.trailing, 10)
@@ -152,13 +163,14 @@ struct EncounterListCellView: View {
 
 struct EncounterChangeView: View {
     var fontSize: CGFloat = 12
+    var model: EncounterChanceCellModel
 
     var body: some View {
         HStack {
             Text("Encounter chance: ")
                 .foregroundColor(.white)
                 .font(Biotif.medium(size: fontSize).font)
-            Text("20%")
+            Text(" \(model.chance)%")
                 .foregroundColor(.white)
                 .font(Biotif.bold(size: fontSize).font)
         }.shadow(color: .red, radius: 1)
@@ -167,6 +179,7 @@ struct EncounterChangeView: View {
 
 struct MinMaxLevelView: View {
     var fontSize: CGFloat = 12
+    var model: EncounterChanceCellModel
 
     var body: some View {
         HStack(spacing: 5) {
@@ -174,7 +187,7 @@ struct MinMaxLevelView: View {
                 Text("Min Level: ")
                     .foregroundColor(.white)
                     .font(Biotif.medium(size: fontSize).font)
-                Text("5")
+                Text("\(model.min)")
                     .foregroundColor(.white)
                     .font(Biotif.bold(size: fontSize).font)
                 Spacer()
@@ -184,7 +197,7 @@ struct MinMaxLevelView: View {
                 Text("Max Level: ")
                     .foregroundColor(.white)
                     .font(Biotif.medium(size: fontSize).font)
-                Text("20")
+                Text("\(model.max)")
                     .foregroundColor(.white)
                     .font(Biotif.bold(size: fontSize).font)
                 Spacer()
@@ -195,20 +208,21 @@ struct MinMaxLevelView: View {
 
 struct EncounterView: View {
     var fontSize: CGFloat = 12
-    
+    var model: EncounterChanceCellModel
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
                 Text("Method: ")
                     .foregroundColor(.white)
                     .font(Biotif.medium(size: 15).font)
-                Text("Surf")
+                Text(model.name)
                     .foregroundColor(.white)
                     .font(Biotif.medium(size: 15).font)
             }
             .shadow(color: .red, radius: 1)
             
-            Text("Use surf to catch this pokemon")
+            Text(model.description)
                 .foregroundColor(Color.white.opacity(0.8))
                 .font(Biotif.medium(size: fontSize).font)
                 .padding(.leading, 10)
