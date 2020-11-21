@@ -8,10 +8,26 @@
 import Foundation
 import Combine
 
+struct EncounterChanceCellModel: Identifiable {
+    var id = UUID()
+    
+    var chance: Double
+    var max: Int
+    var min: Int
+    var name: String
+    var description: String
+}
+
+struct PokemonEncounterModel {
+    var pokemon: Pokemon
+    var encounter: [EncounterChanceCellModel]
+}
+
 class PokemonEncounterUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
+    
     @Published var error: ApiError = .non
-    var pokemon: Pokemon?
+    
     var pokemonEncounter: PokemonEncounters? {
         didSet {
             guard let pokemonEncounter = pokemonEncounter else { return }
@@ -19,9 +35,10 @@ class PokemonEncounterUpdater: ObservableObject {
         }
     }
     
+    @Published var pokemonEncounterModel = PokemonEncounterModel(pokemon: Pokemon(), encounter: [])
+    
     private func getPokemon(from url: String) -> AnyPublisher<Pokemon, Error> {
         if url.isEmpty {
-            pokemon = nil
             return Empty(completeImmediately: false).eraseToAnyPublisher()
         }
         return Session.share.pokemon(from: url)
@@ -60,9 +77,21 @@ class PokemonEncounterUpdater: ObservableObject {
                 case .failure(let message):
                     self.error = .internet(message: message.localizedDescription)
                 }
-            } receiveValue: { pokemon, methods in
+            } receiveValue: {[weak self] pokemon, methods in
+                guard let self = self else { return }
+                let maxChance = encounterDetail.maxChance
+                let models = encounterDetail.detail.map { detail -> EncounterChanceCellModel in
+                    let currentMethod = methods.first(where: {$0.name == detail.method.name})
+                    
+                    return EncounterChanceCellModel(chance: Double(detail.chance) / Double(maxChance),
+                                                    max: detail.maxLvl,
+                                                    min: detail.minLvl,
+                                                    name: detail.method.name,
+                                                    description: StringHelper.getEnglishText(from: currentMethod?.names ?? []))
+                }
                 
+                self.pokemonEncounterModel = PokemonEncounterModel(pokemon: pokemon, encounter: models)
             }.store(in: &cancellables)
-
+        
     }
 }

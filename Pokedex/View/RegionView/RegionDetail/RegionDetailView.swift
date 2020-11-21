@@ -51,7 +51,7 @@ struct RegionContentView: View {
                     if updater.neededToShowDex {
                         ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
                     } else {
-                        RegionPokemonList(pokemons: updater.pokedexCellModels)
+                        RegionPokemonList(pokemons: updater.areaPokedexCellModels)
                     }
                     Color.clear.frame(height: 10)
                 })
@@ -153,7 +153,7 @@ struct LocationPickerView: View {
 }
 
 struct RegionPokemonList: View {
-    var pokemons: [PokedexCellModel]
+    var pokemons: [AreaPokedexCellModel]
     
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
     
@@ -184,15 +184,15 @@ struct TappableRegionPokemonCell: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @State var show: Bool = false
 
-    let pokedexCellModel: PokedexCellModel
+    let pokedexCellModel: AreaPokedexCellModel
     let size: CGSize
     
     var body: some View {
         TapToPresentView(show: $show) {
-            PokedexCardView(url: pokedexCellModel.pokemonUrl, size: size)
+            PokedexCardView(url: pokedexCellModel.url, size: size)
                 .contextMenu(menuItems: {})
         } destination: {
-            PokemonEncounterView()
+            PokemonEncounterView(encounter: pokedexCellModel.encounter)
         }.buttonStyle(PlainButtonStyle())
     }
 }

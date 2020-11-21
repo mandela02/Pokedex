@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct PokemonEncounterView: View {
+    @StateObject var updater = PokemonEncounterUpdater()
+    
+    var encounter: PokemonEncounters
+    
     var body: some View {
         GeometryReader(content: { geometry in
             let width = geometry.size.width - 60
@@ -43,6 +47,8 @@ struct PokemonEncounterView: View {
                     }
                 })
             }
+        }).onAppear(perform: {
+            updater.pokemonEncounter = encounter
         })
     }
 }
@@ -209,11 +215,5 @@ struct EncounterView: View {
                 .shadow(color: .red, radius: 1)
         }
         .padding(.top, 10)
-    }
-}
-
-struct PokemonEncounterView_Previews: PreviewProvider {
-    static var previews: some View {
-        PokemonEncounterView()
     }
 }

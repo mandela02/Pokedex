@@ -70,6 +70,7 @@ struct EncounterDetails: Codable {
 
 struct EncounterMethod: Codable {
     var id: Int = 0
+    var name: String
     var names: [Name] = []
 }
 

@@ -7,6 +7,13 @@
 
 import Foundation
 import Combine
+
+struct AreaPokedexCellModel: Identifiable {
+    var id = UUID()
+    var encounter: PokemonEncounters
+    var url: String
+}
+
 class RegionDetailUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
@@ -75,6 +82,7 @@ class RegionDetailUpdater: ObservableObject {
         }
     }
     @Published var pokedexCellModels: [PokedexCellModel] = []
+    @Published var areaPokedexCellModels: [AreaPokedexCellModel] = []
 
     @Published var location: Location? {
         didSet {
@@ -157,15 +165,12 @@ class RegionDetailUpdater: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] area in
                 guard let self = self else { return }
-                self.pokedexCellModels = self.getPokemonCellModels(form: area)
+                self.areaPokedexCellModels = self.getPokemonCellModels(form: area)
             }.store(in: &cancellables)
     }
     
-    private func getPokemonCellModels(form area: LocationArea) -> [PokedexCellModel] {
+    private func getPokemonCellModels(form area: LocationArea) -> [AreaPokedexCellModel] {
         if area.pokemons.isEmpty { return [] }
-        return area.pokemons
-            .map({PokedexCellModel(pokemonUrl: $0.pokemon.url,
-                                   speciesUrl: UrlType
-                                    .getPokemonUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)))})
+        return area.pokemons.map {AreaPokedexCellModel(encounter: $0, url: $0.pokemon.url)}
     }
 }
