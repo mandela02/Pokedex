@@ -129,6 +129,10 @@ struct Session {
     func area(from url: String) -> AnyPublisher<LocationArea, Error> {
         return call(url)
     }
+    
+    func encounterMethod(from url: String) -> AnyPublisher<EncounterMethod, Error> {
+        return call(url)
+    }
 
     func call<T: Decodable>(_ request: String) -> AnyPublisher<T, Error> {
         guard let url = URL(string: request) else {

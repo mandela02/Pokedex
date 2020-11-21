@@ -34,3 +34,20 @@ struct PushOnSigalView<Destination: View>: View {
                        isActive: $show) { EmptyView() }
     }
 }
+
+struct TapToPresentView<Content: View, Destination: View>: View {
+    @Binding var show: Bool
+    
+    let content: () -> Content
+    let destination: () -> Destination
+    
+    var body: some View {
+        Button  {
+            show = true
+        } label: {
+            content()
+        }.sheet(isPresented: $show, content: {
+            destination()
+        }).background(Color.clear)
+    }
+}

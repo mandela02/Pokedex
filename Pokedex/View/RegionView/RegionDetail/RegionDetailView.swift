@@ -48,7 +48,11 @@ struct RegionContentView: View {
             ZStack {
                 ScrollView(content: {
                     Color.clear.frame(height: 10)
-                    ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
+                    if updater.neededToShowDex {
+                        ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
+                    } else {
+                        RegionPokemonList(pokemons: updater.pokedexCellModels)
+                    }
                     Color.clear.frame(height: 10)
                 })
                 VStack {
@@ -99,6 +103,7 @@ struct LocationPickerView: View {
             .background(Color.white)
             .cornerRadius(10)
             .shadow(radius: 2)
+            .id(updater.selectedLocation)
             
             if updater.isHavingMultiDex {
                 HStack {
@@ -117,6 +122,7 @@ struct LocationPickerView: View {
                 .background(Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 2)
+                .id(updater.selectedPokedex)
             }
             
             if updater.isHavingMultiArea {
@@ -136,11 +142,57 @@ struct LocationPickerView: View {
                 .background(Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 2)
+                .id(updater.selectedArea)
             }
         }
         .transition(.opacity)
         .animation(Animation.easeIn(duration: 0.2))
         .padding(.leading, 20)
         .padding(.trailing, 20)
+    }
+}
+
+struct RegionPokemonList: View {
+    var pokemons: [PokedexCellModel]
+    
+    let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
+    
+    var width: CGFloat {
+        return (UIScreen.main.bounds.width - 80) / numberOfColumns
+    }
+    var height: CGFloat {
+        width * 0.7
+    }
+    
+    private func calculateGridItem() -> [GridItem] {
+        let gridItem = GridItem(.fixed(width), spacing: 10)
+        return Array(repeating: gridItem, count: Int(numberOfColumns))
+    }
+    
+    var body: some View {
+        LazyVGrid(columns: calculateGridItem()) {
+            ForEach(pokemons) { cell in
+                TappableRegionPokemonCell(pokedexCellModel: cell,
+                                          size: CGSize(width: width, height: height))
+                    .background(Color.clear)
+            }
+        }.animation(.linear)
+    }
+}
+
+struct TappableRegionPokemonCell: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    @State var show: Bool = false
+
+    let pokedexCellModel: PokedexCellModel
+    let size: CGSize
+    
+    var body: some View {
+        TapToPresentView(show: $show) {
+            PokedexCardView(url: pokedexCellModel.pokemonUrl, size: size)
+                .contextMenu(menuItems: {})
+        } destination: {
+            PokemonEncounterView()
+        }.buttonStyle(PlainButtonStyle())
     }
 }

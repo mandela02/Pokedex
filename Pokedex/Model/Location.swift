@@ -68,5 +68,9 @@ struct EncounterDetails: Codable {
     }
 }
 
+struct EncounterMethod: Codable {
+    var id: Int = 0
+    var names: [Name] = []
+}
 
 

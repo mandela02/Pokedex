@@ -50,10 +50,5 @@ struct Region: Codable {
     var id: Int = 0
     var locations: [NamedAPIResource] = []
     var pokedexes: [NamedAPIResource] = []
-    var names: [RegionName] = []
-}
-
-struct RegionName: Codable {
-    var name: String
-    var language: NamedAPIResource
+    var names: [Name] = []
 }

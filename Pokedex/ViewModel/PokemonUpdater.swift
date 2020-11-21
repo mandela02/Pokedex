@@ -94,7 +94,8 @@ class PokemonUpdater: ObservableObject {
         
         pokedexCellModel.dropFirst().flatMap({ [weak self] pokedexCellModel -> AnyPublisher<(Pokemon, Species), Never> in
             guard let self = self, !pokedexCellModel.isEmpty else { return Empty(completeImmediately: true).eraseToAnyPublisher() }
-            return self.zip(pokemonUrl: pokedexCellModel.pokemonUrl, speciesUrl: pokedexCellModel.speciesUrl)
+            return self.zip(pokemonUrl: pokedexCellModel.pokemonUrl,
+                            speciesUrl: pokedexCellModel.speciesUrl)
         })
         .receive(on: DispatchQueue.main)
         .sink { [weak self] pokemon, species in

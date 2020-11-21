@@ -27,12 +27,16 @@ class RegionDetailUpdater: ObservableObject {
     @Published var locations: [String] = []
     @Published var selectedLocation: String = "default" {
         didSet {
+            guard selectedLocation != oldValue else { return }
+
             if firstTimeLoading && selectedLocation != "default" {
-                legionName = selectedLocation
+                regionName = selectedLocation
                 firstTimeLoading = false
             }
             
-            if selectedLocation == legionName {
+            if selectedLocation == regionName {
+                areaNames.removeAll()
+                selectedArea = ""
                 getPokedex(from: region)
             } else {
                 pokedexNames.removeAll()
@@ -41,18 +45,26 @@ class RegionDetailUpdater: ObservableObject {
                     getLocation(from: url)
                 }
             }
+            neededToShowDex = selectedLocation == regionName
         }
     }
-    private var legionName = ""
+    
+    @Published var neededToShowDex = false
+    
+    private var regionName = ""
+    
     private var firstTimeLoading = true
+    
     @Published var pokedexNames: [String] = [] {
         didSet {
-            isHavingMultiDex = pokedexNames.count > 1
+            isHavingMultiDex = pokedexNames.count > 0
         }
     }
     @Published var isHavingMultiDex = false
     @Published var selectedPokedex: String = "" {
         didSet {
+            guard selectedPokedex != oldValue else { return }
+
             guard let region = region else { return }
             let pokedexs = region.pokedexes
             if pokedexs.isEmpty { return }
@@ -74,12 +86,14 @@ class RegionDetailUpdater: ObservableObject {
 
     @Published var areaNames: [String] = [] {
         didSet {
-            isHavingMultiArea = areaNames.count > 1
+            isHavingMultiArea = areaNames.count > 0
         }
     }
     @Published var isHavingMultiArea = false
     @Published var selectedArea = "" {
         didSet {
+            guard selectedArea != oldValue else { return }
+            
             guard let location = location else { return }
             let areas = location.areas
             if areas.isEmpty { return }
