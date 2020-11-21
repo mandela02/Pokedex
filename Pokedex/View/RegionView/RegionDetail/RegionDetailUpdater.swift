@@ -11,7 +11,8 @@ import Combine
 struct AreaPokedexCellModel: Identifiable {
     var id = UUID()
     var encounter: PokemonEncounters
-    var url: String
+    var pokemonUrl: String
+    var speciesUrl: String
     var location: String
     var area: String
 }
@@ -229,7 +230,8 @@ class RegionDetailUpdater: ObservableObject {
         return area.pokemons.map { [weak self] in
             guard let self = self else { return nil }
             return AreaPokedexCellModel(encounter: $0,
-                                 url: $0.pokemon.url,
+                                 pokemonUrl: $0.pokemon.url,
+                                 speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)),
                                  location: self.selectedLocation,
                                  area: self.selectedArea)
         }.compactMap( {$0} )

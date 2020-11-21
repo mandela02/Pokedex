@@ -10,7 +10,8 @@ import SwiftUI
 struct RegionDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject private var updater = RegionDetailUpdater()
-    
+    @State private var isFirstTime = true
+
     var regionModel: RegionCellModel
     @Binding var isShowing: Bool
     
@@ -31,8 +32,11 @@ struct RegionDetailView: View {
             RegionContentView(updater: updater)
         }
         .onAppear {
-            updater.url = regionModel.url
-            updater.selectedLocation = regionModel.name.capitalizingFirstLetter()
+            if isFirstTime {
+                updater.url = regionModel.url
+                updater.selectedLocation = regionModel.name.capitalizingFirstLetter()
+                isFirstTime = false
+            }
         }
         .navigationBarHidden(true)
         .ignoresSafeArea()
@@ -184,18 +188,50 @@ struct RegionPokemonList: View {
 }
 
 struct TappableRegionPokemonCell: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    
+    @State var present: Bool = false
     @State var show: Bool = false
+    @State var isFavorite = false
 
     let pokedexCellModel: AreaPokedexCellModel
     let size: CGSize
     
     var body: some View {
-        TapToPresentView(show: $show) {
-            PokedexCardView(url: pokedexCellModel.url, size: size)
-                .contextMenu(menuItems: {})
+        TapToPresentView(show: $present) {
+            PokedexCardView(url: pokedexCellModel.pokemonUrl, size: size)
+                .contextMenu(menuItems: {
+                    Button (action: {
+                        show = true
+                    }, label: {
+                        Text("Detail File ...")
+                    })
+                    Button(action: {
+                        if isFavorite {
+                            CoreData.dislike(pokemon: pokedexCellModel.pokemonUrl)
+                        } else {
+                            CoreData.like(pokemon: pokedexCellModel.pokemonUrl)
+                        }
+                    }) {
+                        Text(isFavorite ? "Remove from favorite" : "Add To favorite")
+                        Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    }
+                })
         } destination: {
             PokemonEncounterView(encounter: pokedexCellModel)
         }.buttonStyle(PlainButtonStyle())
+        .onAppear(perform: {
+            isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
+        }).onChange(of: favorites.count, perform: { value in
+            isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
+        }).background(NavigationLink(
+                        destination: ParallaxView(pokedexCellModel: PokedexCellModel(pokemonUrl: pokedexCellModel.pokemonUrl, speciesUrl: pokedexCellModel.speciesUrl),
+                                                  isShowing: $show),
+                        isActive: $show,
+                        label: {
+                            EmptyView()
+                        }))
     }
 }

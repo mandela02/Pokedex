@@ -22,6 +22,7 @@
 		841E968D2536393800FAD664 /* AllTypeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E968C2536393800FAD664 /* AllTypeList.swift */; };
 		8422CFCC252E0E9D006F4535 /* NamedAPIResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8422CFCB252E0E9D006F4535 /* NamedAPIResource.swift */; };
 		8422CFD1252E0F00006F4535 /* AbilitiesResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8422CFD0252E0F00006F4535 /* AbilitiesResult.swift */; };
+		842993F625696E6C0072A84C /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842993F525696E6C0072A84C /* CoreData.swift */; };
 		843325F12539DD7E007E1AEA /* HeaderImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843325F02539DD7E007E1AEA /* HeaderImageScrollView.swift */; };
 		84382D75253B5E3500F0B4AB /* Favorite+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84382D73253B5E3500F0B4AB /* Favorite+CoreDataClass.swift */; };
 		84382D76253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84382D74253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift */; };
@@ -175,6 +176,7 @@
 		841E968C2536393800FAD664 /* AllTypeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTypeList.swift; sourceTree = "<group>"; };
 		8422CFCB252E0E9D006F4535 /* NamedAPIResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedAPIResource.swift; sourceTree = "<group>"; };
 		8422CFD0252E0F00006F4535 /* AbilitiesResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilitiesResult.swift; sourceTree = "<group>"; };
+		842993F525696E6C0072A84C /* CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
 		843325F02539DD7E007E1AEA /* HeaderImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderImageScrollView.swift; sourceTree = "<group>"; };
 		84382D73253B5E3500F0B4AB /* Favorite+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Favorite+CoreDataClass.swift"; sourceTree = "<group>"; };
 		84382D74253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Favorite+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 				84382D73253B5E3500F0B4AB /* Favorite+CoreDataClass.swift */,
 				84382D74253B5E3500F0B4AB /* Favorite+CoreDataProperties.swift */,
 				9078CE5F253FF356003C597C /* PersistenceManager.swift */,
+				842993F525696E6C0072A84C /* CoreData.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -990,6 +993,7 @@
 				84D278C325376831004755BE /* SubView.swift in Sources */,
 				907D5F19252B12C500E30748 /* PokedexApp.swift in Sources */,
 				8402DAD5253F4966007D222E /* PokemonHeaderView.swift in Sources */,
+				842993F625696E6C0072A84C /* CoreData.swift in Sources */,
 				90AD3BE2252C1016009EECEE /* Collection+Extensions.swift in Sources */,
 				847A12802533696200146D24 /* FlexibleGridView.swift in Sources */,
 				846F3C48253CCB13003A30C6 /* AbilityView.swift in Sources */,

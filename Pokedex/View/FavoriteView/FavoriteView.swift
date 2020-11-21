@@ -57,9 +57,6 @@ struct FavoriteView: View {
         .onWillDisappear {
             favoriteUpdater.isTopView = false
         }
-        .onReceive(favoriteUpdater.didChange) { _ in
-            favoriteUpdater.refreshing = true
-        }
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
