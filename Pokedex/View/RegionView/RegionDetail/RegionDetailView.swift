@@ -6,31 +6,56 @@
 //
 
 import SwiftUI
+import Combine
 
 struct RegionDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @StateObject private var updater = RegionDetailUpdater()
+    @StateObject var updater = RegionDetailUpdater()
     @State private var isFirstTime = true
+    @State private var keyboardHeight: CGFloat = 0
+    @State var isShowSearchBar: Bool = false
+
 
     var regionModel: RegionCellModel
     @Binding var isShowing: Bool
     
     var body: some View {
         VStack {
-            HStack {
-                BackButtonView(isShowing: $isShowing)
-                Spacer()
-            }.padding(.top, 30)
-            .padding(.leading, 20)
+            RegionNavigation(isShowing: $isShowing, updater: updater, isShowSearchBar: $isShowSearchBar)
             
-            Text("The region of " + regionModel.name.capitalizingFirstLetter())
-                .font(Biotif.extraBold(size: 30).font)
-                .foregroundColor(.black)
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 35)
+            GeometryReader (content: { geometry in
+                ZStack(alignment: .top) {
+                    Text("The region of " + regionModel.name.capitalizingFirstLetter())
+                        .font(Biotif.extraBold(size: 30).font)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 35)
 
-            RegionContentView(updater: updater)
+                    RegionContentView(updater: updater)
+
+                    if updater.searchValue != "" {
+                        List(updater.searchResult) { result in
+                            Button(action: {
+                                withAnimation {
+                                    updater.selectedLocation = result
+                                    isShowSearchBar = false
+                                    updater.searchValue = ""
+                                }
+                            }, label: {
+                                Text(result.capitalizingFirstLetter())
+
+                            })
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(height: geometry.size.height - keyboardHeight, alignment: .center)
+                    }
+                }
+            })
+            
         }
+        .onReceive(Publishers.keyboardHeight, perform: {
+            keyboardHeight = $0
+        })
         .onAppear {
             if isFirstTime {
                 updater.url = regionModel.url
@@ -40,6 +65,85 @@ struct RegionDetailView: View {
         }
         .navigationBarHidden(true)
         .ignoresSafeArea()
+    }
+}
+
+struct RegionNavigation: View {
+    @Binding var isShowing: Bool
+    @ObservedObject var updater: RegionDetailUpdater
+    @Binding var isShowSearchBar: Bool
+    var placeholder = "Search Location"
+    
+    @Namespace var namespace
+    var keyboardWillShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+    var keyboardWillHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+
+    var body: some View {
+        HStack {
+            Button {
+                withAnimation(.spring()){
+                    isShowing = false
+                }
+            } label: {
+                Image(systemName: ("arrow.uturn.left"))
+                    .renderingMode(.template)
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.clear)
+                    .clipShape(Circle())
+            }.frame(width: 50, height: 50, alignment: .center)
+            
+            ZStack {
+                if isShowSearchBar {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .imageScale(.medium)
+                            .foregroundColor(Color(.systemGray3))
+                            .padding(3)
+                            .matchedGeometryEffect(id: "magnifyingglass", in: namespace)
+                        TextField(placeholder, text: $updater.searchValue)
+                            .font(.system(size: 15))
+                        if updater.searchValue != "" {
+                            Image(systemName: "xmark.circle.fill")
+                                .imageScale(.medium)
+                                .foregroundColor(Color(.systemGray3))
+                                .padding(3)
+                                .onTapGesture {
+                                    withAnimation {
+                                        updater.searchValue = ""
+                                    }
+                                }
+                        }
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .background(Capsule().fill(Color(.systemGray6)).padding(.all, -10))
+                } else {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            withAnimation {
+                                isShowSearchBar = true
+                            }
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                                .renderingMode(.template)
+                                .foregroundColor(.black)
+                                .padding()
+                                .background(Color.clear)
+                                .clipShape(Circle())
+                        }).matchedGeometryEffect(id: "magnifyingglass", in: namespace)
+                    }
+                }
+            }.padding()
+        }.padding(.top, 30)
+        .padding(.leading, 20)
+        .frame(height: 100, alignment: .center)
+        .onReceive(keyboardWillHide, perform: { _ in
+            withAnimation {
+                isShowSearchBar = false
+                updater.searchValue = ""
+            }
+        })
     }
 }
 

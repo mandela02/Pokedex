@@ -150,8 +150,16 @@ class RegionDetailUpdater: ObservableObject {
     }
 
     @Published var isLoadingData = false
+    
     @Published var isHavingNoData = false
 
+    @Published var searchValue: String = ""
+    @Published var searchResult: [String] = []
+
+    init() {
+        searching()
+    }
+    
     private func getRegion(from url: String?) {
         guard let url = url else { return }
         Session.share.region(from: url)
@@ -235,5 +243,16 @@ class RegionDetailUpdater: ObservableObject {
                                  location: self.selectedLocation,
                                  area: self.selectedArea)
         }.compactMap( {$0} )
+    }
+    
+    private func searching() {
+        $searchValue
+            .receive(on: RunLoop.main)
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .sink(receiveValue: { [weak self] searchString in
+                guard let self = self else { return }
+                let lowString = searchString.lowercased()
+                self.searchResult = self.locations.filter({$0.lowercased().contains(lowString)})
+            }).store(in: &cancellables)
     }
 }
