@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct RotatingPokemonView: View {
-    var message = ""
+    var message: String?
+    var image: String?
     var background: Color
 
     var pokemons = Constants.pokemons
@@ -18,10 +19,16 @@ struct RotatingPokemonView: View {
         GeometryReader { geometry in
             ZStack {
                 background.opacity(0.5)
-                Text(message)
-                    .font(Biotif.bold(size: 20).font)
-                    .foregroundColor(.red)
-                    .shadow(color: .red, radius: 1)
+                if let image = image {
+                    image.image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100, alignment: .center)
+                } else if let message = message {
+                    Text(message)
+                        .font(Biotif.bold(size: 20).font)
+                        .foregroundColor(.red)
+                }
                 let offset = 0 - (geometry.size.width / 2 - 50)
                 ForEach(Array(zip(pokemons.indices, pokemons)), id: \.0) { index, item in
                     item.image

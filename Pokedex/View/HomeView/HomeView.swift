@@ -18,6 +18,7 @@ struct EmptyPresentView: View {
 }
 
 struct PrepareView: View {
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @State var isShowPrepareView = false
     
     var body: some View {
@@ -31,6 +32,7 @@ struct PrepareView: View {
         .environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
         .fullScreenCover(isPresented: $isShowPrepareView) {
             CheckingView(isPresented: $isShowPrepareView)
+                .environmentObject(reachabilityUpdater)
         }.onAppear {
             isShowPrepareView = true
         }.statusBar(hidden: true)
@@ -103,11 +105,7 @@ struct SplashScreen: View {
     var body: some View {
         ZStack {
             conic
-            Image("icon")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100, alignment: .center)
-            
+            RotatingPokemonView(image: "icon", background: .clear)
             VStack(spacing: 5) {
                 Spacer()
                 Text("POKEDEX")

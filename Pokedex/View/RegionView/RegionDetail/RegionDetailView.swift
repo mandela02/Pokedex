@@ -150,6 +150,9 @@ struct RegionNavigation: View {
 struct RegionContentView: View {
     @ObservedObject var updater: RegionDetailUpdater
     @Namespace var animation
+    @State var isLoadingData = true
+    @State var havingNoPokemons = false
+
     var body: some View {
         VStack(spacing: 2) {
             LocationPickerView(updater: updater)
@@ -167,15 +170,24 @@ struct RegionContentView: View {
                     Spacer()
                     GradienView(atTop: false).frame(height: 50)
                 }
-                if updater.isLoadingData {
-                    LoadingView(background: .white)
-                        .matchedGeometryEffect(id: "loading", in: animation)
-                } else if updater.havingNoPokemons {
-                    RotatingPokemonView(message: "No Pokemon in this Area", background: .white)
-                        .matchedGeometryEffect(id: "loading", in: animation)
+                if isLoadingData {
+                        LoadingView(background: .white)
+                            .matchedGeometryEffect(id: "loading", in: animation)
+                } else if havingNoPokemons {
+                        RotatingPokemonView(message: "No Pokemon in this Area", background: .white)
+                            .matchedGeometryEffect(id: "loading", in: animation)
                 }
             }
-        }.animation(.easeInOut)
+        }.onReceive(updater.$isLoadingData, perform: { isLoadingData in
+            withAnimation(.easeIn) {
+                self.isLoadingData = isLoadingData
+            }
+        })
+        .onReceive(updater.$havingNoPokemons, perform: { havingNoPokemons in
+            withAnimation(.easeOut) {
+                self.havingNoPokemons = havingNoPokemons
+            }
+        })
     }
 }
 
