@@ -47,13 +47,13 @@ class RegionDetailUpdater: ObservableObject {
             }
             
             if selectedLocation == regionName {
-                areaPokedexCellModels.removeAll()
-                areaNames.removeAll()
+                areaPokedexCellModels.safeRemoveAll()
+                areaNames.safeRemoveAll()
                 selectedArea = ""
                 getPokedex(from: region)
             } else {
-                pokedexCellModels.removeAll()
-                pokedexNames.removeAll()
+                pokedexCellModels.safeRemoveAll()
+                pokedexNames.safeRemoveAll()
                 selectedPokedex = ""
                 if let url = region?.locations.first(where: {$0.name.eliminateDash == selectedLocation.lowercased()})?.url {
                     getLocation(from: url)
