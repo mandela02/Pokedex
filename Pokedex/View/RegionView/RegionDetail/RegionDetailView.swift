@@ -149,7 +149,7 @@ struct RegionNavigation: View {
 
 struct RegionContentView: View {
     @ObservedObject var updater: RegionDetailUpdater
-    
+    @Namespace var animation
     var body: some View {
         VStack(spacing: 2) {
             LocationPickerView(updater: updater)
@@ -169,6 +169,10 @@ struct RegionContentView: View {
                 }
                 if updater.isLoadingData {
                     LoadingView(background: .white)
+                        .matchedGeometryEffect(id: "loading", in: animation)
+                } else if updater.havingNoPokemons {
+                    RotatingPokemonView(message: "No Pokemon in this Area", background: .white)
+                        .matchedGeometryEffect(id: "loading", in: animation)
                 }
             }
         }

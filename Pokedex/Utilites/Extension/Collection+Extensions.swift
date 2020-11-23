@@ -12,6 +12,9 @@ extension Collection {
     subscript (safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
+    
+    func choose(_ n: Int) -> ArraySlice<Element> { shuffled().prefix(n) }
+
 }
 
 extension Array where Element: Hashable {

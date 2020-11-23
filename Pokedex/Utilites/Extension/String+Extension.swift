@@ -5,7 +5,7 @@
 //  Created by Bui Quang Tri on 10/6/20.
 //
 
-import Foundation
+import SwiftUI
 
 extension String {
     var eliminateDash: String {
@@ -18,6 +18,10 @@ extension String {
 
     mutating func capitalizeFirstLetter() {
         self = self.capitalizingFirstLetter()
+    }
+    
+    var image: Image {
+        return Image(self)
     }
 }
 
