@@ -175,7 +175,7 @@ struct RegionContentView: View {
                         .matchedGeometryEffect(id: "loading", in: animation)
                 }
             }
-        }
+        }.animation(.easeInOut)
     }
 }
 

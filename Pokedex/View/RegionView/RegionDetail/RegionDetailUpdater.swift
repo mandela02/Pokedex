@@ -160,7 +160,7 @@ class RegionDetailUpdater: ObservableObject {
         
         $isLoadingData
             .dropFirst(5)
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .sink(receiveValue: { [weak self] result in
                 guard let self = self else {
