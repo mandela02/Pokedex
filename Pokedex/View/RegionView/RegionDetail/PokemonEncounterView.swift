@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+struct PokemonEncounterNavigationView: View {
+    var encounter: AreaPokedexCellModel
+
+    var body: some View {
+        NavigationView {
+            PokemonEncounterView(encounter: encounter)
+                .navigationTitle("")
+                .navigationBarHidden(true)
+        }
+    }
+}
+
 struct PokemonEncounterView: View {
     @StateObject var updater = PokemonEncounterUpdater()
     

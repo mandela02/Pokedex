@@ -324,7 +324,8 @@ struct TappableRegionPokemonCell: View {
                     }
                 })
         } destination: {
-            PokemonEncounterView(encounter: pokedexCellModel)
+            PokemonEncounterNavigationView(encounter: pokedexCellModel)
+                .environmentObject(reachabilityUpdater)
         }.buttonStyle(PlainButtonStyle())
         .onAppear(perform: {
             isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
@@ -332,7 +333,8 @@ struct TappableRegionPokemonCell: View {
             isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
         }).background(NavigationLink(
                         destination: ParallaxView(pokedexCellModel: PokedexCellModel(pokemonUrl: pokedexCellModel.pokemonUrl, speciesUrl: pokedexCellModel.speciesUrl),
-                                                  isShowing: $show),
+                                                  isShowing: $show)
+                            .environmentObject(reachabilityUpdater),
                         isActive: $show,
                         label: {
                             EmptyView()
