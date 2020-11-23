@@ -25,13 +25,15 @@ struct RegionDetailView: View {
             
             GeometryReader (content: { geometry in
                 ZStack(alignment: .top) {
-                    Text("The region of " + regionModel.name.capitalizingFirstLetter())
-                        .font(Biotif.extraBold(size: 30).font)
-                        .foregroundColor(.black)
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, 35)
+                    VStack(alignment: .leading) {
+                        Text("The region of " + regionModel.name.capitalizingFirstLetter())
+                            .font(Biotif.extraBold(size: 30).font)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, 35)
 
-                    RegionContentView(updater: updater)
+                        RegionContentView(updater: updater)
+                    }
 
                     if updater.searchValue != "" {
                         List(updater.searchResult) { result in
@@ -231,6 +233,7 @@ struct LocationPickerView: View {
             .cornerRadius(10)
             .shadow(radius: 2)
             .id(updater.selectedLocation)
+            .animation(.easeIn)
             
             if updater.isHavingMultiDex {
                 HStack {
@@ -250,6 +253,7 @@ struct LocationPickerView: View {
                 .cornerRadius(10)
                 .shadow(radius: 2)
                 .id(updater.selectedPokedex)
+                .animation(.easeIn)
             }
             
             if updater.isHavingMultiArea {
@@ -270,6 +274,7 @@ struct LocationPickerView: View {
                 .cornerRadius(10)
                 .shadow(radius: 2)
                 .id(updater.selectedArea)
+                .animation(.easeIn)
             }
         }
         .transition(.opacity)
