@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RegionGridView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @StateObject var updater: RegionUpdater = RegionUpdater()
     
     var body: some View {
@@ -16,20 +17,26 @@ struct RegionGridView: View {
             let height = width * 0.6
             let gridItem = GridItem(.fixed(width), spacing: 10)
             let columns = [gridItem, gridItem]
-            
-            ScrollView(.vertical, showsIndicators: false) {
-                Color.clear.frame(height: 10)
-                LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(updater.regionCellModels) { region in
-                        RegionListCellView(size: CGSize(width: width, height: height),
-                                           region: region)
-                            .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                    }
+            ZStack {
+                if isDarkMode {
+                    Color.black
+                } else {
+                    Color.white
                 }
-                Color.clear.frame(height: height)
+                ScrollView(.vertical, showsIndicators: false) {
+                    Color.clear.frame(height: 10)
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(updater.regionCellModels) { region in
+                            RegionListCellView(size: CGSize(width: width, height: height),
+                                               region: region)
+                                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                        }
+                    }
+                    Color.clear.frame(height: height)
 
-                MovingDot()
-                    .isRemove(!updater.isLoadingData)
+                    MovingDot()
+                        .isRemove(!updater.isLoadingData)
+                }
             }
         })
     }

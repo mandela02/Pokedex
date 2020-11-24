@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BackButtonView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @Binding var isShowing: Bool
     var body: some View {
         HStack {
@@ -18,7 +19,7 @@ struct BackButtonView: View {
             } label: {
                 Image(systemName: ("arrow.uturn.left"))
                     .renderingMode(.template)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())

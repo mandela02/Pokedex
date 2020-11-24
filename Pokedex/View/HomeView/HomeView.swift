@@ -40,10 +40,16 @@ struct PrepareView: View {
 }
 
 struct HomeView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @State var showBall: Bool = false
 
     var body: some View {
         ZStack {
+            if isDarkMode {
+                Color.black
+            } else {
+                Color.white
+            }
             GeometryReader { geometry  in
                 let size = geometry.size
                 if showBall {
@@ -56,6 +62,7 @@ struct HomeView: View {
             }
         }
         .statusBar(hidden: true)
+        .ignoresSafeArea()
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 showBall = true

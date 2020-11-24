@@ -93,6 +93,7 @@
 		84F555F82533914000F09E84 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F555F72533914000F09E84 /* LoadingView.swift */; };
 		84F55604253398B900F09E84 /* CompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F55603253398B900F09E84 /* CompleteView.swift */; };
 		90085FB5256D03F7003B63F2 /* AnimatedSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90085FB4256D03F7003B63F2 /* AnimatedSwitch.swift */; };
+		90085FC1256D200B003B63F2 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90085FC0256D200B003B63F2 /* SettingView.swift */; };
 		901E633F2537E5D600F75BF3 /* PokemonList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901E633E2537E5D600F75BF3 /* PokemonList.swift */; };
 		90238B43255014B70087CF28 /* ReachabilityUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90238B42255014B70087CF28 /* ReachabilityUpdater.swift */; };
 		90400AAC2530160000659CD1 /* UnitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90400AAB2530160000659CD1 /* UnitHelper.swift */; };
@@ -250,6 +251,7 @@
 		84F555F72533914000F09E84 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		84F55603253398B900F09E84 /* CompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteView.swift; sourceTree = "<group>"; };
 		90085FB4256D03F7003B63F2 /* AnimatedSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedSwitch.swift; sourceTree = "<group>"; };
+		90085FC0256D200B003B63F2 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		901E633E2537E5D600F75BF3 /* PokemonList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonList.swift; sourceTree = "<group>"; };
 		90238B42255014B70087CF28 /* ReachabilityUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityUpdater.swift; sourceTree = "<group>"; };
 		90400AAB2530160000659CD1 /* UnitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitHelper.swift; sourceTree = "<group>"; };
@@ -520,6 +522,14 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		90085FBF256D1FFD003B63F2 /* SettingView */ = {
+			isa = PBXGroup;
+			children = (
+				90085FC0256D200B003B63F2 /* SettingView.swift */,
+			);
+			path = SettingView;
+			sourceTree = "<group>";
+		};
 		901E63432537E60100F75BF3 /* AnimatedView */ = {
 			isa = PBXGroup;
 			children = (
@@ -644,6 +654,7 @@
 		907D5F46252B12D000E30748 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				90085FBF256D1FFD003B63F2 /* SettingView */,
 				90866DEA2567A03E00EACA4B /* RegionView */,
 				8489E44925657A0C0017821E /* HomeView */,
 				84BD488E25367D5800D3D634 /* PokedexView */,
@@ -940,6 +951,7 @@
 				846F3C55253CCB82003A30C6 /* DetailViewWithGif.swift in Sources */,
 				90866DF92567A79A00EACA4B /* RegionAvatars.swift in Sources */,
 				847A126B2533249000146D24 /* AnimatedLikeButton.swift in Sources */,
+				90085FC1256D200B003B63F2 /* SettingView.swift in Sources */,
 				847A124A253158FA00146D24 /* Item.swift in Sources */,
 				907D5F74252B272600E30748 /* AllPokemonList.swift in Sources */,
 				847A128B25337ABC00146D24 /* VoiceHelper.swift in Sources */,
@@ -1192,11 +1204,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = J243X8N8UC;
+				DEVELOPMENT_TEAM = DAB2NZFLN5;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1206,7 +1218,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = develop_all_20200828;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
@@ -1220,11 +1232,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = J243X8N8UC;
+				DEVELOPMENT_TEAM = DAB2NZFLN5;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1234,7 +1246,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = develop_all_20200828;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;

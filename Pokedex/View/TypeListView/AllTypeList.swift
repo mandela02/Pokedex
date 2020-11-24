@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AllTypeList: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @StateObject var updater: TypeUpdater = TypeUpdater()
     
     var body: some View {
@@ -17,6 +18,11 @@ struct AllTypeList: View {
             let gridItem = GridItem(.fixed(width), spacing: 10)
             let columns = [gridItem, gridItem]
             ZStack {
+                if isDarkMode {
+                    Color.black
+                } else {
+                    Color.white
+                }
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(updater.allTypes, id: \.self) { type in
@@ -30,11 +36,19 @@ struct AllTypeList: View {
                 }
                 VStack {
                     Spacer()
-                    LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
-                                                               Color.white.opacity(1)]),
-                                   startPoint: .top, endPoint: .bottom)
-                        .frame(height: 100, alignment: .center)
-                        .blur(radius: 3.0)
+                    if isDarkMode {
+                        LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0),
+                                                                   Color.black.opacity(1)]),
+                                       startPoint: .top, endPoint: .bottom)
+                            .frame(height: 100, alignment: .center)
+                            .blur(radius: 3.0)
+                    } else {
+                        LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
+                                                                   Color.white.opacity(1)]),
+                                       startPoint: .top, endPoint: .bottom)
+                            .frame(height: 100, alignment: .center)
+                            .blur(radius: 3.0)
+                    }
                 }
             }
         })

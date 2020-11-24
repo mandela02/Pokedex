@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonList: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var cells: [PokedexCellModel]
     @Binding var isLoading: Bool
     @Binding var isFinal: Bool
@@ -32,7 +34,7 @@ struct PokemonList: View {
                     
                     Text("Pokedex")
                         .font(Biotif.bold(size: 50).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                         .padding(.all, 20)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     
@@ -61,7 +63,7 @@ struct PokemonList: View {
                 }
                 
                 if isLoading {
-                    LoadingView(background: .white)
+                    LoadingView(background: isDarkMode ? .black : .white)
                 }
             }
         })
@@ -69,12 +71,21 @@ struct PokemonList: View {
 }
 
 struct GradienView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var atTop: Bool
     
     var body: some View {
-        LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
-                                                   Color.white.opacity(1)]),
-                       startPoint: atTop ? .bottom : .top, endPoint: atTop ? .top : .bottom)
-            .blur(radius: 3.0)
+        if isDarkMode {
+            LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0),
+                                                       Color.black.opacity(1)]),
+                           startPoint: atTop ? .bottom : .top, endPoint: atTop ? .top : .bottom)
+                .blur(radius: 3.0)
+        } else {
+            LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0),
+                                                       Color.white.opacity(1)]),
+                           startPoint: atTop ? .bottom : .top, endPoint: atTop ? .top : .bottom)
+                .blur(radius: 3.0)
+        }
     }
 }

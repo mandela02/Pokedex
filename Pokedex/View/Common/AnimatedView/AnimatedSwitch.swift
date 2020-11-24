@@ -26,7 +26,7 @@ struct AnimatedSwitchContent: View {
         GeometryReader(content: { geometry in
             let width = geometry.size.width
             let height = width * 0.3
-            ZStack {
+            ZStack(alignment: .center) {
                 MountainView(isOn: $isOn, size: CGSize(width: width, height: height))
                     .cornerRadius(height/2)
                     .frame(width: width, height: height, alignment: .center)
@@ -48,9 +48,8 @@ struct AnimatedSwitchContent: View {
                             }
                         }
                     )
-            }
-            .frame(width: width, height: height, alignment: .leading)
-        }).padding()
+            }.frame(width: width, height: height, alignment: .leading)
+        }).frame(alignment: .center)
     }
 }
 
@@ -60,6 +59,7 @@ struct MountainView: View {
         
     var body: some View {
         ZStack {
+            Color.white
             Color.yellow
                 .opacity( isOn ? 0 : 0.2)
             Color.purple
