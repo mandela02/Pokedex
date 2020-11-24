@@ -22,4 +22,17 @@ struct Constants {
     static let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
     static let emptyImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/0.png"
     static let baseFrontImageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/%@.png"
+    
+    static var pokemons: [String] = Array(["abra", "bellsprout", "bullbasaur", "caterpie", "charmander", "dratini", "eevee", "jigglypuff", "mankey", "meowth", "mew", "pidgey", "pikachu", "psyduck", "rattata", "snorlax", "squirtle", "venonat", "weedle", "zubat"].choose(12))
+}
+
+struct RegionDex {
+    static var kantoAvatar  = [1, 4, 7]
+    static var johtoAvatar  = [152, 155, 158]
+    static var hoennAvatar  = [252, 255, 258]
+    static var sinnohAvatar = [387, 390, 393]
+    static var unovaAvatar  = [495, 498, 501]
+    static var kalosAvatar  = [650, 635, 656]
+    static var alolaAvatar  = [722, 725, 728]
+    static var galarAvatar: [Int] = []
 }

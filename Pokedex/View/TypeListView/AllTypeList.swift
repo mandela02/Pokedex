@@ -13,7 +13,7 @@ struct AllTypeList: View {
     var body: some View {
         GeometryReader(content: { geometry in
             let width = (geometry.size.width - 20 - 40) / 2
-            let height = (geometry.size.height) / 8
+            let height = width * 0.3
             let gridItem = GridItem(.fixed(width), spacing: 10)
             let columns = [gridItem, gridItem]
             ZStack {
@@ -38,11 +38,5 @@ struct AllTypeList: View {
                 }
             }
         })
-    }
-}
-
-struct TypeListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AllTypeList()
     }
 }

@@ -96,26 +96,12 @@ struct NewButtonView: View {
     }
     
     private func like(pokemon: Pokemon) {
-        let favorite = Favorite(context: viewContext)
-        favorite.url = UrlType.getPokemonUrl(of: pokemon.pokeId)
-        save()
+        CoreData.like(pokemon: UrlType.getPokemonUrl(of: pokemon.pokeId))
         showLikedNotification = true
     }
     
     private func dislike(pokemon: Pokemon) {
-        guard let item = favorites.first(where: {$0.url == UrlType.getPokemonUrl(of: pokemon.pokeId)}) else {
-            return
-        }
-        viewContext.delete(item)
-        save()
-    }
-    
-    private func save() {
-        do {
-            try viewContext.save()
-        } catch {
-            print(error.localizedDescription)
-        }
+        CoreData.dislike(pokemon: UrlType.getPokemonUrl(of: pokemon.pokeId))
     }
 }
 

@@ -77,7 +77,7 @@ struct SubView<Content: View>: View {
         }
         .background(Color.white.clipShape(CustomCorner(corner: [.topLeft, .topRight])))
         .offset(y: offset.height)
-        .frame(height: UIScreen.main.bounds.height/2)
+        .frame(height: UIScreen.main.bounds.height/1.8)
         .gesture(drag())
     }
 }
@@ -90,15 +90,18 @@ struct TypeSubView: View {
         SubView(isShowing: $isShowing,
                 view: {
                     getView()
+                        .background(Color.white)
                 })
     }
     
     private func getView() -> AnyView {
         switch kind {
         case .type:
-            return AnyView(AllTypeList().background(Color.white))
+            return AnyView(AllTypeList())
         case .search:
-            return AnyView(SearchView().background(Color.white))
+            return AnyView(SearchView())
+        case .region:
+            return AnyView(RegionGridView())
         default:
             return AnyView(EmptyView())
         }

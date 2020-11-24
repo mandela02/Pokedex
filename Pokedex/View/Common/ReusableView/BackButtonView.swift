@@ -10,7 +10,7 @@ import SwiftUI
 struct BackButtonView: View {
     @Binding var isShowing: Bool
     var body: some View {
-        HStack{
+        HStack {
             Button {
                 withAnimation(.spring()){
                     isShowing = false

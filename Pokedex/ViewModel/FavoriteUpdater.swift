@@ -41,6 +41,14 @@ class FavoriteUpdater: ObservableObject {
 
     init() {
         fetchEntries()
+        didChange.sink { [weak self] _ in
+            guard let self = self else { return }
+            if self.isTopView {
+                self.update()
+            } else {
+                self.refreshing = true
+            }
+        }.store(in: &cancellables)
     }
         
     private func fetchEntries() {
