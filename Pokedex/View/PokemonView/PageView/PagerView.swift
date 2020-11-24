@@ -33,6 +33,8 @@ enum Direction {
 }
 
 struct PagerView<Content: View & Identifiable>: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @Binding var index: Int
     @State var offset: CGFloat = 0.0
     var color: Color
@@ -71,7 +73,7 @@ struct PagerView<Content: View & Identifiable>: View {
                     ForEach(self.pages()) { page in
                         page
                             .frame(width: geometry.size.width, height: geometry.size.height)
-                            .background(HexColor.white)
+                            .background(isDarkMode ? Color.black : Color.white)
                     }
                 }
                 .offset(x: self.isGestureActive ? self.offset : -geometry.size.width * CGFloat(self.index))

@@ -20,6 +20,8 @@ struct AboutView: View {
 }
 
 struct AboutContentView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var id = UUID()
     var pokemon: Pokemon
     var species: Species
@@ -49,9 +51,9 @@ struct AboutContentView: View {
             }
             
             SizeView(height: pokemon.height, weight: pokemon.weight)
-                .background(HexColor.white)
+                .background(isDarkMode ? Color.black : Color.white)
                 .cornerRadius(8)
-                .shadow(color: .gray, radius: 8, x: -10, y: 10)
+                .shadow(color: .gray, radius: 3)
                 .padding()
                 .padding(.bottom, 20)
             

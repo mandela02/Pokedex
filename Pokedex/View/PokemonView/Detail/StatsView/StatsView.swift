@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct StatsView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var updater: StatUpdater = StatUpdater()
     @Binding var selectedIndex: Int
@@ -37,8 +39,9 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 5, content: {
                         Text("Characteristics")
                             .font(Biotif.bold(size: 15).font)
-                            .foregroundColor(.black)
-                        FlexibleGridView(characteristics: $updater.descriptions)
+                            .foregroundColor(isDarkMode ? .white : .black)
+                        FlexibleGridView(characteristics: $updater.descriptions,
+                                         foreground: isDarkMode ? .black : .white)
                     })
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
@@ -57,6 +60,8 @@ struct StatsView: View {
 }
 
 struct LevelInformationView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     let stat: PokeStat
     let amount: Int
     @Binding var selectedIndex: Int
@@ -70,7 +75,7 @@ struct LevelInformationView: View {
                 .frame(width: 80, alignment: .leading)
             Text("\(amount)")
                 .font(Biotif.bold(size: 12).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white :.black)
                 .frame(width: 30, alignment: .leading)
                 .padding(.trailing, 10)
             LevelBar(level: amount,

@@ -22,6 +22,8 @@ enum Gender: String {
 }
 
 struct BreedingView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var rate: Int
     var group: String
     var habitat: String
@@ -50,10 +52,10 @@ struct BreedingView: View {
                 }
                 Text(group.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                 Text(habitat.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
@@ -61,6 +63,8 @@ struct BreedingView: View {
 }
 
 struct GenderView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var gender: Gender
     var rate: Int
     
@@ -74,12 +78,14 @@ struct GenderView: View {
                 .foregroundColor(gender.color)
             Text(StringHelper.getGenderRateString(gender: gender, rate: rate))
                 .font(Biotif.semiBold(size: 12).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white : .black)
         }
     }
 }
 
 struct SizeView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var height: Int
     var weight: Int
     
@@ -91,7 +97,7 @@ struct SizeView: View {
                     .foregroundColor(.gray)
                 Text(StringHelper.heightString(from: height))
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 Text("Weight")
@@ -99,13 +105,15 @@ struct SizeView: View {
                     .foregroundColor(.gray)
                 Text(StringHelper.weightString(from: weight))
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }.padding()
     }
 }
 
 struct SpeciesNameView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var species: Species
 
     var body: some View {
@@ -116,7 +124,7 @@ struct SpeciesNameView: View {
                 .frame(width: 50, alignment: .leading)
             Text(StringHelper.getEnglishText(from: species.genera ?? []))
                 .font(Biotif.bold(size: 12).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.leading, 5)
         }
     }
@@ -124,6 +132,8 @@ struct SpeciesNameView: View {
 
 
 struct DescriptionView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var species: Species
     
     var body: some View {
@@ -134,7 +144,7 @@ struct DescriptionView: View {
                 .frame(alignment: .leading)
             Text(StringHelper.getEnglishText(from: species.flavorTextEntries ?? []))
                 .font(Biotif.bold(size: 12).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.leading, 10)
         }
     }

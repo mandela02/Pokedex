@@ -47,13 +47,14 @@ struct SelectedSegmentScrollView: View {
 }
 
 struct TabItem: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @Binding var selected: Int
     var tab: Tab
     
     var body: some View {
         Text(tab.title)
             .font(Biotif.bold(size: 15).font)
-            .foregroundColor(.black)
+            .foregroundColor(isDarkMode ? .white : .black)
             .frame(minWidth: 10, maxWidth: .infinity, alignment: .center)
             .frame(height: 50, alignment: .center)
             .onTapGesture(count: 1, perform: {

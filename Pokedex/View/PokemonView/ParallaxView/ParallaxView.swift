@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ParallaxView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     
     @Binding var isShowing: Bool
@@ -28,7 +29,8 @@ struct ParallaxView: View {
     
     var body: some View {
         ZStack {
-            updater.pokemonModel.pokemon.mainType.color.background.ignoresSafeArea()
+            updater.pokemonModel.pokemon.mainType.color.background
+                .ignoresSafeArea()
                 .animation(.linear)
             
             GeometryReader(content: { geometry in
@@ -77,6 +79,7 @@ struct ParallaxView: View {
                               isInExpandeMode: $isMinimized,
                               opacity: $opacity,
                               showLikedNotification: $showLikedNotification,
+                              isDisabled: $updater.isLoadingInitialData,
                               pokemon: updater.pokemonModel.pokemon)
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
                 .blur(radius: showLikedNotification ? 3 : 0)
@@ -131,6 +134,7 @@ struct ParallaxView: View {
 }
 
 struct ParallaxContentView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     
     var height: CGFloat
@@ -173,13 +177,20 @@ struct ParallaxContentView: View {
                     
                     VStack(spacing: 0) {
                         Spacer()
-                        Color.white
-                            .frame(height: 100, alignment: .center)
-                            .cornerRadius(25)
-                            .offset(y: 50)
+                        if isDarkMode {
+                            Color.black
+                                .frame(height: 100, alignment: .center)
+                                .cornerRadius(25)
+                                .offset(y: 50)
+                        } else {
+                            Color.white
+                                .frame(height: 100, alignment: .center)
+                                .cornerRadius(25)
+                                .offset(y: 50)
+                        }
                         DetailPageView(species: updater.pokemonModel.species,
                                        pokemon: updater.pokemonModel.pokemon)
-                            .background(Color.white)
+                            .background(isDarkMode ? Color.black : Color.white)
                     }
                     .blur(radius: updater.isLoadingNewData ? 3 : 0)
                     .frame(height: height - 50, alignment: .center)

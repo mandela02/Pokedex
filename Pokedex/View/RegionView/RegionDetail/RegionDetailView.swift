@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 struct RegionDetailView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var updater = RegionDetailUpdater()
     @State private var isFirstTime = true
@@ -21,14 +22,16 @@ struct RegionDetailView: View {
     
     var body: some View {
         VStack {
-            RegionNavigation(isShowing: $isShowing, updater: updater, isShowSearchBar: $isShowSearchBar)
+            RegionNavigation(isShowing: $isShowing,
+                             updater: updater,
+                             isShowSearchBar: $isShowSearchBar)
             
             GeometryReader (content: { geometry in
                 ZStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text("The region of " + regionModel.name.capitalizingFirstLetter())
                             .font(Biotif.extraBold(size: 30).font)
-                            .foregroundColor(.black)
+                            .foregroundColor(isDarkMode ? Color.black : Color.white)
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 35)
 
@@ -36,18 +39,25 @@ struct RegionDetailView: View {
                     }
 
                     if updater.searchValue != "" {
-                        List(updater.searchResult) { result in
-                            Button(action: {
-                                withAnimation {
-                                    updater.selectedLocation = result
-                                    isShowSearchBar = false
-                                    updater.searchValue = ""
-                                }
-                            }, label: {
-                                Text(result.capitalizingFirstLetter())
-
-                            })
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        ScrollView {
+                            ForEach(updater.searchResult) { result in
+                                Button(action: {
+                                    withAnimation {
+                                        updater.selectedLocation = result
+                                        isShowSearchBar = false
+                                        updater.searchValue = ""
+                                    }
+                                }, label: {
+                                    Text(result.capitalizingFirstLetter())
+                                        .font(Biotif.medium(size: 15).font)
+                                        .foregroundColor( isDarkMode ? .white : .black)
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
+                                        .padding(.leading, 10)
+                                })
+                                .frame(height: 44.0)
+                                .background(isDarkMode ? Color.black : Color.white)
+                                .padding(.leading, 10)
+                            }
                         }
                         .frame(height: geometry.size.height - keyboardHeight, alignment: .center)
                     }
@@ -55,6 +65,7 @@ struct RegionDetailView: View {
             })
             
         }
+        .background(isDarkMode ? Color.black : Color.white)
         .onReceive(Publishers.keyboardHeight, perform: {
             keyboardHeight = $0
         })
@@ -71,6 +82,7 @@ struct RegionDetailView: View {
 }
 
 struct RegionNavigation: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @Binding var isShowing: Bool
     @ObservedObject var updater: RegionDetailUpdater
     @Binding var isShowSearchBar: Bool
@@ -89,7 +101,7 @@ struct RegionNavigation: View {
             } label: {
                 Image(systemName: ("arrow.uturn.left"))
                     .renderingMode(.template)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? Color.white : Color.black)
                     .padding()
                     .background(Color.clear)
                     .clipShape(Circle())
@@ -129,7 +141,7 @@ struct RegionNavigation: View {
                         }, label: {
                             Image(systemName: "magnifyingglass")
                                 .renderingMode(.template)
-                                .foregroundColor(.black)
+                                .foregroundColor(isDarkMode ? Color.white : Color.black)
                                 .padding()
                                 .background(Color.clear)
                                 .clipShape(Circle())
@@ -145,11 +157,13 @@ struct RegionNavigation: View {
                 isShowSearchBar = false
                 updater.searchValue = ""
             }
-        })
+        }).background(isDarkMode ? Color.black : Color.white)
     }
 }
 
 struct RegionContentView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @ObservedObject var updater: RegionDetailUpdater
     @Namespace var animation
     @State var isLoadingData = true
@@ -173,10 +187,11 @@ struct RegionContentView: View {
                     GradienView(atTop: false).frame(height: 50)
                 }
                 if isLoadingData {
-                        LoadingView(background: .white)
+                    LoadingView(background: isDarkMode ? .black : .white)
                             .matchedGeometryEffect(id: "loading", in: animation)
                 } else if havingNoPokemons {
-                        RotatingPokemonView(message: "No Pokemon in this Area", background: .white)
+                    RotatingPokemonView(message: "No Pokemon in this Area",
+                                        background: isDarkMode ? .black : .white)
                             .matchedGeometryEffect(id: "loading", in: animation)
                 }
             }
@@ -195,23 +210,24 @@ struct RegionContentView: View {
 
 struct LocationPickerView: View {
     @ObservedObject var updater: RegionDetailUpdater
- 
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var selectedLocationLabel: some View {
         Text(updater.selectedLocation)
             .font(Biotif.bold(size: 20).font)
-            .foregroundColor(.blue)
+            .foregroundColor(isDarkMode ? .white : .blue)
     }
     
     var selectedPokedexLabel: some View {
         Text(updater.selectedPokedex)
             .font(Biotif.bold(size: 20).font)
-            .foregroundColor(.blue)
+            .foregroundColor(isDarkMode ? .white : .blue)
     }
     
     var selectedAreaLabel: some View {
         Text(updater.selectedArea)
             .font(Biotif.bold(size: 20).font)
-            .foregroundColor(.blue)
+            .foregroundColor(isDarkMode ? .white : .blue)
     }
 
     var body: some View {
@@ -219,7 +235,7 @@ struct LocationPickerView: View {
             HStack {
                 Text("Location")
                     .font(Biotif.regular(size: 20).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                 Spacer()
                 Picker(selection: $updater.selectedLocation,
                        label: selectedLocationLabel) {
@@ -229,7 +245,7 @@ struct LocationPickerView: View {
                 }.pickerStyle(MenuPickerStyle())
             }.frame(minWidth: 0, maxWidth: .infinity)
             .padding()
-            .background(Color.white)
+            .background(isDarkMode ? Color.black : Color.white)
             .cornerRadius(10)
             .shadow(radius: 2)
             .id(updater.selectedLocation)
@@ -239,7 +255,7 @@ struct LocationPickerView: View {
                 HStack {
                     Text("Pokedex")
                         .font(Biotif.regular(size: 20).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                     Spacer()
                     Picker(selection: $updater.selectedPokedex,
                            label: selectedPokedexLabel) {
@@ -249,7 +265,7 @@ struct LocationPickerView: View {
                     }.pickerStyle(MenuPickerStyle())
                 }.frame(minWidth: 0, maxWidth: .infinity)
                 .padding()
-                .background(Color.white)
+                .background(isDarkMode ? Color.black : Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 2)
                 .id(updater.selectedPokedex)
@@ -260,7 +276,7 @@ struct LocationPickerView: View {
                 HStack {
                     Text("Area")
                         .font(Biotif.regular(size: 20).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                     Spacer()
                     Picker(selection: $updater.selectedArea,
                            label: selectedAreaLabel) {
@@ -270,7 +286,7 @@ struct LocationPickerView: View {
                     }.pickerStyle(MenuPickerStyle())
                 }.frame(minWidth: 0, maxWidth: .infinity)
                 .padding()
-                .background(Color.white)
+                .background(isDarkMode ? Color.black : Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 2)
                 .id(updater.selectedArea)

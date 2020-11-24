@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FavoriteView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
 
     @Binding var show: Bool
@@ -15,6 +17,11 @@ struct FavoriteView: View {
     
     var body: some View {
         ZStack {
+            if isDarkMode{
+                Color.black
+            } else {
+                Color.white
+            }
             // Rotating Ball
             if favoriteUpdater.isTopView {
                 RotatingPokeballView(color: Color(.systemGray4))
@@ -64,6 +71,7 @@ struct FavoriteView: View {
 }
 
 struct EmptyFavoriteView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     var isShow: Bool = true
     
     var body: some View {
@@ -77,19 +85,22 @@ struct EmptyFavoriteView: View {
             }
             Text("NOTHING can please you!\nGo send some love to your pokemons!")
                 .font(Biotif.bold(size: 25).font)
-                .foregroundColor(.black)
                 .multilineTextAlignment(.center)
+                .foregroundColor(isDarkMode ? .white : Color(.darkGray))
+
         }
     }
 }
 
 struct BigTitle: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var text: String
     
     var body: some View {
         Text(text)
             .font(Biotif.extraBold(size: 30).font)
-            .foregroundColor(.black)
+            .foregroundColor(isDarkMode ? .white : .black)
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 35)
             .padding(.top, 75)

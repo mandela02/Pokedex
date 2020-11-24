@@ -25,7 +25,8 @@ struct PokedexView: View {
     @State private var showSubView: Bool = false
     @State private var keyboardHeight: CGFloat = 0
     @State private var showFavorite: Bool = false
-    
+    @State private var showSetting: Bool = false
+
     init() {
         initTableView()
     }
@@ -73,10 +74,16 @@ struct PokedexView: View {
             }
             PushOnSigalView(show: $showFavorite,
                             destination:  { FavoriteView(show: $showFavorite) })
+            PushOnSigalView(show: $showSetting,
+                            destination:  { SettingView(show: $showSetting) })
         }
         .onChange(of: selectedMenu, perform: { active in
             withAnimation(.default) {
-                if active == 3 {
+                if active == SubViewKind.setting.rawValue {
+                    showSetting = true
+                    self.selectedMenu = -1
+                    showSubView = false
+                } else if active == SubViewKind.favorite.rawValue {
                     showFavorite = true
                     self.selectedMenu = -1
                     showSubView = false
@@ -96,9 +103,9 @@ struct PokedexView: View {
         UITableView.appearance().separatorStyle = .none
         UITableView.appearance().separatorColor = .clear
         UITableView.appearance().showsVerticalScrollIndicator = false
-        UITableView.appearance().backgroundColor = .clear
         UITableView.appearance().allowsSelection = false
-        UITableViewCell.appearance().backgroundColor = .clear
         UITableViewCell.appearance().selectionStyle = .none
+        UITableView.appearance().backgroundColor = .clear
+        UITableViewCell.appearance().backgroundColor = .clear
     }
 }

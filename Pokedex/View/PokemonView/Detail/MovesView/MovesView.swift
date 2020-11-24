@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct MovesView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
     var pokemon: Pokemon
     
     var body: some View {
         ZStack {
+            isDarkMode ? Color.black : Color.white
+            
             GeometryReader(content: { geometry in
                 let width = geometry.size.width - 80
                 let height = width * 0.2
@@ -21,7 +25,8 @@ struct MovesView: View {
                 List {
                     ForEach(moveUpdater.groupedMoveCellModels) { section in
                         Section(header: Text(section.name.capitalizingFirstLetter())
-                                    .font(Biotif.extraBold(size: 25).font)) {
+                                    .font(Biotif.extraBold(size: 25).font)
+                                    .foregroundColor(isDarkMode ? .white : .black)) {
                             ForEach(section.cells) { cell in
                                 let isSelected = cell.move.name == moveUpdater.selected
                                 VStack {
@@ -35,7 +40,8 @@ struct MovesView: View {
                                             }
                                         }
                                     Color.clear.frame(height: 5)
-                                }
+                                }.listRowBackground(Color.clear)
+
                             }
                         }
                     }
@@ -88,6 +94,7 @@ struct TappableMoveCell: View {
 }
 
 struct MoveCell: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @StateObject var updater = MoveDetailUpdater()
 
     var pokemonMove: PokemonMove
@@ -117,7 +124,7 @@ struct MoveCell: View {
                     }
                 }
             }
-            .background(Color.white)
+            .background(isDarkMode ? Color.black : Color.white)
             .overlay(
                 RoundedRectangle(cornerRadius: 25)
                     .stroke(type.color.background.opacity(0.5), lineWidth: 5)
@@ -135,6 +142,8 @@ struct MoveCell: View {
 }
 
 struct SkillNameView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var move: Move
     var level: Int?
     
@@ -142,12 +151,12 @@ struct SkillNameView: View {
         HStack(alignment: .lastTextBaseline){
             Text(move.name?.capitalizingFirstLetter() ?? "")
                 .font(Biotif.bold(size: 25).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white : .black)
             Spacer()
             if let level = level {
                 Text("Lvl. \(level)")
                     .font(Biotif.bold(size: 15).font)
-                    .foregroundColor(Color(.darkGray))
+                    .foregroundColor(isDarkMode ? Color.white : Color(.darkGray))
             }
         }
         .padding(.leading, 20)
@@ -156,22 +165,24 @@ struct SkillNameView: View {
 }
 
 struct SkillPowerView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var move: Move
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             let type = PokemonType.type(from: move.type?.name ?? "")
             TypeBubbleCellView(text: type.rawValue.capitalizingFirstLetter(),
-                               foregroundColor: type.color.text,
+                               foregroundColor: isDarkMode ? .white : .black,
                                backgroundColor: type.color.background,
                                font: Biotif.book(size: 12).font)
             Spacer()
             HStack(alignment: .center, spacing: 20) {
                 Text("Power: \(move.power ?? 0)")
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(Color(.darkGray))
+                    .foregroundColor(isDarkMode ? Color.white : Color(.darkGray))
                 Text("PP: \(move.pp ?? 0)")
                     .font(Biotif.semiBold(size: 12).font)
-                    .foregroundColor(Color(.darkGray))
+                    .foregroundColor(isDarkMode ? Color.white : Color(.darkGray))
             }
         }
         .padding(.leading, 50)
@@ -180,6 +191,8 @@ struct SkillPowerView: View {
 }
 
 struct TextInformationView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var move: Move
     var pokemonMove: PokemonMove
     var learnMethod: String
@@ -188,13 +201,13 @@ struct TextInformationView: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("How to learn: \(pokemonMove.versionGroupDetails.first?.moveLearnMethod.name.capitalizingFirstLetter() ?? "")")
                 .font(Biotif.bold(size: 12).font)
-                .foregroundColor(Color(.black))
+                .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
             Text(learnMethod)
                 .font(Biotif.book(size: 10).font)
-                .foregroundColor(Color(.darkGray))
+                .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
@@ -203,11 +216,11 @@ struct TextInformationView: View {
                 .frame(minWidth: 0,
                        maxWidth: .infinity,
                        alignment: .topLeading)
-                .foregroundColor(Color(.darkGray))
+                .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                 .padding()
-                .background(Color.white)
+                .background(isDarkMode ? Color.black : Color.white)
                 .cornerRadius(10)
-                .shadow(color: .gray, radius: 8, x: -10, y: 10)
+                .shadow(color: .gray, radius: 3)
                 .padding(.all, 5)
         }
         .padding(EdgeInsets(top: 5, leading: 5, bottom: 20, trailing: 5))
@@ -215,6 +228,8 @@ struct TextInformationView: View {
 }
 
 struct MachineSubView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var move: Move
     var machine: Machine
     var target: String
@@ -225,21 +240,21 @@ struct MachineSubView: View {
                 HStack {
                     Text("Target")
                         .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color(.darkGray))
+                        .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                         .frame(width: 50, alignment: .leading)
                     Text(target.capitalizingFirstLetter())
                         .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color.black)
+                        .foregroundColor(isDarkMode ? Color.white : Color.black)
                 }
                 HStack {
                     Text("Machine")
                         .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(Color(.darkGray))
+                        .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                         .isRemove(machine.item.name.isEmpty)
                         .frame(width: 50, alignment: .leading)
                     Text(machine.item.name.capitalizingFirstLetter())
                         .font(Biotif.medium(size: 10).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                         .isRemove(machine.item.name.isEmpty)
                 }
             }

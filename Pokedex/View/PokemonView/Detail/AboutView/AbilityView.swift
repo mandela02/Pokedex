@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AbilitesView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     
     var pokemon: Pokemon
@@ -18,7 +19,7 @@ struct AbilitesView: View {
             if let abilities = pokemon.abilities, !abilities.isEmpty  {
                 Text("Abilities")
                     .font(Biotif.extraBold(size: 20).font)
-                    .foregroundColor(.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 10)
                 HStack(alignment: .center, spacing: 30) {
@@ -46,6 +47,8 @@ struct AbilitesView: View {
 }
 
 struct AbilityDetailView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var pokemon: Pokemon
     @Binding var selectedAbility: String?
     @StateObject var updater = AbilityUpdater(name: "")
@@ -78,7 +81,7 @@ struct AbilityDetailView: View {
 
                     Text(updater.description)
                         .font(Biotif.regular(size: 12).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                         .frame(minWidth: 0,
                                maxWidth: .infinity,
                                alignment: .leading)
@@ -109,7 +112,7 @@ struct AbilityDetailView: View {
                 updater.name = selectedAbility
             }
         })
-        .background(Color.white)
+        .background(isDarkMode ? Color.black : Color.white)
         .padding()
         .overlay(
             RoundedRectangle(cornerRadius: 25)

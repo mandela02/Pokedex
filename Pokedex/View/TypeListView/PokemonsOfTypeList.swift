@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PokemonsOfTypeListNavigationView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @Binding var show: Bool
     var type : PokemonType
     
@@ -20,6 +22,11 @@ struct PokemonsOfTypeListNavigationView: View {
     
     var body: some View {
         ZStack {
+            if isDarkMode {
+                Color.black
+            } else {
+                Color.white
+            }
             CustomBigTitleNavigationView(content: {
                 ParallaxPokemonsList(pokemons: updater.pokedexCellModels)
             }, header: {
@@ -29,7 +36,7 @@ struct PokemonsOfTypeListNavigationView: View {
             }, maxHeight: 200)
                 .isRemove(updater.hasNoPokemon)
             
-            LoadingView(background: .white)
+            LoadingView(background: isDarkMode ? .black : .white)
                 .isRemove(!updater.isLoading)
 
             PokemonsOfTypeEmptyView()
@@ -87,6 +94,8 @@ struct PokemonsOfTypeListNavigationView: View {
 }
 
 struct PokemonOfTypeHeaderView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     @Binding var show: Bool
     var typeName: String
     var damage: MoveDamageClass
@@ -96,14 +105,14 @@ struct PokemonOfTypeHeaderView: View {
                 HStack(alignment: .lastTextBaseline) {
                     Text(typeName.capitalizingFirstLetter())
                         .font(Biotif.extraBold(size: 30).font)
-                        .foregroundColor(.black)
+                        .foregroundColor(isDarkMode ? .white : .black)
                     
                     Spacer()
                     
                     if !damage.name.isEmpty {
                         Text("Damage type: " + damage.name)
                             .font(Biotif.extraBold(size: 20).font)
-                            .foregroundColor(Color(.darkGray))
+                            .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                     }
                 }
                 .padding(.top, 75)
@@ -115,7 +124,7 @@ struct PokemonOfTypeHeaderView: View {
                     Spacer()
                     Text(StringHelper.getEnglishText(from: damage.descriptions))
                         .font(Biotif.regular(size: 15).font)
-                        .foregroundColor(Color(.darkGray))
+                        .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                         .padding(.trailing, 30)
                 }
             }
@@ -124,6 +133,8 @@ struct PokemonOfTypeHeaderView: View {
 }
 
 struct PokemonsOfTypeEmptyView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
@@ -133,6 +144,7 @@ struct PokemonsOfTypeEmptyView: View {
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 2, trailing: 20))
                 Text("No Pokemons Founded")
                     .font(Biotif.extraBold(size: 30).font)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }
         }
     }

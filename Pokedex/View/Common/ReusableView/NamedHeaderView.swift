@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NamedHeaderView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var name: String
     
     var body: some View {
@@ -15,7 +17,7 @@ struct NamedHeaderView: View {
             Spacer()
             Text(name.capitalizingFirstLetter())
                 .font(Biotif.extraBold(size: 20).font)
-                .foregroundColor(.black)
+                .foregroundColor(isDarkMode ? .white : .black)
             Spacer()
         }
         .padding(.top, 50)
