@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EvolutionView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @ObservedObject var evolutionUpdater: EvolutionUpdater
     
@@ -19,19 +20,21 @@ struct EvolutionView: View {
         List {
             Section (header: Text("Evolution Chain")
                         .font(Biotif.extraBold(size: 20).font)
-                        .foregroundColor(.black)) {
+                        .foregroundColor(isDarkMode ? .white : .black)) {
                 ForEach(evolutionUpdater.evolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
+                        .listRowBackground(Color.clear)
                 }
             }.isRemove(evolutionUpdater.evolutionLinks.isEmpty)
 
             Section (header: Text("Mega Evolution")
                         .font(Biotif.extraBold(size: 20).font)
-                        .foregroundColor(.black)) {
+                        .foregroundColor(isDarkMode ? .white : .black)) {
                 ForEach(evolutionUpdater.megaEvolutionLinks) { link in
                     EvolutionCellView(evoLink: link)
                         .padding(.bottom, 5)
+                        .listRowBackground(Color.clear)
                 }
             }.isRemove(!(evolutionUpdater.species?.havingMega ?? true))
             
@@ -58,6 +61,8 @@ struct EvolutionCellView: View {
 }
 
 struct ArrowView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var trigger: String
     
     var body: some View {
@@ -66,13 +71,13 @@ struct ArrowView: View {
                 Image(systemName: "shift.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .rotationEffect(.init(degrees: 90))
                     .scaleEffect(0.5)
                 Image(systemName: "shift.fill")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(Color.black)
+                    .foregroundColor(isDarkMode ? .white : .black)
                     .rotationEffect(.init(degrees: 90))
                     .scaleEffect(0.5)
             }
@@ -84,6 +89,7 @@ struct ArrowView: View {
 }
 
 struct PokemonCellView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
 
     @State var show: Bool = false
@@ -115,7 +121,8 @@ struct PokemonCellView: View {
                 }
                 Text(name.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 15).font)
-                    .foregroundColor(.black)
+                    .lineLimit(1)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }
         } destination: {
             ParallaxView(pokedexCellModel: pokedexCellModel, isShowing: $show)

@@ -31,7 +31,7 @@ struct RegionDetailView: View {
                     VStack(alignment: .leading) {
                         Text("The region of " + regionModel.name.capitalizingFirstLetter())
                             .font(Biotif.extraBold(size: 30).font)
-                            .foregroundColor(.black)
+                            .foregroundColor(isDarkMode ? Color.black : Color.white)
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 35)
 
@@ -39,18 +39,25 @@ struct RegionDetailView: View {
                     }
 
                     if updater.searchValue != "" {
-                        List(updater.searchResult) { result in
-                            Button(action: {
-                                withAnimation {
-                                    updater.selectedLocation = result
-                                    isShowSearchBar = false
-                                    updater.searchValue = ""
-                                }
-                            }, label: {
-                                Text(result.capitalizingFirstLetter())
-
-                            })
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        ScrollView {
+                            ForEach(updater.searchResult) { result in
+                                Button(action: {
+                                    withAnimation {
+                                        updater.selectedLocation = result
+                                        isShowSearchBar = false
+                                        updater.searchValue = ""
+                                    }
+                                }, label: {
+                                    Text(result.capitalizingFirstLetter())
+                                        .font(Biotif.medium(size: 15).font)
+                                        .foregroundColor( isDarkMode ? .white : .black)
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
+                                        .padding(.leading, 10)
+                                })
+                                .frame(height: 44.0)
+                                .background(isDarkMode ? Color.black : Color.white)
+                                .padding(.leading, 10)
+                            }
                         }
                         .frame(height: geometry.size.height - keyboardHeight, alignment: .center)
                     }

@@ -71,6 +71,7 @@ struct FavoriteView: View {
 }
 
 struct EmptyFavoriteView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     var isShow: Bool = true
     
     var body: some View {
@@ -84,8 +85,9 @@ struct EmptyFavoriteView: View {
             }
             Text("NOTHING can please you!\nGo send some love to your pokemons!")
                 .font(Biotif.bold(size: 25).font)
-                .foregroundColor(.black)
                 .multilineTextAlignment(.center)
+                .foregroundColor(isDarkMode ? .white : Color(.darkGray))
+
         }
     }
 }

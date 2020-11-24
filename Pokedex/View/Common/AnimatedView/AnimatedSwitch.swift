@@ -40,7 +40,7 @@ struct AnimatedSwitchContent: View {
                                     .frame(width: width - height)
                             }
                             Circle()
-                                .fill(Color(.systemGray5))
+                                .fill(Color.white)
                                 .scaleEffect(0.9)
                             if isOn {
                                 Spacer()

@@ -133,6 +133,8 @@ struct PokemonOfTypeHeaderView: View {
 }
 
 struct PokemonsOfTypeEmptyView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
@@ -142,6 +144,7 @@ struct PokemonsOfTypeEmptyView: View {
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 2, trailing: 20))
                 Text("No Pokemons Founded")
                     .font(Biotif.extraBold(size: 30).font)
+                    .foregroundColor(isDarkMode ? .white : .black)
             }
         }
     }

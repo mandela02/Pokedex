@@ -103,6 +103,7 @@ struct CheckingView: View {
 }
 
 struct SplashScreen: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     let conic = RadialGradient(gradient: Gradient(colors: [Color.red.opacity(0.5),
                                                            Color.red]),
                                center: .center,
@@ -111,6 +112,7 @@ struct SplashScreen: View {
 
     var body: some View {
         ZStack {
+            isDarkMode ? Color.black : Color.white
             conic
             RotatingPokemonView(image: "icon", background: .clear)
             VStack(spacing: 5) {

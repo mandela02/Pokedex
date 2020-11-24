@@ -105,5 +105,7 @@ struct PokedexView: View {
         UITableView.appearance().showsVerticalScrollIndicator = false
         UITableView.appearance().allowsSelection = false
         UITableViewCell.appearance().selectionStyle = .none
+        UITableView.appearance().backgroundColor = .clear
+        UITableViewCell.appearance().backgroundColor = .clear
     }
 }

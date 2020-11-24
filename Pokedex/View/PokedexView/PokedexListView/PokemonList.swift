@@ -16,7 +16,7 @@ struct PokemonList: View {
         
     var paddingHeader: CGFloat
     var paddingFooter: CGFloat
-    
+    @State var textColor = Color.black
     let onCellAppear: (PokedexCellModel) -> ()
     
     let numberOfColumns: CGFloat = Constants.deviceIdiom == .pad ? 3 : 2
@@ -34,10 +34,10 @@ struct PokemonList: View {
                     
                     Text("Pokedex")
                         .font(Biotif.bold(size: 50).font)
-                        .foregroundColor(isDarkMode ? .white : .black)
+                        .foregroundColor(textColor)
                         .padding(.all, 20)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                    
+
                     LazyVGrid(columns: columns) {
                         ForEach(cells) { cell in
                             TappablePokemonCell(pokedexCellModel: cell, size: CGSize(width: width, height: height))
@@ -66,6 +66,10 @@ struct PokemonList: View {
                     LoadingView(background: isDarkMode ? .black : .white)
                 }
             }
+        }).onChange(of: isDarkMode, perform: { value in
+              textColor = value ? .white : .black
+        }).onAppear(perform: {
+            textColor = isDarkMode ? .white : .black
         })
     }
 }

@@ -15,11 +15,10 @@ struct SettingView: View {
 
     var body: some View {
         ZStack {
-            if isDarkMode {
-                Color.black
-            } else {
-                Color.white
-            }
+            ZStack {
+                Color.black.opacity(isDarkMode ? 1 : 0)
+                Color.white.opacity(isDarkMode ? 0 : 1)
+            }.animation(Animation.easeInOut(duration: 0.2))
             CustomBigTitleNavigationView(content: {
                 SettingContentView()
             }, header: {
