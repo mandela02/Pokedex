@@ -77,6 +77,7 @@ struct ParallaxView: View {
                               isInExpandeMode: $isMinimized,
                               opacity: $opacity,
                               showLikedNotification: $showLikedNotification,
+                              isDisabled: $updater.isLoadingInitialData,
                               pokemon: updater.pokemonModel.pokemon)
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
                 .blur(radius: showLikedNotification ? 3 : 0)

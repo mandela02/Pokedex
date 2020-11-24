@@ -13,12 +13,13 @@ struct PokemonHeaderView: View {
     @Binding var isInExpandeMode: Bool
     @Binding var opacity: Double
     @Binding var showLikedNotification: Bool
+    @Binding var isDisabled: Bool
 
     var pokemon: Pokemon
 
     var body: some View {
         VStack {
-            NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, showLikedNotification: $showLikedNotification, pokemon: pokemon)
+            NewButtonView(isShowing: $isShowing, isInExpandeMode: $isInExpandeMode, showLikedNotification: $showLikedNotification, isDisabled: $isDisabled, pokemon: pokemon)
             if reachabilityUpdater.hasNoInternet {
                 NoInternetView()
             } else {
@@ -38,6 +39,7 @@ struct NewButtonView: View {
     @Binding var isShowing: Bool
     @Binding var isInExpandeMode: Bool
     @Binding var showLikedNotification: Bool
+    @Binding var isDisabled: Bool
 
     var pokemon: Pokemon
     
@@ -76,6 +78,7 @@ struct NewButtonView: View {
                 }
             })
             .disabled(reachabilityUpdater.hasNoInternet)
+            .disabled(isDisabled)
             .padding()
             .background(Color.clear)
             .clipShape(Circle())

@@ -9,9 +9,7 @@ import Foundation
 import Combine
 
 struct PokedexCellModel: Identifiable, Equatable {
-    var id: String {
-        return pokemonUrl
-    }
+    var id = UUID()
     
     var pokemonUrl: String = ""
     var speciesUrl: String = ""
