@@ -62,8 +62,8 @@ struct MountainView: View {
             Color.white
             Color.yellow
                 .opacity( isOn ? 0 : 0.2)
-            Color.purple
-                .opacity( isOn ? 0.2 : 0)
+            Color.black
+                .opacity( isOn ? 0.7 : 0)
 
             SunView(isOn: $isOn, size: CGSize(width: size.height, height: size.height))
                 .offset(y: size.height/1.5)
@@ -116,7 +116,7 @@ struct SunView: View {
                                center: .center,
                                startRadius: size.width * 0.3,
                                endRadius: size.width * 0.5)
-        nightConic = RadialGradient(gradient: Gradient(colors: [Color.purple.opacity(0.5), Color.white]),
+        nightConic = RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.5), Color.black]),
                                center: .center,
                                startRadius: size.width * 0.3,
                                endRadius: size.width * 0.5)
@@ -142,7 +142,9 @@ struct SunView: View {
                     self.conic = value ? self.nightConic : self.dayConic
                 }
             }
-        })
+        }).onAppear {
+            self.conic = isOn ? self.nightConic : self.dayConic
+        }
     }
 }
 

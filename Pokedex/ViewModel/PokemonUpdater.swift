@@ -26,11 +26,12 @@ class PokemonUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     @Published var error: ApiError = .non
-    var isTopView = true
+    @Published var isTopView = true
     var retry = false {
         didSet {
             if retry && isTopView {
-                //initPokemon()
+                let oldValue = pokedexCellModel.value
+                pokedexCellModel.send(oldValue)
             }
         }
     }

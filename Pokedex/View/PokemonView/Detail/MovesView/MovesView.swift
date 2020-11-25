@@ -48,7 +48,7 @@ struct MovesView: View {
                                                                  pokemonMove: cell.pokemonMove,
                                                                  move: cell.move)
                                                     .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
-                                                    .onDisappear {
+                                                    .onWillDisappear {
                                                         if isSelected {
                                                             moveUpdater.selected = nil
                                                         }
