@@ -113,7 +113,7 @@ struct SplashScreen: View {
 
     var body: some View {
         ZStack {
-            isDarkMode ? Color.black : Color.white
+            isDarkMode ? Color.black.opacity(0.5) : Color.white.opacity(0.5)
             conic
             RotatingPokemonView(image: "icon", background: .clear)
             VStack(spacing: 5) {

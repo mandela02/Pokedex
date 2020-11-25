@@ -17,31 +17,40 @@ struct EvolutionView: View {
     }
     
     var body: some View {
-        List {
-            Section (header: Text("Evolution Chain")
-                        .font(Biotif.extraBold(size: 20).font)
-                        .foregroundColor(isDarkMode ? .white : .black)) {
-                ForEach(evolutionUpdater.evolutionLinks) { link in
-                    EvolutionCellView(evoLink: link)
-                        .padding(.bottom, 5)
-                        .listRowBackground(Color.clear)
+        ScrollView(showsIndicators: false) {
+            LazyVStack(alignment: .leading) {
+                ForEach((0..<evolutionUpdater.evolutionSectionsModels.count), id:\.self) { index in
+                    HStack {
+                        Text(evolutionUpdater.evolutionSectionsModels[index].title)
+                            .font(Biotif.extraBold(size: 20).font)
+                            .foregroundColor(isDarkMode ? .white : .black)
+                        Spacer()
+                        Image(systemName: "arrowtriangle.right")
+                            .renderingMode(.template)
+                            .foregroundColor(isDarkMode ? .white : .black)
+                            .rotationEffect(.degrees(evolutionUpdater.evolutionSectionsModels[index].isExpanded ? 90 : 0))
+                    }
+                    .isRemove(evolutionUpdater.evolutionSectionsModels[index].data.isEmpty)
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            evolutionUpdater.evolutionSectionsModels[index].isExpanded.toggle()
+                        }
+                    }
+                    if evolutionUpdater.evolutionSectionsModels[index].isExpanded {
+                        LazyVStack(alignment: .leading) {
+                            ForEach(evolutionUpdater.evolutionSectionsModels[index].data) { data in
+                                EvolutionCellView(evoLink: data)
+                                    .padding(.bottom, 5)
+                            }
+                        }
+                    }
                 }
-            }.isRemove(evolutionUpdater.evolutionLinks.isEmpty)
-
-            Section (header: Text("Mega Evolution")
-                        .font(Biotif.extraBold(size: 20).font)
-                        .foregroundColor(isDarkMode ? .white : .black)) {
-                ForEach(evolutionUpdater.megaEvolutionLinks) { link in
-                    EvolutionCellView(evoLink: link)
-                        .padding(.bottom, 5)
-                        .listRowBackground(Color.clear)
-                }
-            }.isRemove(!(evolutionUpdater.species?.havingMega ?? true))
-            
-            Color.clear.frame(height: 100, alignment: .center)
+                Color.clear.frame(height: 15)
+            }
         }
+        .frame(alignment: .leading)
+        .padding()
         .background(isDarkMode ? Color.black : Color.white)
-        .listStyle(SidebarListStyle())
         .animation(.linear)
     }
 }

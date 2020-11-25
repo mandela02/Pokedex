@@ -19,21 +19,22 @@ struct EvoLink: Identifiable {
 class EvolutionUpdater: ObservableObject {
     init(of species: Species) {
         self.species = species
+        mergeResult()
     }
     
-    @Published var species: Species? {
+    @Published private var species: Species? {
         didSet {
             getEvolutionInformation()
         }
     }
 
-    @Published var evolution: Evolution = Evolution() {
+    @Published private var evolution: Evolution = Evolution() {
         didSet {
             evolutionChains = evolution.allChains
         }
     }
     
-    @Published var evolutionChains: [EvolutionChain] = [] {
+    @Published private var evolutionChains: [EvolutionChain] = [] {
         didSet {
             var links: [EvoLink] = []
             for (index, element) in evolutionChains.enumerated() {
@@ -48,12 +49,24 @@ class EvolutionUpdater: ObservableObject {
         }
     }
 
-    @Published var evolutionLinks: [EvoLink] = []
-    @Published var megaEvolutionLinks: [EvoLink] = []
-    
+    @Published private var evolutionLinks: [EvoLink] = []
+    @Published private var megaEvolutionLinks: [EvoLink] = []
+    @Published var evolutionSectionsModels: [SectionModel<EvoLink>] = []
+
     @Published var error: ApiError = .non
 
     private var cancellables = Set<AnyCancellable>()
+    
+    private func mergeResult() {
+        Publishers.CombineLatest($evolutionLinks, $megaEvolutionLinks)
+            .sink { [weak self] (evolutionLinks, megaEvolutionLinks) in
+                guard let self = self else { return }
+                var evolutionSectionsModels: [SectionModel<EvoLink>] = []
+                evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Evolution Chain", data: evolutionLinks))
+                evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Mega Evolution", data: megaEvolutionLinks))
+                self.evolutionSectionsModels = evolutionSectionsModels
+            }.store(in: &cancellables)
+    }
     
     private func getEvolutionInformation() {
         if let megas = species?.megas {
