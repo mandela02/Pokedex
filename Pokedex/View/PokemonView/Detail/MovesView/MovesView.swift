@@ -17,38 +17,54 @@ struct MovesView: View {
     var body: some View {
         ZStack {
             isDarkMode ? Color.black : Color.white
-            
             GeometryReader(content: { geometry in
                 let width = geometry.size.width - 80
-                let height = width * 0.2
-                
-                List {
-                    ForEach(moveUpdater.groupedMoveCellModels) { section in
-                        Section(header: Text(section.name.capitalizingFirstLetter())
-                                    .font(Biotif.extraBold(size: 25).font)
-                                    .foregroundColor(isDarkMode ? .white : .black)) {
-                            ForEach(section.cells) { cell in
-                                let isSelected = cell.move.name == moveUpdater.selected
-                                VStack {
-                                    TappableMoveCell(selectedMove: $moveUpdater.selected,
-                                                     pokemonMove: cell.pokemonMove,
-                                                     move: cell.move)
-                                        .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
-                                        .onDisappear {
-                                            if isSelected {
-                                                moveUpdater.selected = nil
+                let height = width * 0.3
+
+                ScrollView(showsIndicators: false) {
+                    LazyVStack(alignment: .leading) {
+                        ForEach((0 ..< moveUpdater.groupedMoveCellModels.count), id:\.self) { index in
+                            VStack(spacing: 10) {
+                                HStack {
+                                    Text(moveUpdater.groupedMoveCellModels[index].title.capitalizingFirstLetter())
+                                                .font(Biotif.extraBold(size: 25).font)
+                                                .foregroundColor(isDarkMode ? .white : .black)
+                                    Spacer()
+                                    Image(systemName: "arrowtriangle.right")
+                                        .renderingMode(.template)
+                                        .foregroundColor(isDarkMode ? .white : .black)
+                                        .rotationEffect(.degrees(moveUpdater.groupedMoveCellModels[index].isExpanded ? 90 : 0))
+                                }.onTapGesture {
+                                    withAnimation(.easeInOut) {
+                                        moveUpdater.groupedMoveCellModels[index].isExpanded.toggle()
+                                    }
+                                }
+                                if moveUpdater.groupedMoveCellModels[index].isExpanded {
+                                    LazyVStack(alignment: .leading) {
+                                        ForEach(moveUpdater.groupedMoveCellModels[index].data) { cell in
+                                            let isSelected = cell.move.name == moveUpdater.selected
+                                            VStack {
+                                                TappableMoveCell(selectedMove: $moveUpdater.selected,
+                                                                 pokemonMove: cell.pokemonMove,
+                                                                 move: cell.move)
+                                                    .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
+                                                    .onDisappear {
+                                                        if isSelected {
+                                                            moveUpdater.selected = nil
+                                                        }
+                                                    }
+                                                Color.clear.frame(height: 5)
                                             }
                                         }
-                                    Color.clear.frame(height: 5)
-                                }.listRowBackground(Color.clear)
-
+                                    }
+                                }
+                                Color.clear.frame(height: 5)
                             }
                         }
                     }
-                    Color.clear.frame(height: UIScreen.main.bounds.height * 0.4)
-                }
-                .listStyle(SidebarListStyle())
+                }.frame(alignment: .leading)
                 .animation(.default)
+                .padding()
                 .onAppear {
                     moveUpdater.pokemon = pokemon
                 }
@@ -78,12 +94,13 @@ struct TappableMoveCell: View {
     var move: Move
     
     var body: some View {
-        Button {
-            isExtensed.toggle()
-            selectedMove = isExtensed ? move.name : nil
-        } label: {
-            MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
-        }.onChange(of: selectedMove, perform: { value in
+        MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
+            .onTapGesture(count: 1, perform: {
+                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                    isExtensed.toggle()
+                    selectedMove = isExtensed ? move.name : nil
+                }
+            }).onChange(of: selectedMove, perform: { value in
             withAnimation(.spring()) {
                 isExtensed = selectedMove == move.name
             }
@@ -133,7 +150,7 @@ struct MoveCell: View {
             .onAppear {
                 updater.pokemonMove = pokemonMove
                 updater.move = move
-            }.onDisappear {
+            }.onWillDisappear {
                 updater.pokemonMove = nil
                 updater.move = nil
             }
@@ -172,7 +189,7 @@ struct SkillPowerView: View {
         HStack(alignment: .center, spacing: 10) {
             let type = PokemonType.type(from: move.type?.name ?? "")
             TypeBubbleCellView(text: type.rawValue.capitalizingFirstLetter(),
-                               foregroundColor: isDarkMode ? .white : .black,
+                               foregroundColor: .white,
                                backgroundColor: type.color.background,
                                font: Biotif.book(size: 12).font)
             Spacer()
@@ -281,10 +298,9 @@ struct SmallMoveCellView: View {
                     .scaleEffect(isExtensed ? 1.5 : 1.1)
                     .foregroundColor(PokemonType.type(from: move.type?.name ?? "").color.background.opacity(0.5))
             }
-            VStack() {
+            VStack(spacing: 10) {
                 SkillNameView(move: move, level: level)
                     .padding(.top, 30)
-                Spacer()
                 SkillPowerView(move: move)
                     .padding(.bottom, 30)
             }

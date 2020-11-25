@@ -28,6 +28,7 @@ struct PrepareView: View {
                 .navigationTitle("")
                 .navigationBarHidden(true)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .isRemove(isShowPrepareView)
         .environment(\.managedObjectContext, PersistenceManager.shared.persistentContainer.viewContext)
         .fullScreenCover(isPresented: $isShowPrepareView) {

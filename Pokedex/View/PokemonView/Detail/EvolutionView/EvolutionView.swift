@@ -40,6 +40,7 @@ struct EvolutionView: View {
             
             Color.clear.frame(height: 100, alignment: .center)
         }
+        .background(isDarkMode ? Color.black : Color.white)
         .listStyle(SidebarListStyle())
         .animation(.linear)
     }
