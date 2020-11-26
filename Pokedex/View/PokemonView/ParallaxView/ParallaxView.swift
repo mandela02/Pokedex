@@ -92,6 +92,7 @@ struct ParallaxView: View {
                     .animation(.default)
             }
         }
+        .statusBar(hidden: true)
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()

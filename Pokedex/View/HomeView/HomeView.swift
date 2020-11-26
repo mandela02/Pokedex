@@ -10,10 +10,8 @@ import SwiftUI
 
 struct EmptyPresentView: View {
     var body: some View {
-        EmptyView()
-            .fullScreenCover(isPresented: .constant(true)) {
-                PrepareView()
-            }.statusBar(hidden: true)
+        PrepareView()
+            .statusBar(hidden: true)
     }
 }
 

@@ -24,7 +24,7 @@ class StringHelper {
     }
     
     static func getEnglishText(from texts: [FlavorTextEntry]) -> String {
-        guard let text = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.randomElement() else {
+        guard let text = texts.filter({$0.language.name == "en"}).map({$0.flavorText}).uniques.first else {
             return ""
         }
         return text.replacingOccurrences(of: "\n", with: " ", options: .literal, range: nil)
