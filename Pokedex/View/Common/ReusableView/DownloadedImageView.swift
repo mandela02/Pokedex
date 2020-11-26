@@ -104,12 +104,16 @@ struct AnimatedImageView: View {
         GeometryReader { geometry in
             ZStack {
                 if isDoneLoading {
-                    ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                                needHidden = true
-                            })
-                        }
+                    HStack {
+                        Spacer()
+                        ZoomOutImageView(image: imageLoader.displayImage ?? UIImage())
+                        Spacer()
+                    }
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                            needHidden = true
+                        })
+                    }
                 } else {
                     WigglePokeBallView(imageLoader: imageLoader)
                         .onReceive(imageLoader.$displayImage, perform: { displayImage in

@@ -139,6 +139,7 @@
 		90DF66CB252EC580000284A6 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DF66CA252EC580000284A6 /* View+Extension.swift */; };
 		90DF66DF252EFF42000284A6 /* Devide+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DF66DE252EFF42000284A6 /* Devide+Extension.swift */; };
 		90DF66EA252F0EA0000284A6 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DF66E9252F0EA0000284A6 /* AboutView.swift */; };
+		90E006B8256DFFF40056051D /* SectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E006B7256DFFF40056051D /* SectionListView.swift */; };
 		90F0BBE9252F185B00A37B3C /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F0BBE8252F185B00A37B3C /* StatsView.swift */; };
 		90F9426D2536A4E4003C23FF /* HamburgerButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */; };
 		90F942B92536D381003C23FF /* TypeDetailUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F942B82536D381003C23FF /* TypeDetailUpdater.swift */; };
@@ -303,6 +304,7 @@
 		90DF66CA252EC580000284A6 /* View+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		90DF66DE252EFF42000284A6 /* Devide+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Devide+Extension.swift"; sourceTree = "<group>"; };
 		90DF66E9252F0EA0000284A6 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		90E006B7256DFFF40056051D /* SectionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionListView.swift; sourceTree = "<group>"; };
 		90F0BBE8252F185B00A37B3C /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		90F9425025369620003C23FF /* Pokedex.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pokedex.entitlements; sourceTree = "<group>"; };
 		90F9426C2536A4E4003C23FF /* HamburgerButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HamburgerButtonView.swift; sourceTree = "<group>"; };
@@ -559,6 +561,7 @@
 				908F65BB2546C20800E16454 /* ParallaxPokemonsList.swift */,
 				908F65C02546C22300E16454 /* NamedHeaderView.swift */,
 				8493589C2557344B00A782A9 /* CustomCorner.swift */,
+				90E006B7256DFFF40056051D /* SectionListView.swift */,
 			);
 			path = ReusableView;
 			sourceTree = "<group>";
@@ -1018,6 +1021,7 @@
 				907D5F19252B12C500E30748 /* PokedexApp.swift in Sources */,
 				8402DAD5253F4966007D222E /* PokemonHeaderView.swift in Sources */,
 				842993F625696E6C0072A84C /* CoreData.swift in Sources */,
+				90E006B8256DFFF40056051D /* SectionListView.swift in Sources */,
 				90AD3BE2252C1016009EECEE /* Collection+Extensions.swift in Sources */,
 				847A12802533696200146D24 /* FlexibleGridView.swift in Sources */,
 				846F3C48253CCB13003A30C6 /* AbilityView.swift in Sources */,

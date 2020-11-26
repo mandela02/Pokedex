@@ -15,7 +15,7 @@ struct PokemonEncounterNavigationView: View {
             PokemonEncounterView(encounter: encounter)
                 .navigationTitle("")
                 .navigationBarHidden(true)
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

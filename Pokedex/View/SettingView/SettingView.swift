@@ -37,6 +37,7 @@ struct SettingView: View {
             .padding(.top, 30)
             .padding(.leading, 20)
         }.ignoresSafeArea()
+        .statusBar(hidden: true)
     }
 }
 

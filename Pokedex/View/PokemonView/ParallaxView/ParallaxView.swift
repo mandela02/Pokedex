@@ -44,14 +44,16 @@ struct ParallaxView: View {
                     .isRemove(!isMinimized)
                     .blur(radius: showLikedNotification ? 3 : 0)
                 
-                RotatingPokeballView()
-                    .ignoresSafeArea()
-                    .frame(width: geometry.size.width,
-                           height: geometry.size.height,
-                           alignment: .bottom)
-                    .isRemove(isMinimized)
-                    .blur(radius: showLikedNotification ? 3 : 0)
-
+                if updater.isTopView {
+                    RotatingPokeballView()
+                        .ignoresSafeArea()
+                        .frame(width: geometry.size.width,
+                               height: geometry.size.height,
+                               alignment: .bottom)
+                        .isRemove(isMinimized)
+                        .blur(radius: showLikedNotification ? 3 : 0)
+                }
+                
                 ParallaxContentView(height: geometry.size.height,
                                     width: geometry.size.width,
                                     isShowing: $isShowing,
@@ -62,17 +64,16 @@ struct ParallaxView: View {
                     .clipped()
             })
             
-            ZStack {
-                    PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
-                                        about: updater.pokemonModel.pokemon)
-                        .padding(.trailing, 30)
-                        .padding(.bottom, 30)
-                        .transition(.opacity)
-            }.blur(radius: showLikedNotification ? 3 : 0)
-            .frame(minWidth: 0,
-                   maxWidth: .infinity,
-                   minHeight: 0,
-                   maxHeight: .infinity,
+            PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+                                about: updater.pokemonModel.pokemon)
+                .padding(.trailing, 30)
+                .padding(.bottom, 30)
+                .transition(.opacity)
+                .blur(radius: showLikedNotification ? 3 : 0)
+                .frame(minWidth: 0,
+                       maxWidth: .infinity,
+                       minHeight: 0,
+                       maxHeight: .infinity,
                    alignment: .bottomTrailing)
             
             PokemonHeaderView(isShowing: $isShowing,
@@ -84,7 +85,6 @@ struct ParallaxView: View {
                 .blur(radius: updater.isLoadingNewData ? 3 : 0)
                 .blur(radius: showLikedNotification ? 3 : 0)
             
-            
             if showLikedNotification {
                 LikedNotificationView(id: updater.pokemonModel.pokemon.pokeId,
                                       name: updater.pokemonModel.pokemon.name,
@@ -92,6 +92,7 @@ struct ParallaxView: View {
                     .animation(.default)
             }
         }
+        .statusBar(hidden: true)
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()
@@ -147,12 +148,21 @@ struct ParallaxContentView: View {
     @State private var scale: CGFloat = 1
     @State private var imageOffsetY: CGFloat = 1
     @State private var maxHeight: CGFloat = 0
-
+    @State private var backgroundHeight: CGFloat = 0
+    
     @ObservedObject var updater: PokemonUpdater
     
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
+            VStack() {
+                Spacer()
+                Group {
+                    isDarkMode ? Color.black : Color.white
+                }.frame(height: backgroundHeight, alignment: .bottom)
+            }
+
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
                     GeometryReader { reader -> AnyView in
@@ -160,6 +170,7 @@ struct ParallaxContentView: View {
                         let maxFrameY = reader.frame(in: .named("ContainerView")).maxY
                         
                         DispatchQueue.main.async {
+                            backgroundHeight = height * 1/2 - maxFrameY > 0 ? height * 1/2 - maxFrameY : 0
                             imageOffsetY = maxFrameY + 100 - maxHeight * 4 / 5
                             let frameY = minFrameY - 100 + maxHeight
                             
@@ -217,7 +228,7 @@ struct ParallaxContentView: View {
                 } else {
                     DownloadedImageView(withURL: updater.pokemonModel.pokemon.sprites.other?.artwork.front ?? "", style: .animated)
                         .scaleEffect(1.5)
-                        .frame(width: width * 1/2,
+                        .frame(width: width,
                                height: maxHeight * 2/3,
                                alignment: .center)
                         .opacity(opacity)
