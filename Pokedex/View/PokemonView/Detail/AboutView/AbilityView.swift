@@ -30,18 +30,15 @@ struct AbilitesView: View {
                                            backgroundColor: text == updater.selectedString ? .gray : (isDarkMode ? .black : .white),
                                            font: Biotif.semiBold(size: 15).font)
                             .onTapGesture {
-                                if text == updater.selectedString {
-                                    updater.selectedString = nil
-                                } else {
-                                    updater.selectedString = text
-                                }
+                                updater.onTap(of: text)
                             }.disabled(reachabilityUpdater.hasNoInternet)
                             .disabled(updater.isLoading)
                     })
                     Spacer()
                 }
-                .padding(.leading, 40)
                 .frame(minWidth: 0, maxWidth: .infinity)
+                .frame(height: 30, alignment: .center)
+                .padding(.leading, 30)
                 .transition(.opacity)
                 .animation(.easeIn)
                 
