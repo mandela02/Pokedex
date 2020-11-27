@@ -8,46 +8,45 @@
 import Foundation
 import Combine
 
+struct SelectedAbilityModel {
+    var name: String
+    var description: String
+}
+
 class AbilityUpdater: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
-
-    init(name: String) {
-        self.name = name
-    }
-    @Published var name: String = "" {
+    
+    var pokemon = Pokemon() {
         didSet {
-            isLoadingData =  true
-            url = UrlType.getAbilityUrl(of: name)
+            if pokemon.isEmpty { return }
+            getAllAbilities(from: pokemon)
         }
     }
-
-    @Published var url: String = "" {
+    @Published private var abilities: [Ability] = [] {
         didSet {
-            getAbility(from: url)
+            isLoading = false
         }
     }
     
-    @Published var ability: Ability = Ability() {
-        didSet {
-            if let titles = ability.flavorTextEntries, !titles.isEmpty {
-                title = StringHelper.getEnglishText(from: titles)
-            }
-            if let descriptions = ability.effectEntries, !descriptions.isEmpty {
-                description = StringHelper.getEnglishText(from: descriptions)
-            }
-            isLoadingData = false
-        }
-    }
-    
-    @Published var title = ""
-    @Published var description = ""
-    @Published var isLoadingData = true
     @Published var error: ApiError = .non
+    @Published var selectedString: String? {
+        didSet {
+            guard let selectedString = selectedString else { return }
+            let selectedName = selectedString
+            let selectedDescripton = abilities.first(where: {$0.name == selectedString.lowercased()}).map({StringHelper.getEnglishText(from: $0.effectEntries ?? [])}) ?? ""
+            selectedAbility = SelectedAbilityModel(name: selectedName, description: selectedDescripton)
+        }
+    }
 
-    private func getAbility(from url: String) {
-        guard !url.isEmpty else { return }
-        Session.share.ability(from: url)
-            .replaceError(with: Ability())
+    @Published var selectedAbility: SelectedAbilityModel?
+    
+    var isLoading = true
+    
+    private func getAllAbilities(from pokemon: Pokemon) {
+        guard let abilities = pokemon.abilities else { return }
+        Publishers.MergeMany(abilities.map({Session.share.ability(from: UrlType.getAbilityUrl(of: $0.ability.name))}))
+            .collect()
+            .replaceError(with: [])
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveCompletion: { [weak self] complete in
@@ -56,12 +55,12 @@ class AbilityUpdater: ObservableObject {
                 case .finished:
                     self.error = .non
                 case .failure(let error):
-                    self.isLoadingData = false
+                    self.isLoading = false
                     self.error = .internet(message: error.localizedDescription)
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }
-                self.ability = result
+                self.abilities = result
             })
             .store(in: &cancellables)
     }
