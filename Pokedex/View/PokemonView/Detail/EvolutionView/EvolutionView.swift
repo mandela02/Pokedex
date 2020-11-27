@@ -47,6 +47,7 @@ struct EvolutionView: View {
                 }
                 Color.clear.frame(height: 15)
             }
+            Color.clear.frame(height: 100)
         }
         .frame(alignment: .leading)
         .padding()

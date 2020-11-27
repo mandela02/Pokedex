@@ -46,8 +46,8 @@ struct MovesView: View {
                                             VStack {
                                                 TappableMoveCell(selectedMove: $moveUpdater.selected,
                                                                  pokemonMove: cell.pokemonMove,
-                                                                 move: cell.move)
-                                                    .frame(height: isSelected ? height + getExtraHeight(of: cell, width: width) : height)
+                                                                 move: cell.move,
+                                                                 smallHeight: height)
                                                     .onWillDisappear {
                                                         if isSelected {
                                                             moveUpdater.selected = nil
@@ -62,6 +62,7 @@ struct MovesView: View {
                             }
                         }
                     }
+                    Color.clear.frame(height: 100)
                 }.frame(alignment: .leading)
                 .animation(.default)
                 .padding()
@@ -92,9 +93,13 @@ struct TappableMoveCell: View {
     @Binding var selectedMove: String?
     var pokemonMove: PokemonMove
     var move: Move
+    var smallHeight: CGFloat
     
     var body: some View {
-        MoveCell(pokemonMove: pokemonMove, move: move, isExtensed: $isExtensed)
+        MoveCell(isExtensed: $isExtensed,
+                 pokemonMove: pokemonMove,
+                 move: move,
+                 smallHeight: smallHeight)
             .onTapGesture(count: 1, perform: {
                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                     isExtensed.toggle()
@@ -114,20 +119,17 @@ struct MoveCell: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @StateObject var updater = MoveDetailUpdater()
 
+    @Binding var isExtensed: Bool
     var pokemonMove: PokemonMove
     var move: Move
-    @Binding var isExtensed: Bool
+    var smallHeight: CGFloat
 
     var body: some View {
-        GeometryReader(content: { geometry in
-            let type = PokemonType.type(from: updater.move?.type?.name ?? "")
-            let width = geometry.size.width
-            let height = width * 0.2 + 10
             VStack {
-                SmallMoveCellView(height: height,
-                                  move: updater.moveCellModel.move,
+                SmallMoveCellView(move: updater.moveCellModel.move,
                                   level: updater.moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
                                   isExtensed: $isExtensed)
+                    .frame(height: smallHeight)
                 if isExtensed {
                     VStack(spacing: 5) {
                         MachineSubView(move: updater.moveCellModel.move,
@@ -144,7 +146,7 @@ struct MoveCell: View {
             .background(isDarkMode ? Color.black : Color.white)
             .overlay(
                 RoundedRectangle(cornerRadius: 25)
-                    .stroke(type.color.background.opacity(0.5), lineWidth: 5)
+                    .stroke(PokemonType.type(from: updater.move?.type?.name ?? "").color.background.opacity(0.5), lineWidth: 5)
             )
             .cornerRadius(25)
             .onAppear {
@@ -154,7 +156,6 @@ struct MoveCell: View {
                 updater.pokemonMove = nil
                 updater.move = nil
             }
-        })
     }
 }
 
@@ -229,10 +230,8 @@ struct TextInformationView: View {
                 .padding(.trailing, 20)
             
             Text(StringHelper.getEnglishText(from: move.effectEntries ?? []))
-                .font(Biotif.book(size: 10).font)
-                .frame(minWidth: 0,
-                       maxWidth: .infinity,
-                       alignment: .topLeading)
+                .font(.system(size: 10))
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .topLeading)
                 .foregroundColor(isDarkMode ? .white : Color(.darkGray))
                 .padding()
                 .background(isDarkMode ? Color.black : Color.white)
@@ -281,22 +280,24 @@ struct MachineSubView: View {
 }
 
 struct SmallMoveCellView: View {
-    var height: CGFloat
     var move: Move
     var level: Int?
     @Binding var isExtensed: Bool
     
     var body: some View {
         ZStack {
-            HStack {
-                Spacer()
-                Image("ic_pokeball")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .offset(x: height/3)
-                    .scaleEffect(isExtensed ? 1.5 : 1.1)
-                    .foregroundColor(PokemonType.type(from: move.type?.name ?? "").color.background.opacity(0.5))
+            GeometryReader { reader in
+                HStack {
+                    Spacer()
+                    Image("ic_pokeball")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .offset(x: 20)
+                        .scaleEffect(isExtensed ? 1.5 : 1.1)
+                        .foregroundColor(PokemonType.type(from: move.type?.name ?? "").color.background.opacity(0.5))
+                        .frame(width: reader.size.width * 0.3)
+                }
             }
             VStack(spacing: 10) {
                 SkillNameView(move: move, level: level)
@@ -305,6 +306,5 @@ struct SmallMoveCellView: View {
                     .padding(.bottom, 30)
             }
         }
-        .frame(height: height)
     }
 }
