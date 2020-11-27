@@ -12,7 +12,8 @@ struct AbilitesView: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     
     var pokemon: Pokemon
-    @Binding var selectedString: String?
+    @State var showAbilityDetail: Bool = false
+    @StateObject var updater = AbilityUpdater()
 
     var body: some View {
         VStack(spacing: 10) {
@@ -24,24 +25,40 @@ struct AbilitesView: View {
                     .padding(.leading, 10)
                 HStack(alignment: .center, spacing: 30) {
                     ForEach(abilities.map({$0.ability.name.capitalizingFirstLetter()}), content: { text in
-                        TypeBubbleCellView(text: text,
-                                           foregroundColor: text == selectedString ? .white : .gray,
-                                           backgroundColor: text == selectedString ? .gray : .white,
+                        TypeBubbleCellView(text: text.eliminateDash,
+                                           foregroundColor: text == updater.selectedString ? .white : .gray,
+                                           backgroundColor: text == updater.selectedString ? .gray : (isDarkMode ? .black : .white),
                                            font: Biotif.semiBold(size: 15).font)
                             .onTapGesture {
-                                if text == selectedString {
-                                    selectedString = nil
+                                if text == updater.selectedString {
+                                    updater.selectedString = nil
                                 } else {
-                                    selectedString = text
+                                    updater.selectedString = text
                                 }
                             }.disabled(reachabilityUpdater.hasNoInternet)
+                            .disabled(updater.isLoading)
                     })
                     Spacer()
                 }
                 .padding(.leading, 40)
+                .frame(minWidth: 0, maxWidth: .infinity)
                 .transition(.opacity)
                 .animation(.easeIn)
+                
+                if showAbilityDetail {
+                    AbilityDetailView(pokemon: pokemon, model: $updater.selectedAbility).padding()
+                }
             }
+        }.onChange(of: updater.selectedString, perform: { selectedString in
+            withAnimation(.linear) {
+                if selectedString == nil {
+                    showAbilityDetail = false
+                } else {
+                    showAbilityDetail = true
+                }
+            }
+        }).onAppear {
+            updater.pokemon = pokemon
         }
     }
 }
@@ -50,76 +67,51 @@ struct AbilityDetailView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
 
     var pokemon: Pokemon
-    @Binding var selectedAbility: String?
-    @StateObject var updater = AbilityUpdater(name: "")
-
+    @Binding var model: SelectedAbilityModel?
+    
     var body: some View {
         ZStack {
-            VStack {
+            GeometryReader { reader in
                 HStack {
                     Spacer()
                     Image("ic_pokeball")
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
+                        .offset(x: 20, y: -20)
                         .scaleEffect(1.1)
-                        .frame(width: 120, height: 120, alignment: .trailing)
-                        .offset(x: 30, y: -20)
+                        .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
+                        .frame(height: reader.size.width * 0.3)
                 }
-                Spacer()
             }
-            
-            VStack(spacing: 5) {
-                Text(updater.title)
-                        .font(Biotif.bold(size: 15).font)
-                        .foregroundColor(.gray)
-                        .frame(minWidth: 0,
-                               maxWidth: .infinity,
-                               alignment: .leading)
-                        .padding(.trailing, 20)
 
-                    Text(updater.description)
-                        .font(Biotif.regular(size: 12).font)
-                        .foregroundColor(isDarkMode ? .white : .black)
-                        .frame(minWidth: 0,
-                               maxWidth: .infinity,
-                               alignment: .leading)
-                        .padding(.leading, 20)
-                        .padding(.trailing, 20)
+            VStack(spacing: 5) {
+                Text(model?.name.eliminateDash ?? "")
+                    .font(.system(size: 20))
+                    .fontWeight(.bold)
+                    .foregroundColor(.gray)
+                    .frame(minWidth: 0,
+                           maxWidth: .infinity,
+                           alignment: .leading)
+                
+                Text("\t" + (model?.description ?? ""))
+                    .font(.system(size: 15))
+                    .fontWeight(.regular)
+                    .foregroundColor(isDarkMode ? .white : .black)
+                    .frame(minWidth: 0,
+                           maxWidth: .infinity,
+                           alignment: .leading)
             }
-            .animation(.linear)
-            .transition(.opacity)
-            .padding(.leading, 20)
-            .isHidden(updater.isLoadingData)
             
-            if updater.isLoadingData {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: pokemon.mainType.color.background))
-                        .scaleEffect(1.2)
-                    Spacer()
-                }
-            }
-        }
-        .onAppear {
-            updater.name = selectedAbility ?? ""
-        }
-        .onChange(of: selectedAbility, perform: { selectedAbility in
-            if let selectedAbility = selectedAbility,
-               selectedAbility != updater.name {
-                updater.name = selectedAbility
-            }
-        })
+        }.animation(.linear)
+        .transition(.opacity)
         .background(isDarkMode ? Color.black : Color.white)
         .padding()
         .overlay(
             RoundedRectangle(cornerRadius: 25)
                 .stroke(pokemon.mainType.color.background.opacity(0.5),
                         lineWidth: 5)
-        )
-        .cornerRadius(25)
+        ).cornerRadius(25)
         .frame(minWidth: 0, maxWidth: .infinity)
     }
 }

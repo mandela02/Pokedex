@@ -10,9 +10,7 @@ import SwiftUI
 struct GeneralDetailView: View {
     var pokemon: Pokemon
     var species: Species
-    @Binding var selectedString: String?
-    
-    
+
     var body: some View {
         VStack {
             HStack(spacing: 10) {
@@ -26,7 +24,7 @@ struct GeneralDetailView: View {
             }
             .frame(height: 120, alignment: .center)
             if !(pokemon.abilities?.isEmpty ?? true) {
-                AbilitesView(pokemon: pokemon, selectedString: $selectedString)
+                AbilitesView(pokemon: pokemon)
             }
         }.padding(.bottom, 10)
     }

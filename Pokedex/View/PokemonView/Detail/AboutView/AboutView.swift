@@ -26,29 +26,11 @@ struct AboutContentView: View {
     var pokemon: Pokemon
     var species: Species
     
-    @State var seletedString: String?
-    @State var showAbilityDetail: Bool = false
-    
     var body: some View {
         VStack(alignment: .center, spacing: 5) {
             GeneralDetailView(pokemon: pokemon,
-                              species: species,
-                              selectedString: $seletedString)
+                              species: species)
                 .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
-                .onChange(of: seletedString, perform: { seletedString in
-                    withAnimation(.linear) {
-                        if seletedString == nil {
-                            showAbilityDetail = false
-                        } else {
-                            showAbilityDetail = true
-                        }
-                    }
-                })
-            
-            if showAbilityDetail {
-                AbilityDetailView(pokemon: pokemon, selectedAbility: $seletedString)
-                    .padding()
-            }
             
             SizeView(height: pokemon.height, weight: pokemon.weight)
                 .background(isDarkMode ? Color.black : Color.white)

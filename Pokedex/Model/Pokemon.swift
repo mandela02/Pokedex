@@ -66,6 +66,10 @@ struct Pokemon: Codable, Identifiable {
         return PokemonType.type(from: types.first?.type.name)
     }
     
+    var isEmpty: Bool {
+        pokeId == 0
+    }
+    
     enum CodingKeys: String, CodingKey {
         case name = "name"
         case types = "types"

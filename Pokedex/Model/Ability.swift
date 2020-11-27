@@ -19,12 +19,14 @@ struct AbilityEffectChange: Codable {
 }
 
 struct Ability: Codable {
+    var name: String?
     var effectEntries: [EffectEntry]?
     var flavorTextEntries: [FlavorTextEntryVersionGroup]?
 
     enum CodingKeys: String, CodingKey {
         case effectEntries = "effect_entries"
         case flavorTextEntries = "flavor_text_entries"
+        case name
     }
 }
 
