@@ -20,7 +20,7 @@ struct HamburgerButtonView: View {
                     .offset(x: pressed ? 5 : 0)
                 Rectangle().fill(Color.white).frame(width: 30, height: 5)
                     .cornerRadius(4)
-                    .scaleEffect(pressed ? 0 : 1)
+                    .scaleEffect(pressed ? 0.01 : 1)
                     .opacity(pressed ? 0 : 1)
                     .offset(x: pressed ? 5 : 0)
                 Rectangle().fill(Color.white).frame(width: 30, height: 5)
