@@ -175,7 +175,10 @@ struct ParallaxContentView: View {
                             let frameY = minFrameY - 100 + maxHeight
                             
                             opacity = 1 + Double(minFrameY/(maxHeight - 50))
-                            scale = 1 + CGFloat(minFrameY/(maxHeight - 50))
+                            
+                            let calculatedScale = 1 + CGFloat(minFrameY/(maxHeight - 50))
+                            
+                            scale = calculatedScale == 0 ? 0.01 : calculatedScale
                             
                             if frameY <= 0 {
                                 withAnimation(.linear) { isMinimized = true }

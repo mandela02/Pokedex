@@ -45,7 +45,7 @@ struct HeartView: View {
                 .opacity(showStrokeBorder ? 0 : 1)
                 .frame(width: 35, height: 35)
                 .foregroundColor(.purple)
-                .scaleEffect(showStrokeBorder ? 1 : 0)
+                .scaleEffect(showStrokeBorder ? 1 : 0.01)
                 .animation(Animation.easeInOut(duration: 0.5))
             
             Image("splash")
@@ -53,7 +53,7 @@ struct HeartView: View {
                 .aspectRatio(contentMode: .fit)
                 .opacity(showSplash ? 0 : 1)
                 .frame(width: 48, height: 48)
-                .scaleEffect(showSplash ? 1 : 0)
+                .scaleEffect(showSplash ? 1 : 0.01)
                 .animation(Animation.easeInOut(duration: 0.5).delay(0.1))
             
             Image("splash_tilted")
@@ -61,7 +61,7 @@ struct HeartView: View {
                 .aspectRatio(contentMode: .fit)
                 .opacity(showSplashTilted ? 0 : 1)
                 .frame(width: 50, height: 50)
-                .scaleEffect(showSplashTilted ? 1.1 : 0)
+                .scaleEffect(showSplashTilted ? 1.1 : 0.01)
                 .scaleEffect(1.1)
                 .animation(Animation.easeOut(duration: 0.5).delay(0.1))
             
@@ -69,7 +69,7 @@ struct HeartView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 26, height: 26)
                 .foregroundColor(.pink)
-                .scaleEffect(showHeart ? 1.1 : 0)
+                .scaleEffect(showHeart ? 1.1 : 0.01)
                 .animation(Animation.interactiveSpring().delay(0.2))
             
         }.onTapGesture() {
