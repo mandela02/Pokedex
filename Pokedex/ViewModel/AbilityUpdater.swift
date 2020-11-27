@@ -25,6 +25,7 @@ class AbilityUpdater: ObservableObject {
     @Published private var abilities: [Ability] = [] {
         didSet {
             isLoading = false
+            names = abilities.compactMap({$0.name}).map({$0.capitalizingFirstLetter()})
         }
     }
     
@@ -39,8 +40,17 @@ class AbilityUpdater: ObservableObject {
     }
 
     @Published var selectedAbility: SelectedAbilityModel?
-    
+    @Published var names: [String] = []
+
     var isLoading = true
+    
+    func onTap(of text: String) {
+        if text == selectedString {
+            selectedString = nil
+        } else {
+            selectedString = text
+        }
+    }
     
     private func getAllAbilities(from pokemon: Pokemon) {
         guard let abilities = pokemon.abilities else { return }

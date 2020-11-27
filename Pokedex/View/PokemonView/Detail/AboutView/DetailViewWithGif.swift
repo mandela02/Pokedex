@@ -21,8 +21,7 @@ struct GeneralDetailView: View {
                 Spacer()
                 GifWithProgressView(url: pokemon.sprites.versions?.generationV?.blackWhite?.animated?.front ?? "",
                                     color: pokemon.mainType.color.background)
-            }
-            .frame(height: 120, alignment: .center)
+            }.frame(height: 120, alignment: .center)
             if !(pokemon.abilities?.isEmpty ?? true) {
                 AbilitesView(pokemon: pokemon)
             }
