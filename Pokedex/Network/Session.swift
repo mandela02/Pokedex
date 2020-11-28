@@ -62,173 +62,78 @@ struct Session {
     private init() {}
     
     func overallResult(from url: String) -> AnyPublisher<PokemonResult, Error> {
-        if let result = cache.get(for: url), let pokemonResult = result.thing as? PokemonResult {
-            return Just(pokemonResult)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func pokemon(from url: String) -> AnyPublisher<Pokemon, Error> {
-        if let result = cache.get(for: url), let pokemon = result.thing as? Pokemon {
-            return Just(pokemon)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func species(from url: String) -> AnyPublisher<Species, Error> {
-        if let result = cache.get(for: url), let species = result.thing as? Species {
-            return Just(species)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func evolution(from url: String) -> AnyPublisher<Evolution, Error> {
-        if let result = cache.get(for: url), let evolution = result.thing as? Evolution {
-            return Just(evolution)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
 
     func stat(from url: String) -> AnyPublisher<Stat, Error> {
-        if let result = cache.get(for: url), let stat = result.thing as? Stat {
-            return Just(stat)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func characteristic(from url: String) -> AnyPublisher<Characteristic, Error> {
-        if let result = cache.get(for: url), let characteristic = result.thing as? Characteristic {
-            return Just(characteristic)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func type(from url: String) -> AnyPublisher<PokeType, Error> {
-        if let result = cache.get(for: url), let type = result.thing as? PokeType {
-            return Just(type)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func moveDamageClass(from url: String) -> AnyPublisher<MoveDamageClass, Error> {
-        if let result = cache.get(for: url), let moveDamageClass = result.thing as? MoveDamageClass {
-            return Just(moveDamageClass)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func move(from url: String) -> AnyPublisher<Move, Error> {
-        if let result = cache.get(for: url), let move = result.thing as? Move {
-            return Just(move)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func machine(from url: String) -> AnyPublisher<Machine, Error> {
-        if let result = cache.get(for: url), let machine = result.thing as? Machine {
-            return Just(machine)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func moveLearnMethod(from url: String) -> AnyPublisher<MoveLearnMethod, Error> {
-        if let result = cache.get(for: url), let moveLearnMethod = result.thing as? MoveLearnMethod {
-            return Just(moveLearnMethod)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func moveTarget(from url: String) -> AnyPublisher<MoveTarget, Error> {
-        if let result = cache.get(for: url), let moveTarget = result.thing as? MoveTarget {
-            return Just(moveTarget)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func ability(from url: String) -> AnyPublisher<Ability, Error> {
-        if let result = cache.get(for: url), let ability = result.thing as? Ability {
-            return Just(ability)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func region(from url: String) -> AnyPublisher<Region, Error> {
-        if let result = cache.get(for: url), let region = result.thing as? Region {
-            return Just(region)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
 
     func pokedex(from url: String) -> AnyPublisher<Pokedex, Error> {
-        if let result = cache.get(for: url), let pokedex = result.thing as? Pokedex {
-            return Just(pokedex)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
 
     func location(from url: String) -> AnyPublisher<Location, Error> {
-        if let result = cache.get(for: url), let location = result.thing as? Location {
-            return Just(location)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
 
     func area(from url: String) -> AnyPublisher<LocationArea, Error> {
-        if let result = cache.get(for: url), let area = result.thing as? LocationArea {
-            return Just(area)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func encounterMethod(from url: String) -> AnyPublisher<EncounterMethod, Error> {
-        if let result = cache.get(for: url), let encounterMethod = result.thing as? EncounterMethod {
-            return Just(encounterMethod)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
     
     func condition(from url: String) -> AnyPublisher<Condition, Error> {
-        if let result = cache.get(for: url), let condition = result.thing as? Condition {
-            return Just(condition)
-                .tryMap { $0 }
-                .eraseToAnyPublisher()
-        }
         return call(url)
     }
 
@@ -236,6 +141,13 @@ struct Session {
         guard let url = URL(string: request) else {
             return Empty(completeImmediately: true).eraseToAnyPublisher()
         }
+        
+        if let result = cache.get(for: request), let thing = result.thing as? T {
+            return Just(thing)
+                .tryMap { $0 }
+                .eraseToAnyPublisher()
+        }
+        
         let publisher = URLSession.shared.dataTaskPublisher(for: url)
             .mapError { $0 as Error }
             .map{ $0.data }
