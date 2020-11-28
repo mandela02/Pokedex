@@ -18,11 +18,7 @@ struct AllTypeList: View {
             let gridItem = GridItem(.fixed(width), spacing: 10)
             let columns = [gridItem, gridItem]
             ZStack {
-                if isDarkMode {
-                    Color.black
-                } else {
-                    Color.white
-                }
+                isDarkMode ? Color.black : Color.white
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(updater.allTypes, id: \.self) { type in

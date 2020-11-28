@@ -19,6 +19,7 @@ struct NavigationPokedexView: View {
 }
 
 struct PokedexView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     
     @State private var selectedMenu = -1
@@ -54,12 +55,14 @@ struct PokedexView: View {
             }
             
             if showSubView {
-                Color.black.opacity(0.5)
-                    .onTapGesture {
-                        withAnimation(.linear) {
-                            showSubView = false
-                        }
+                Group {
+                    isDarkMode ? Color.gray : Color.black
+                }.opacity(0.5)
+                .onTapGesture {
+                    withAnimation(.linear) {
+                        showSubView = false
                     }
+                }
                 VStack {
                     Spacer()
                     TypeSubView(isShowing: $showSubView,

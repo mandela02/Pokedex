@@ -18,7 +18,7 @@ struct EvolutionView: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading) {
+            LazyVStack(alignment: .leading, spacing: 10) {
                 ForEach((0..<evolutionUpdater.evolutionSectionsModels.count), id:\.self) { index in
                     HStack {
                         Text(evolutionUpdater.evolutionSectionsModels[index].title)
@@ -39,8 +39,11 @@ struct EvolutionView: View {
                     if evolutionUpdater.evolutionSectionsModels[index].isExpanded {
                         LazyVStack(alignment: .leading) {
                             ForEach(evolutionUpdater.evolutionSectionsModels[index].data) { data in
-                                EvolutionCellView(evoLink: data)
-                                    .padding(.bottom, 5)
+                                VStack {
+                                    EvolutionCellView(evoLink: data)
+                                        .padding(.bottom, 5)
+                                    Color.clear.frame(height: 5)
+                                }
                             }
                         }
                     }

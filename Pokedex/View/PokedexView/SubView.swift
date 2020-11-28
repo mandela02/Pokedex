@@ -97,7 +97,6 @@ struct TypeSubView: View {
         SubView(isShowing: $isShowing,
                 view: {
                     getView()
-                        .background(Color.white)
                 })
     }
     
@@ -121,11 +120,7 @@ struct SearchView: View {
     
     var body: some View {
         ZStack {
-            if isDarkMode {
-                Color.black
-            } else {
-                Color.white
-            }
+            isDarkMode ? Color.black : Color.white
             VStack {
                 SearchBar(text: $searchUpdater.searchValue)
                 ScrollView {

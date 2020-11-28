@@ -51,7 +51,6 @@ class MovesUpdater: ObservableObject {
         didSet {
             groupedMoveCellModels = Dictionary(grouping: moveCellModels,
                                                by: {($0.move.type?.name ?? "No Name")})
-                //.map({GroupedMoveCellModel(name: $0.key, cells: $0.value)})
                 .map({SectionModel(isExpanded: true, title: $0.key, data: $0.value)})
         }
     }

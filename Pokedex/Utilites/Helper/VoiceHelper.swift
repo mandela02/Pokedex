@@ -12,16 +12,16 @@ import SwiftUI
 class VoiceHelper: NSObject, ObservableObject {
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
-            speech  = pokemon.name + ", pokemon no \(pokemon.pokeId)"
+            lineToSpeak  = pokemon.name + ", pokemon no \(pokemon.pokeId)"
         }
     }
     @Published var species: Species = Species()
-        
-    @Published var isSpeaking = false {
+    
+    @Published var begunSpeak = false {
         didSet {
-            if isSpeaking {
-                speak(text: speech)
-                speech = StringHelper.getRandomEnglishText(from: species.flavorTextEntries ?? [])
+            if begunSpeak {
+                speak(text: lineToSpeak)
+                lineToSpeak = StringHelper.getRandomEnglishText(from: species.flavorTextEntries ?? [])
             } else {
                 if speechSynthesizer.isSpeaking {
                     speechSynthesizer.stopSpeaking(at: .immediate)
@@ -30,7 +30,7 @@ class VoiceHelper: NSObject, ObservableObject {
         }
     }
     
-    var speech = ""
+    var lineToSpeak = ""
     
     private var speechSynthesizer = AVSpeechSynthesizer()
     
@@ -51,14 +51,14 @@ class VoiceHelper: NSObject, ObservableObject {
     }
     
     func refresh() {
-         isSpeaking = false
+        begunSpeak = false
     }
 }
 
 extension VoiceHelper: AVSpeechSynthesizerDelegate {
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         withAnimation(.spring()) {
-            isSpeaking = false
+            begunSpeak = false
         }
     }
 }
