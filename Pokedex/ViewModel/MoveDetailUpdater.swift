@@ -92,12 +92,8 @@ extension MoveDetailUpdater {
                 let machineUrl = String(machineUrl)
                 let targetUrl = String(targetUrl)
                 
-                guard let self = self,
-                      !moveLearnMethodUrl.isEmpty,
-                      !machineUrl.isEmpty,
-                      !targetUrl.isEmpty
-                else {
-                    return CurrentValueSubject<(MoveLearnMethod, Machine, MoveTarget), Never>((MoveLearnMethod(), Machine(), MoveTarget()))
+                guard let self = self else {
+                    return Empty(completeImmediately: true)
                         .eraseToAnyPublisher()
                 }
                 

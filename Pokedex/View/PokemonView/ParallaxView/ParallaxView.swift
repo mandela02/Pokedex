@@ -64,7 +64,7 @@ struct ParallaxView: View {
                     .clipped()
             })
             
-            PulsatingPlayButton(isSpeaking: $voiceUpdater.isSpeaking,
+            PulsatingPlayButton(isSpeaking: $voiceUpdater.begunSpeak,
                                 about: updater.pokemonModel.pokemon)
                 .padding(.trailing, 30)
                 .padding(.bottom, 30)
@@ -110,7 +110,7 @@ struct ParallaxView: View {
                 voiceUpdater.species = pokemonModel.species
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    voiceUpdater.isSpeaking = true
+                    voiceUpdater.begunSpeak = true
                 }
             }
         }).onReceive(reachabilityUpdater.$retry, perform: { retry in
