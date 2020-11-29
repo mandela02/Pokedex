@@ -133,8 +133,8 @@ extension PokemonUpdater {
 extension PokemonUpdater {
     func update() {
         isAllowScroll = false
-        let nextUpdate = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: currentId),
-                                          speciesUrl: UrlType.getSpeciesUrl(of: currentId))
+        let nextUpdate = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: currentId),
+                                          speciesUrl: UrlString.getSpeciesUrl(of: currentId))
         if pokedexCellModel.value != nextUpdate {
             pokedexCellModel.send(nextUpdate)
         } else {
@@ -155,7 +155,7 @@ extension PokemonUpdater {
         zeroArray[currentId] = currentId
         zeroArray[currentId + 1] = currentId + 1 > settings.speciesCount ? 0 : currentId + 1
         zeroArray[currentId + 2] = currentId + 2 > settings.speciesCount ? 0 : currentId + 2
-        images = zeroArray.map({$0 == 0 ? "" : UrlType.getImageUrlString(of: $0)})
+        images = zeroArray.map({$0 == 0 ? "" : UrlString.getImageUrlString(of: $0)})
     }
     
     func moveTo(direction: Direction) {
@@ -196,6 +196,6 @@ extension PokemonUpdater {
     }
     
     private func getImage(from id: Int) -> String {
-        return UrlType.getImageUrlString(of: id)
+        return UrlString.getImageUrlString(of: id)
     }
 }

@@ -33,9 +33,9 @@ struct RegionListCellContentView: View {
         self.size = size
         self.region = region
         
-        firstImage = UrlType.getImageUrlString(of: region.avatars[safe: 0] ?? 0)
-        secondImage = UrlType.getImageUrlString(of: region.avatars[safe: 1] ?? 0)
-        thirdImage = UrlType.getImageUrlString(of: region.avatars[safe: 2] ?? 0)
+        firstImage = UrlString.getImageUrlString(of: region.avatars[safe: 0] ?? 0)
+        secondImage = UrlString.getImageUrlString(of: region.avatars[safe: 1] ?? 0)
+        thirdImage = UrlString.getImageUrlString(of: region.avatars[safe: 2] ?? 0)
     }
     
     var body: some View {

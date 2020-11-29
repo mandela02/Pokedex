@@ -206,7 +206,7 @@ class RegionDetailUpdater: ObservableObject {
     
     private func getPokemonCellModels(form pokedex: Pokedex) -> [PokedexCellModel] {
         return pokedex.pokemons
-            .map({PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.species.url)),
+            .map({PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.species.url)),
                                    speciesUrl: $0.species.url)})
     }
     
@@ -247,7 +247,7 @@ class RegionDetailUpdater: ObservableObject {
             guard let self = self else { return nil }
             return AreaPokedexCellModel(encounter: $0,
                                  pokemonUrl: $0.pokemon.url,
-                                 speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)),
+                                 speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)),
                                  location: self.selectedLocation,
                                  area: self.selectedArea)
         }.compactMap( {$0} )

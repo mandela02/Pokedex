@@ -54,7 +54,7 @@ class AbilityUpdater: ObservableObject {
     
     private func getAllAbilities(from pokemon: Pokemon) {
         guard let abilities = pokemon.abilities else { return }
-        Publishers.MergeMany(abilities.map({Session.share.ability(from: UrlType.getAbilityUrl(of: $0.ability.name))}))
+        Publishers.MergeMany(abilities.map({Session.share.ability(from: UrlString.getAbilityUrl(of: $0.ability.name))}))
             .collect()
             .replaceError(with: [])
             .receive(on: DispatchQueue.main)

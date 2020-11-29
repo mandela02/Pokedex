@@ -39,7 +39,7 @@ struct PokedexCardView: View {
                 VStack {
                     Spacer()
                     if viewAppear && cellUpdater.pokemon.pokeId != 0 {
-                        DownloadedImageView(withURL: UrlType.getImageUrlString(of: cellUpdater.pokemon.pokeId),
+                        DownloadedImageView(withURL: UrlString.getImageUrlString(of: cellUpdater.pokemon.pokeId),
                                             style: .normal)
                             .frame(width: size.width/2,
                                    height: size.height,

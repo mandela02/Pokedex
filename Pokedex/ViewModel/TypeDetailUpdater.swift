@@ -25,7 +25,7 @@ class TypeDetailUpdater: ObservableObject {
     @Published var type: PokeType = PokeType() {
         didSet {
             pokedexCellModels = type.pokemon.map({PokedexCellModel(pokemonUrl: $0.pokemon.url,
-                                                                   speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)))})
+                                                                   speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)))})
             getDamage()
         }
     }

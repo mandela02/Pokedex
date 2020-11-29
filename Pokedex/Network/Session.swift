@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-enum UrlType: String, CaseIterable {
+enum UrlString: String, CaseIterable {
     case pokemons
     case trigger
     case type

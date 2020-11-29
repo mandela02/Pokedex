@@ -153,7 +153,7 @@ struct SeachResultCell: View {
                 .padding(.leading, 10)
         } destination: {
             ParallaxView(pokedexCellModel: PokedexCellModel(pokemonUrl: url,
-                                                            speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: url))),
+                                                            speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: url))),
                          isShowing: $show)
         }.background(isDarkMode ? Color.black : Color.white)
     }

@@ -25,7 +25,7 @@ class FavoriteUpdater: ObservableObject {
     @Published var favorites: [Favorite] = [] {
         didSet {
             pokemonUrls = favorites.compactMap({$0.url}).map({PokedexCellModel(pokemonUrl: $0,
-                                                                               speciesUrl: UrlType.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0)))})
+                                                                               speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0)))})
             isEmpty = favorites.isEmpty
         }
     }

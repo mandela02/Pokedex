@@ -112,7 +112,7 @@ class SearchDataPrepareUpdater: ObservableObject {
     private func loadPokemonResource(limit: Int) {
         Session
             .share
-            .overallResult(from: UrlType.getAllPokemonsResource(limit: limit))
+            .overallResult(from: UrlString.getAllPokemonsResource(limit: limit))
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
             .sink(receiveCompletion: {  [weak self] complete in
