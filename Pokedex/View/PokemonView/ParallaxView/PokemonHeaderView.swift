@@ -88,23 +88,23 @@ struct NewButtonView: View {
         .padding(.horizontal)
         .onChange(of: pokemon.pokeId, perform: { id in
             if id != 0 {
-                isFavorite = favorites.map({$0.url}).contains(UrlType.getPokemonUrl(of: id))
+                isFavorite = favorites.map({$0.url}).contains(UrlString.getPokemonUrl(of: id))
             }
         })
         .onAppear {
             if pokemon.pokeId != 0 {
-                isFavorite = favorites.map({$0.url}).contains(UrlType.getPokemonUrl(of: pokemon.pokeId))
+                isFavorite = favorites.map({$0.url}).contains(UrlString.getPokemonUrl(of: pokemon.pokeId))
             }
         }
     }
     
     private func like(pokemon: Pokemon) {
-        CoreData.like(pokemon: UrlType.getPokemonUrl(of: pokemon.pokeId))
+        CoreData.like(pokemon: UrlString.getPokemonUrl(of: pokemon.pokeId))
         showLikedNotification = true
     }
     
     private func dislike(pokemon: Pokemon) {
-        CoreData.dislike(pokemon: UrlType.getPokemonUrl(of: pokemon.pokeId))
+        CoreData.dislike(pokemon: UrlString.getPokemonUrl(of: pokemon.pokeId))
     }
 }
 

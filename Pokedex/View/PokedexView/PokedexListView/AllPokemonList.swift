@@ -27,7 +27,7 @@ struct AllPokemonList: View {
             .onAppear {
                 updater.isTopView = true
                 if isFirstTimeLoadView {
-                    updater.url = UrlType.species.urlString
+                    updater.url = UrlString.species.urlString
                     isFirstTimeLoadView = false
                 }
             }.onDisappear {

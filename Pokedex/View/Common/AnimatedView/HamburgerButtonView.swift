@@ -34,9 +34,3 @@ struct HamburgerButtonView: View {
         })
     }
 }
-//
-//struct HamburgerButtonView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HamburgerButtonView()
-//    }
-//}

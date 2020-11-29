@@ -49,7 +49,7 @@ class MainPokedexUpdater: ObservableObject {
             pokedexCellModels = pokedexCellModels +
                 pokemonResult
                 .results
-                .map({PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url)),
+                .map({PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: StringHelper.getPokemonId(from: $0.url)),
                                        speciesUrl: $0.url)})
         }
     }

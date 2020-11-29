@@ -42,7 +42,7 @@ class RegionUpdater: ObservableObject {
     }
     
     func getAllRegion() {
-        Session.share.overallResult(from: UrlType.region.urlString)
+        Session.share.overallResult(from: UrlString.region.urlString)
             .replaceError(with: PokemonResult())
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] result in

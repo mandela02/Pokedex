@@ -116,10 +116,10 @@ struct PokemonCellView: View {
     
     init(pokemon: NamedAPIResource) {
         let pokeId = StringHelper.getPokemonId(from: pokemon.url)
-        self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlType.getPokemonUrl(of: pokeId),
-                                                 speciesUrl: UrlType.getSpeciesUrl(of: pokeId))
+        self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
+                                                 speciesUrl: UrlString.getSpeciesUrl(of: pokeId))
         self.name = pokemon.name
-        self.imageURL = UrlType.getImageUrlString(of: pokeId)
+        self.imageURL = UrlString.getImageUrlString(of: pokeId)
     }
     var body: some View {
         TapToPushView(show: $show) {
