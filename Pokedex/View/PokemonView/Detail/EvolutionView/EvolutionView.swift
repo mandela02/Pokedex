@@ -10,47 +10,50 @@ import SwiftUI
 struct EvolutionView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-    @ObservedObject var evolutionUpdater: EvolutionUpdater
+    @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater()
     
-    init(species: Species) {
-        evolutionUpdater = EvolutionUpdater(of: species)
-    }
+    var species: Species
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: 10) {
                 ForEach((0..<evolutionUpdater.evolutionSectionsModels.count), id:\.self) { index in
-                    HStack {
-                        Text(evolutionUpdater.evolutionSectionsModels[index].title)
-                            .font(Biotif.extraBold(size: 20).font)
-                            .foregroundColor(isDarkMode ? .white : .black)
-                        Spacer()
-                        Image(systemName: "arrowtriangle.right")
-                            .renderingMode(.template)
-                            .foregroundColor(isDarkMode ? .white : .black)
-                            .rotationEffect(.degrees(evolutionUpdater.evolutionSectionsModels[index].isExpanded ? 90 : 0))
-                    }
-                    .isRemove(evolutionUpdater.evolutionSectionsModels[index].data.isEmpty)
-                    .onTapGesture {
-                        withAnimation(.easeInOut) {
-                            evolutionUpdater.evolutionSectionsModels[index].isExpanded.toggle()
+                    VStack(spacing: 10) {
+                        HStack {
+                            Text(evolutionUpdater.evolutionSectionsModels[index].title)
+                                .font(Biotif.extraBold(size: 20).font)
+                                .foregroundColor(isDarkMode ? .white : .black)
+                            Spacer()
+                            Image(systemName: "arrowtriangle.right")
+                                .renderingMode(.template)
+                                .foregroundColor(isDarkMode ? .white : .black)
+                                .rotationEffect(.degrees(evolutionUpdater.evolutionSectionsModels[index].isExpanded ? 90 : 0))
                         }
-                    }
-                    if evolutionUpdater.evolutionSectionsModels[index].isExpanded {
-                        LazyVStack(alignment: .leading) {
-                            ForEach(evolutionUpdater.evolutionSectionsModels[index].data) { data in
-                                VStack {
-                                    EvolutionCellView(evoLink: data)
-                                        .padding(.bottom, 5)
-                                    Color.clear.frame(height: 5)
+                        .onTapGesture {
+                            withAnimation(.easeInOut) {
+                                evolutionUpdater.evolutionSectionsModels[index].isExpanded.toggle()
+                            }
+                        }
+                        if evolutionUpdater.evolutionSectionsModels[index].isExpanded {
+                            LazyVStack(alignment: .leading) {
+                                ForEach(evolutionUpdater.evolutionSectionsModels[index].data) { data in
+                                    VStack {
+                                        EvolutionCellView(evoLink: data,
+                                                          species: UrlString.getSpeciesUrl(of: species.id))
+                                            .padding(.bottom, 5)
+                                        Color.clear.frame(height: 5)
+                                    }
                                 }
                             }
                         }
+                        Color.clear.frame(height: 5)
                     }
                 }
-                Color.clear.frame(height: 15)
             }
             Color.clear.frame(height: 100)
+        }
+        .onAppear {
+            evolutionUpdater.species = species
         }
         .frame(alignment: .leading)
         .padding()
@@ -61,13 +64,15 @@ struct EvolutionView: View {
 
 struct EvolutionCellView: View {
     var evoLink: EvoLink?
+    var species: String
     
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Spacer()
             PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource())
             ArrowView(trigger: evoLink?.triggers ?? "")
-            PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource())
+            PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource(),
+                            species: evoLink?.triggers == "Mega" ? species : nil)
             Spacer()
         }
         .buttonStyle(PlainButtonStyle())
@@ -111,13 +116,19 @@ struct PokemonCellView: View {
     var imageURL: String
     var name: String
     var pokedexCellModel: PokedexCellModel
-    
+    var species: String?
+
     var canTap: Bool = true
     
-    init(pokemon: NamedAPIResource) {
+    init(pokemon: NamedAPIResource, species: String? = nil) {
         let pokeId = StringHelper.getPokemonId(from: pokemon.url)
-        self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
-                                                 speciesUrl: UrlString.getSpeciesUrl(of: pokeId))
+        if let species = species {
+            self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
+                                                     speciesUrl: species)
+        } else {
+            self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
+                                                     speciesUrl: UrlString.getSpeciesUrl(of: pokeId))
+        }
         self.name = pokemon.name
         self.imageURL = UrlString.getImageUrlString(of: pokeId)
     }
@@ -131,7 +142,7 @@ struct PokemonCellView: View {
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(Color.gray.opacity(0.5))
                     DownloadedImageView(withURL: imageURL,
-                                        style: .normal)
+                                        style: .plain)
                 }
                 Text(name.capitalizingFirstLetter())
                     .font(Biotif.semiBold(size: 15).font)

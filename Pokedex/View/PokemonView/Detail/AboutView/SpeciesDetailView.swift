@@ -121,7 +121,7 @@ struct SpeciesNameView: View {
             Text("Species")
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.gray)
-                .frame(width: 50, alignment: .leading)
+                .frame(width: 100, alignment: .leading)
             Text(StringHelper.getEnglishText(from: species.genera ?? []))
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(isDarkMode ? .white : .black)
@@ -130,6 +130,24 @@ struct SpeciesNameView: View {
     }
 }
 
+struct PokemonNameView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+
+    var pokemon: Pokemon
+
+    var body: some View {
+        HStack {
+            Text("Common name")
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(.gray)
+                .frame(width: 100, alignment: .leading)
+            Text(pokemon.name.capitalizingFirstLetter())
+                .font(Biotif.bold(size: 12).font)
+                .foregroundColor(isDarkMode ? .white : .black)
+                .padding(.leading, 5)
+        }
+    }
+}
 
 struct DescriptionView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false

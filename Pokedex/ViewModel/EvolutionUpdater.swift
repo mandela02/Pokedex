@@ -17,12 +17,11 @@ struct EvoLink: Identifiable {
 }
 
 class EvolutionUpdater: ObservableObject {
-    init(of species: Species) {
-        self.species = species
+    init() {
         mergeResult()
     }
     
-    @Published private var species: Species? {
+    @Published var species: Species? {
         didSet {
             getEvolutionInformation()
         }
@@ -59,11 +58,16 @@ class EvolutionUpdater: ObservableObject {
     
     private func mergeResult() {
         Publishers.CombineLatest($evolutionLinks, $megaEvolutionLinks)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
             .sink { [weak self] (evolutionLinks, megaEvolutionLinks) in
                 guard let self = self else { return }
+                if evolutionLinks.isEmpty { return }
                 var evolutionSectionsModels: [SectionModel<EvoLink>] = []
                 evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Evolution Chain", data: evolutionLinks))
-                evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Mega Evolution", data: megaEvolutionLinks))
+                if !megaEvolutionLinks.isEmpty {
+                    evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Mega Evolution", data: megaEvolutionLinks))
+                }
                 self.evolutionSectionsModels = evolutionSectionsModels
             }.store(in: &cancellables)
     }

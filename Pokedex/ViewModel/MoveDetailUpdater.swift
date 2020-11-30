@@ -47,7 +47,7 @@ class MoveDetailUpdater: ObservableObject {
 extension MoveDetailUpdater {
     private func target(from url: String) -> AnyPublisher<MoveTarget, Never> {
         if url.isEmpty {
-            return CurrentValueSubject<MoveTarget, Never>(MoveTarget()).eraseToAnyPublisher()
+            return Just(MoveTarget()).eraseToAnyPublisher()
         }
         
         return Session.share.moveTarget(from: url)
@@ -57,7 +57,7 @@ extension MoveDetailUpdater {
     
     private func machine(from url: String) -> AnyPublisher<Machine, Never> {
         if url.isEmpty {
-            return CurrentValueSubject<Machine, Never>(Machine()).eraseToAnyPublisher()
+            return Just(Machine()).eraseToAnyPublisher()
         }
         
         return Session.share.machine(from: url)
@@ -67,7 +67,7 @@ extension MoveDetailUpdater {
     
     private func moveLearnMethod(from url: String) -> AnyPublisher<MoveLearnMethod, Never> {
         if url.isEmpty {
-            return CurrentValueSubject<MoveLearnMethod, Never>(MoveLearnMethod()).eraseToAnyPublisher()
+            return Just(MoveLearnMethod()).eraseToAnyPublisher()
         }
         
         return Session.share.moveLearnMethod(from: url)
