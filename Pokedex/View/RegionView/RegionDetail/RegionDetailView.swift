@@ -31,7 +31,7 @@ struct RegionDetailView: View {
                     VStack(alignment: .leading) {
                         Text("The region of " + regionModel.name.capitalizingFirstLetter())
                             .font(Biotif.extraBold(size: 30).font)
-                            .foregroundColor(isDarkMode ? Color.black : Color.white)
+                            .foregroundColor(isDarkMode ? Color.white : Color.black)
                             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             .padding(.leading, 35)
 
@@ -76,6 +76,7 @@ struct RegionDetailView: View {
                 isFirstTime = false
             }
         }
+        .statusBar(hidden: true)
         .navigationBarHidden(true)
         .ignoresSafeArea()
     }

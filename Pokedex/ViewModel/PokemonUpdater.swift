@@ -97,8 +97,7 @@ class PokemonUpdater: ObservableObject {
             guard let self = self, !pokedexCellModel.isEmpty else { return Empty(completeImmediately: true).eraseToAnyPublisher() }
             return self.zip(pokemonUrl: pokedexCellModel.pokemonUrl,
                             speciesUrl: pokedexCellModel.speciesUrl)
-        })
-        .receive(on: DispatchQueue.main)
+        }).receive(on: DispatchQueue.main)
         .sink { [weak self] pokemon, species in
             guard let self = self else { return }
             self.pokemonModel = PokemonModel(pokemon: pokemon, species: species)
@@ -109,14 +108,18 @@ class PokemonUpdater: ObservableObject {
 //get data
 extension PokemonUpdater {
     private func getPokemon(from url: String) -> AnyPublisher<Pokemon, Never> {
-        guard !url.isEmpty else { return PassthroughSubject<Pokemon, Never>().eraseToAnyPublisher() }
+        guard !url.isEmpty else {
+            return Just(Pokemon()).eraseToAnyPublisher()
+        }
         return Session.share.pokemon(from: url)
             .replaceError(with: Pokemon())
             .eraseToAnyPublisher()
     }
     
     private func getSpecies(from url: String) -> AnyPublisher<Species, Never> {
-        guard !url.isEmpty else { return PassthroughSubject<Species, Never>().eraseToAnyPublisher() }
+        guard !url.isEmpty else {
+            return Just(Species()).eraseToAnyPublisher()
+        }
         return Session.share.species(from: url)
             .replaceError(with: Species())
             .eraseToAnyPublisher()

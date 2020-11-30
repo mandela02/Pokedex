@@ -63,7 +63,7 @@ struct FavoriteView: View {
         }
         .onWillDisappear {
             favoriteUpdater.isTopView = false
-        }
+        }.statusBar(hidden: true)
         .navigationTitle("")
         .navigationBarHidden(true)
         .ignoresSafeArea()

@@ -191,17 +191,13 @@ struct ParallaxContentView: View {
                     
                     VStack(spacing: 0) {
                         Spacer()
-                        if isDarkMode {
-                            Color.black
-                                .frame(height: 100, alignment: .center)
-                                .cornerRadius(25)
-                                .offset(y: 50)
-                        } else {
-                            Color.white
-                                .frame(height: 100, alignment: .center)
-                                .cornerRadius(25)
-                                .offset(y: 50)
+                        Group {
+                            isDarkMode ? Color.black : Color.white
                         }
+                        .frame(height: 100, alignment: .center)
+                        .cornerRadius(25)
+                        .offset(y: 50)
+
                         DetailPageView(species: updater.pokemonModel.species,
                                        pokemon: updater.pokemonModel.pokemon)
                             .background(isDarkMode ? Color.black : Color.white)

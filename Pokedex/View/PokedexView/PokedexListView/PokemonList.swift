@@ -49,17 +49,19 @@ struct PokemonList: View {
                                     .background(Color.clear)
                                     .onAppear {
                                         onCellAppear(cell)
-                                        if cell.pokemonUrl == UrlString.getPokemonUrl(of: 20) {
-                                            withAnimation {
-                                                isShowScrollButton = true
-                                            }
-                                        }
-                                        if cell.pokemonUrl == UrlString.getPokemonUrl(of: 10) {
+                                        if cell.pokemonUrl == UrlString.getPokemonUrl(of: 1) {
                                             withAnimation {
                                                 isShowScrollButton = false
                                             }
                                         }
-                                    }.id(cell.pokemonUrl)
+                                    }.onDisappear {
+                                        if cell.pokemonUrl == UrlString.getPokemonUrl(of: 1) {
+                                            withAnimation {
+                                                isShowScrollButton = true
+                                            }
+                                        }
+                                    }
+                                    .id(cell.pokemonUrl)
                             }
                         }.animation(.linear)
                         

@@ -15,6 +15,7 @@ struct GeneralDetailView: View {
         VStack {
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 10) {
+                    PokemonNameView(pokemon: pokemon)
                     SpeciesNameView(species: species)
                     DescriptionView(species: species)
                 }.padding(.leading, 10)
