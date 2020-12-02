@@ -46,7 +46,8 @@ struct AbilitesView: View {
                     AbilityDetailView(pokemon: pokemon, model: $updater.selectedAbility)
                 }
             }
-        }.onChange(of: updater.selectedString, perform: { selectedString in
+        }
+        .onChange(of: updater.selectedString, perform: { selectedString in
             withAnimation(.linear) {
                 if selectedString == nil {
                     showAbilityDetail = false
@@ -65,8 +66,9 @@ struct AbilityDetailView: View {
 
     var pokemon: Pokemon
     @Binding var model: SelectedAbilityModel?
-    @State var minHeight: CGFloat = 0.0
     
+    @State var minHeight: CGFloat = 0.0
+
     var body: some View {
         ZStack {
             GeometryReader { reader in
@@ -86,26 +88,14 @@ struct AbilityDetailView: View {
                 }.frame(height: minHeight)
             }
 
-
-            VStack(spacing: 5) {
-                Text(model?.name.eliminateDash ?? "")
-                    .font(.system(size: 15))
-                    .fontWeight(.bold)
-                    .foregroundColor(.gray)
-                    .frame(minWidth: 0,
-                           maxWidth: .infinity,
-                           alignment: .leading)
-                
-                Text(model?.description ?? "")
-                    .font(.system(size: 10))
-                    .fontWeight(.regular)
-                    .foregroundColor(isDarkMode ? .white : .black)
-                    .frame(minWidth: 0,
-                           maxWidth: .infinity,
-                           alignment: .leading)
+            HStack(spacing: 5) {
+                Color.clear.frame(width: 10)
+                AbilityDescriptionView(name: model?.name.eliminateDash ?? "",
+                                       desccription: model?.description ?? "")
+                Color.clear.frame(width: 10)
             }
-            .padding()
-        }.animation(.linear)
+        }
+        .animation(.linear)
         .transition(.slide)
         .background(Color.clear)
         .overlay(
@@ -114,5 +104,32 @@ struct AbilityDetailView: View {
                         lineWidth: 5)
         ).cornerRadius(25)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: minHeight)
+    }
+}
+
+struct AbilityDescriptionView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+    var name: String
+    var desccription: String
+    
+    var body: some View {
+        VStack(spacing: 5) {
+            Color.clear.frame(height: 10)
+            Text(name)
+                .font(.system(size: 15))
+                .fontWeight(.bold)
+                .foregroundColor(.gray)
+                .frame(minWidth: 0,
+                       maxWidth: .infinity,
+                       alignment: .leading)
+            Text(desccription)
+                .font(.system(size: 10))
+                .fontWeight(.regular)
+                .foregroundColor(isDarkMode ? .white : .black)
+                .frame(minWidth: 0,
+                       maxWidth: .infinity,
+                       alignment: .leading)
+            Color.clear.frame(height: 10)
+        }
     }
 }
