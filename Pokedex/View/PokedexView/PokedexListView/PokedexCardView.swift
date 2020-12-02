@@ -49,7 +49,7 @@ struct PokedexCardView: View {
                 }.frame(width: size.width, height: size.height, alignment: .bottomTrailing)
                 
                 VStack(alignment: .leading, spacing: 0, content: {
-                    Text(cellUpdater.pokemon.name.capitalizingFirstLetter())
+                    Text(cellUpdater.pokemon.name.capitalizingFirstLetter().eliminateDash)
                         .font(Biotif.bold(size: 25).font)
                         .foregroundColor(cellUpdater.pokemon.mainType.color.text)
                         .frame(alignment: .topLeading)
