@@ -23,11 +23,14 @@ class EvolutionUpdater: ObservableObject {
     
     @Published var species: Species? {
         didSet {
-            isLoadingData = true
-            if let species = species {
-                getEvolutionInformation(of: species)
-            } else {
-                isLoadingData = false
+            if isFirstTimeLoading {
+                isLoadingData = true
+                if let species = species {
+                    getEvolutionInformation(of: species)
+                } else {
+                    isLoadingData = false
+                }
+                isFirstTimeLoading = false
             }
         }
     }
@@ -59,7 +62,8 @@ class EvolutionUpdater: ObservableObject {
 
     @Published var error: ApiError = .non
     @Published var isLoadingData = true
-
+   
+    private var isFirstTimeLoading = true
     private var cancellables = Set<AnyCancellable>()
     
     private func mergeResult() {

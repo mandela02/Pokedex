@@ -26,7 +26,8 @@ struct TappablePokemonCell: View {
                         if isFavorite {
                             CoreData.dislike(pokemon: pokedexCellModel.pokemonUrl)
                         } else {
-                            CoreData.like(pokemon: pokedexCellModel.pokemonUrl)
+                            CoreData.like(pokemonUrl: pokedexCellModel.pokemonUrl,
+                                          speciesUrl: pokedexCellModel.speciesUrl)
                         }
                     }) {
                         Text(isFavorite ? "Remove from favorite" : "Add To favorite")
@@ -38,9 +39,9 @@ struct TappablePokemonCell: View {
                 .environmentObject(reachabilityUpdater)
         }.buttonStyle(PlainButtonStyle())
         .onAppear(perform: {
-            isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
+            isFavorite = favorites.map({$0.pokemonUrl}).contains(pokedexCellModel.pokemonUrl)
         }).onChange(of: favorites.count, perform: { value in
-            isFavorite = favorites.map({$0.url}).contains(pokedexCellModel.pokemonUrl)
+            isFavorite = favorites.map({$0.pokemonUrl}).contains(pokedexCellModel.pokemonUrl)
         })
     }
 }

@@ -11,15 +11,16 @@ import CoreData
 struct CoreData {
     static private let viewContext = PersistenceManager.shared.persistentContainer.viewContext
     
-    static func like(pokemon: String) {
+    static func like(pokemonUrl: String, speciesUrl: String) {
         let favorite = Favorite(context: viewContext)
-        favorite.url = pokemon
+        favorite.pokemonUrl = pokemonUrl
+        favorite.speciesUrl = speciesUrl
         save()
     }
     
     static func dislike(pokemon: String) {
         let favorites = fetchEntries()
-        guard let item = favorites.first(where: {$0.url == pokemon}) else {
+        guard let item = favorites.first(where: {$0.pokemonUrl == pokemon}) else {
             return
         }
         viewContext.delete(item)
@@ -46,6 +47,6 @@ struct CoreData {
     
     static func isFavorite(pokemon: String) -> Bool {
         let favorites = fetchEntries()
-        return favorites.map({$0.url}).contains(pokemon)
+        return favorites.map({$0.pokemonUrl}).contains(pokemon)
     }
 }

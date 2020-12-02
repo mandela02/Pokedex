@@ -247,7 +247,7 @@ class RegionDetailUpdater: ObservableObject {
             guard let self = self else { return nil }
             return AreaPokedexCellModel(encounter: $0,
                                  pokemonUrl: $0.pokemon.url,
-                                 speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: $0.pokemon.url)),
+                                 speciesUrl: UrlString.getSpeciesUrl(from: StringHelper.getSpeciesName(from: $0.pokemon.name)),
                                  location: self.selectedLocation,
                                  area: self.selectedArea)
         }.compactMap( {$0} )

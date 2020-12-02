@@ -88,10 +88,10 @@ struct EvolutionCellView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Spacer()
-            PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource())
+            PokemonCellView(pokemon: evoLink?.from ?? NamedAPIResource(), species: species)
             ArrowView(trigger: evoLink?.triggers ?? "")
             PokemonCellView(pokemon: evoLink?.to ?? NamedAPIResource(),
-                            species: evoLink?.triggers == "Mega" ? species : nil)
+                            species: species)
             Spacer()
         }
         .buttonStyle(PlainButtonStyle())
@@ -135,19 +135,13 @@ struct PokemonCellView: View {
     var imageURL: String
     var name: String
     var pokedexCellModel: PokedexCellModel
-    var species: String?
 
     var canTap: Bool = true
     
-    init(pokemon: NamedAPIResource, species: String? = nil) {
+    init(pokemon: NamedAPIResource, species: String) {
         let pokeId = StringHelper.getPokemonId(from: pokemon.url)
-        if let species = species {
-            self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
-                                                     speciesUrl: species)
-        } else {
-            self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
-                                                     speciesUrl: UrlString.getSpeciesUrl(of: pokeId))
-        }
+        self.pokedexCellModel = PokedexCellModel(pokemonUrl: UrlString.getPokemonUrl(of: pokeId),
+                                                 speciesUrl: species)
         self.name = pokemon.name
         self.imageURL = UrlString.getImageUrlString(of: pokeId)
     }
