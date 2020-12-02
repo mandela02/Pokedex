@@ -9,68 +9,80 @@ import SwiftUI
 
 struct MovesView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-
-    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var moveUpdater: MovesUpdater = MovesUpdater()
     var pokemon: Pokemon
     
     var body: some View {
-        ZStack {
-            isDarkMode ? Color.black : Color.white
-            GeometryReader(content: { geometry in
-                let width = geometry.size.width - 80
-                let height = width * 0.3
-
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(alignment: .leading) {
-                        ForEach((0 ..< moveUpdater.groupedMoveCellModels.count), id:\.self) { index in
-                            VStack(spacing: 10) {
-                                HStack {
-                                    Text(moveUpdater.groupedMoveCellModels[index].title.capitalizingFirstLetter())
-                                                .font(Biotif.extraBold(size: 25).font)
-                                                .foregroundColor(isDarkMode ? .white : .black)
-                                    Spacer()
-                                    Image(systemName: "arrowtriangle.right")
-                                        .renderingMode(.template)
-                                        .foregroundColor(isDarkMode ? .white : .black)
-                                        .rotationEffect(.degrees(moveUpdater.groupedMoveCellModels[index].isExpanded ? 90 : 0))
-                                }.onTapGesture {
-                                    withAnimation(.easeInOut) {
-                                        moveUpdater.groupedMoveCellModels[index].isExpanded.toggle()
-                                    }
+        Group {
+            if moveUpdater.isLoadingData {
+                LoadingView(background: isDarkMode ? Color.black : Color.white)
+            } else {
+                MovesContentView(moveUpdater: moveUpdater, pokemon: pokemon)
+            }
+        }.onAppear {
+            moveUpdater.pokemon = pokemon
+        }
+    }
+}
+struct MovesContentView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    
+    @ObservedObject var moveUpdater: MovesUpdater
+    var pokemon: Pokemon
+    
+    var body: some View {
+        GeometryReader(content: { geometry in
+            let width = geometry.size.width - 80
+            let height = width * 0.3
+            
+            ScrollView(showsIndicators: false) {
+                LazyVStack(alignment: .leading) {
+                    ForEach((0 ..< moveUpdater.groupedMoveCellModels.count), id:\.self) { index in
+                        VStack(spacing: 10) {
+                            HStack {
+                                Text(moveUpdater.groupedMoveCellModels[index].title.capitalizingFirstLetter())
+                                    .font(Biotif.extraBold(size: 25).font)
+                                    .foregroundColor(isDarkMode ? .white : .black)
+                                Spacer()
+                                Image(systemName: "arrowtriangle.right")
+                                    .renderingMode(.template)
+                                    .foregroundColor(isDarkMode ? .white : .black)
+                                    .rotationEffect(.degrees(moveUpdater.groupedMoveCellModels[index].isExpanded ? 90 : 0))
+                            }.onTapGesture {
+                                withAnimation(.easeInOut) {
+                                    moveUpdater.groupedMoveCellModels[index].isExpanded.toggle()
                                 }
-                                if moveUpdater.groupedMoveCellModels[index].isExpanded {
-                                    LazyVStack(alignment: .leading) {
-                                        ForEach(moveUpdater.groupedMoveCellModels[index].data) { cell in
-                                            let isSelected = cell.move.name == moveUpdater.selected
-                                            VStack {
-                                                TappableMoveCell(selectedMove: $moveUpdater.selected,
-                                                                 pokemonMove: cell.pokemonMove,
-                                                                 move: cell.move,
-                                                                 smallHeight: height)
-                                                    .onWillDisappear {
-                                                        if isSelected {
-                                                            moveUpdater.selected = nil
-                                                        }
+                            }
+                            if moveUpdater.groupedMoveCellModels[index].isExpanded {
+                                LazyVStack(alignment: .leading) {
+                                    ForEach(moveUpdater.groupedMoveCellModels[index].data) { cell in
+                                        let isSelected = cell.move.name == moveUpdater.selected
+                                        VStack {
+                                            TappableMoveCell(selectedMove: $moveUpdater.selected,
+                                                             pokemonMove: cell.pokemonMove,
+                                                             move: cell.move,
+                                                             smallHeight: height)
+                                                .onWillDisappear {
+                                                    if isSelected {
+                                                        moveUpdater.selected = nil
                                                     }
-                                                Color.clear.frame(height: 5)
-                                            }
+                                                }
+                                            Color.clear.frame(height: 5)
                                         }
                                     }
                                 }
-                                Color.clear.frame(height: 5)
                             }
+                            Color.clear.frame(height: 5)
                         }
                     }
-                    Color.clear.frame(height: 100)
-                }.frame(alignment: .leading)
-                .animation(.default)
-                .padding()
-                .onAppear {
-                    moveUpdater.pokemon = pokemon
                 }
-            })
-        }
+                Color.clear.frame(height: 100)
+            }.frame(alignment: .leading)
+            .background(isDarkMode ? Color.black : Color.white)
+            .animation(.default)
+            .padding()
+        })
     }
     
     private func getExtraHeight(of cell: MoveCellModel, width: CGFloat) -> CGFloat {
@@ -87,7 +99,7 @@ struct MovesView: View {
 
 struct TappableMoveCell: View {
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
-
+    
     @State var isExtensed = false
     
     @Binding var selectedMove: String?
@@ -106,62 +118,62 @@ struct TappableMoveCell: View {
                     selectedMove = isExtensed ? move.name : nil
                 }
             }).onChange(of: selectedMove, perform: { value in
-            withAnimation(.spring()) {
-                isExtensed = selectedMove == move.name
-            }
-        })
-        .buttonStyle(PlainButtonStyle())
-        .disabled(reachabilityUpdater.hasNoInternet)
+                withAnimation(.spring()) {
+                    isExtensed = selectedMove == move.name
+                }
+            })
+            .buttonStyle(PlainButtonStyle())
+            .disabled(reachabilityUpdater.hasNoInternet)
     }
 }
 
 struct MoveCell: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @StateObject var updater = MoveDetailUpdater()
-
+    
     @Binding var isExtensed: Bool
     var pokemonMove: PokemonMove
     var move: Move
     var smallHeight: CGFloat
-
+    
     var body: some View {
-            VStack {
-                SmallMoveCellView(move: updater.moveCellModel.move,
-                                  level: updater.moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
-                                  isExtensed: $isExtensed)
-                    .frame(height: smallHeight)
-                if isExtensed {
-                    VStack(spacing: 5) {
-                        MachineSubView(move: updater.moveCellModel.move,
-                                       machine: updater.moveCellModel.machine,
-                                       target: StringHelper.getEnglishText(from: updater.moveCellModel.target.descriptions))
-                            .padding(.leading, 20)
-                        TextInformationView(move: updater.moveCellModel.move,
-                                            pokemonMove: updater.moveCellModel.pokemonMove,
-                                            learnMethod: StringHelper.getEnglishText(from: updater.moveCellModel.learnMethod.descriptions))
-                            .padding(.all, 5)
-                    }
+        VStack {
+            SmallMoveCellView(move: updater.moveCellModel.move,
+                              level: updater.moveCellModel.pokemonMove.versionGroupDetails.first?.levelLearnedAt ?? 00,
+                              isExtensed: $isExtensed)
+                .frame(height: smallHeight)
+            if isExtensed {
+                VStack(spacing: 5) {
+                    MachineSubView(move: updater.moveCellModel.move,
+                                   machine: updater.moveCellModel.machine,
+                                   target: StringHelper.getEnglishText(from: updater.moveCellModel.target.descriptions))
+                        .padding(.leading, 20)
+                    TextInformationView(move: updater.moveCellModel.move,
+                                        pokemonMove: updater.moveCellModel.pokemonMove,
+                                        learnMethod: StringHelper.getEnglishText(from: updater.moveCellModel.learnMethod.descriptions))
+                        .padding(.all, 5)
                 }
             }
-            .background(isDarkMode ? Color.black : Color.white)
-            .overlay(
-                RoundedRectangle(cornerRadius: 25)
-                    .stroke(PokemonType.type(from: updater.move?.type?.name ?? "").color.background.opacity(0.5), lineWidth: 5)
-            )
-            .cornerRadius(25)
-            .onAppear {
-                updater.pokemonMove = pokemonMove
-                updater.move = move
-            }.onWillDisappear {
-                updater.pokemonMove = nil
-                updater.move = nil
-            }
+        }
+        .background(isDarkMode ? Color.black : Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 25)
+                .stroke(PokemonType.type(from: updater.move?.type?.name ?? "").color.background.opacity(0.5), lineWidth: 5)
+        )
+        .cornerRadius(25)
+        .onAppear {
+            updater.pokemonMove = pokemonMove
+            updater.move = move
+        }.onWillDisappear {
+            updater.pokemonMove = nil
+            updater.move = nil
+        }
     }
 }
 
 struct SkillNameView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-
+    
     var move: Move
     var level: Int?
     
@@ -184,7 +196,7 @@ struct SkillNameView: View {
 
 struct SkillPowerView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-
+    
     var move: Move
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
@@ -210,7 +222,7 @@ struct SkillPowerView: View {
 
 struct TextInformationView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-
+    
     var move: Move
     var pokemonMove: PokemonMove
     var learnMethod: String
@@ -245,7 +257,7 @@ struct TextInformationView: View {
 
 struct MachineSubView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-
+    
     var move: Move
     var machine: Machine
     var target: String

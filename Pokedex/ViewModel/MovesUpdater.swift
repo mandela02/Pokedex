@@ -25,6 +25,7 @@ struct GroupedMoveCellModel: Identifiable {
 class MovesUpdater: ObservableObject {
     @Published var pokemon: Pokemon = Pokemon() {
         didSet {
+            isLoadingData = true
             pokemonMoves = pokemon.moves ?? []
         }
     }
@@ -33,6 +34,8 @@ class MovesUpdater: ObservableObject {
         didSet {
             if !pokemonMoves.isEmpty {
                 getAllMoves()
+            } else {
+                isLoadingData = false
             }
         }
     }
@@ -55,9 +58,14 @@ class MovesUpdater: ObservableObject {
         }
     }
     
-    @Published var groupedMoveCellModels: [SectionModel<MoveCellModel>] = []
+    @Published var groupedMoveCellModels: [SectionModel<MoveCellModel>] = [] {
+        didSet {
+            isLoadingData = false
+        }
+    }
     @Published var selected: String?
     @Published var error: ApiError = .non
+    @Published var isLoadingData = true
 
     private var cancellables = Set<AnyCancellable>()
     

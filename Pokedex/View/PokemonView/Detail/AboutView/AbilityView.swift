@@ -43,7 +43,7 @@ struct AbilitesView: View {
                 .animation(.easeIn)
                 
                 if showAbilityDetail {
-                    AbilityDetailView(pokemon: pokemon, model: $updater.selectedAbility).padding()
+                    AbilityDetailView(pokemon: pokemon, model: $updater.selectedAbility)
                 }
             }
         }.onChange(of: updater.selectedString, perform: { selectedString in
@@ -65,50 +65,54 @@ struct AbilityDetailView: View {
 
     var pokemon: Pokemon
     @Binding var model: SelectedAbilityModel?
+    @State var minHeight: CGFloat = 0.0
     
     var body: some View {
         ZStack {
             GeometryReader { reader in
-                HStack {
+                HStack() {
                     Spacer()
                     Image("ic_pokeball")
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .offset(x: 20, y: -20)
-                        .scaleEffect(1.1)
                         .foregroundColor(pokemon.mainType.color.background.opacity(0.5))
-                        .frame(height: reader.size.width * 0.3)
-                }
+                        .onAppear {
+                            withAnimation {
+                                minHeight = reader.size.width * 0.3
+                            }
+                        }
+                }.frame(height: minHeight)
             }
+
 
             VStack(spacing: 5) {
                 Text(model?.name.eliminateDash ?? "")
-                    .font(.system(size: 20))
+                    .font(.system(size: 15))
                     .fontWeight(.bold)
                     .foregroundColor(.gray)
                     .frame(minWidth: 0,
                            maxWidth: .infinity,
                            alignment: .leading)
                 
-                Text("\t" + (model?.description ?? ""))
-                    .font(.system(size: 15))
+                Text(model?.description ?? "")
+                    .font(.system(size: 10))
                     .fontWeight(.regular)
                     .foregroundColor(isDarkMode ? .white : .black)
                     .frame(minWidth: 0,
                            maxWidth: .infinity,
                            alignment: .leading)
             }
-            
+            .padding()
         }.animation(.linear)
-        .transition(.opacity)
-        .background(isDarkMode ? Color.black : Color.white)
-        .padding()
+        .transition(.slide)
+        .background(Color.clear)
         .overlay(
             RoundedRectangle(cornerRadius: 25)
                 .stroke(pokemon.mainType.color.background.opacity(0.5),
                         lineWidth: 5)
         ).cornerRadius(25)
-        .frame(minWidth: 0, maxWidth: .infinity)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: minHeight)
     }
 }

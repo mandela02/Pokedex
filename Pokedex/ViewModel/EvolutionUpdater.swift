@@ -23,7 +23,12 @@ class EvolutionUpdater: ObservableObject {
     
     @Published var species: Species? {
         didSet {
-            getEvolutionInformation()
+            isLoadingData = true
+            if let species = species {
+                getEvolutionInformation(of: species)
+            } else {
+                isLoadingData = false
+            }
         }
     }
 
@@ -53,6 +58,7 @@ class EvolutionUpdater: ObservableObject {
     @Published var evolutionSectionsModels: [SectionModel<EvoLink>] = []
 
     @Published var error: ApiError = .non
+    @Published var isLoadingData = true
 
     private var cancellables = Set<AnyCancellable>()
     
@@ -62,21 +68,23 @@ class EvolutionUpdater: ObservableObject {
             .eraseToAnyPublisher()
             .sink { [weak self] (evolutionLinks, megaEvolutionLinks) in
                 guard let self = self else { return }
-                if evolutionLinks.isEmpty { return }
+                if evolutionLinks.isEmpty {
+                    self.isLoadingData = false
+                    return
+                }
                 var evolutionSectionsModels: [SectionModel<EvoLink>] = []
                 evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Evolution Chain", data: evolutionLinks))
                 if !megaEvolutionLinks.isEmpty {
                     evolutionSectionsModels.append(SectionModel(isExpanded: true, title: "Mega Evolution", data: megaEvolutionLinks))
                 }
                 self.evolutionSectionsModels = evolutionSectionsModels
+                self.isLoadingData = false
             }.store(in: &cancellables)
     }
     
-    private func getEvolutionInformation() {
-        if let megas = species?.megas {
-            megaEvolutionLinks = megas.map({EvoLink(from: species?.pokemon ?? NamedAPIResource(), to: $0, detail: [], triggers: "Mega")})
-        }
-        initEvolution(of: species?.evolutionChain?.url ?? "")
+    private func getEvolutionInformation(of species: Species) {
+        megaEvolutionLinks = species.megas.map({EvoLink(from: species.pokemon, to: $0, detail: [], triggers: "Mega")})
+        initEvolution(of: species.evolutionChain?.url ?? "")
     }
     
     private func initEvolution(of url: String) {
@@ -87,7 +95,9 @@ class EvolutionUpdater: ObservableObject {
                 guard let self = self else { return }
                 switch complete {
                 case .finished: self.error = .non
-                case .failure(let message): self.error = .internet(message: message.localizedDescription)
+                case .failure(let message):
+                    self.error = .internet(message: message.localizedDescription)
+                    self.isLoadingData = false
                 }
             }, receiveValue: { [weak self] result in
                 guard let self = self else { return }

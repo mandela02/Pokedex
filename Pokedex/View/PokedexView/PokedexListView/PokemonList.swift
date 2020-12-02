@@ -66,7 +66,10 @@ struct PokemonList: View {
                         }.animation(.linear)
                         
                         if isFinal {
-                            CompleteView().frame(height: 200)
+                            LazyVStack {
+                                CompleteView()
+                                    .frame(height: 200)
+                            }
                         }
                         
                         Color.clear.frame(height: paddingFooter, alignment: .center)
