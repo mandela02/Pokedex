@@ -47,6 +47,10 @@ enum UrlString: String, CaseIterable {
         return Constants.baseUrl + "pokemon-species/\(order)/"
     }
 
+    static func getSpeciesUrl(from name: String) -> String {
+        return Constants.baseUrl + "pokemon-species/" + name
+    }
+
     static func getAbilityUrl(of name: String) -> String {
         return Constants.baseAbilityUrl + name.lowercased()
     }

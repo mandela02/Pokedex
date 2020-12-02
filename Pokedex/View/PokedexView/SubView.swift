@@ -146,14 +146,14 @@ struct SeachResultCell: View {
     @State var show = false
     var body: some View {
         TapToPushView(show: $show) {
-            Text(name.capitalizingFirstLetter())
+            Text(name.capitalizingFirstLetter().eliminateDash)
                 .font(Biotif.medium(size: 15).font)
                 .foregroundColor( isDarkMode ? .white : .black)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .leading)
                 .padding(.leading, 10)
         } destination: {
             ParallaxView(pokedexCellModel: PokedexCellModel(pokemonUrl: url,
-                                                            speciesUrl: UrlString.getSpeciesUrl(of: StringHelper.getPokemonId(from: url))),
+                                                            speciesUrl: UrlString.getSpeciesUrl(from: StringHelper.getSpeciesName(from: name))),
                          isShowing: $show)
         }.background(isDarkMode ? Color.black : Color.white)
     }

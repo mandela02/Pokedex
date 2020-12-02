@@ -16,7 +16,8 @@ extension Favorite {
         return NSFetchRequest<Favorite>(entityName: "Favorite")
     }
 
-    @NSManaged public var url: String?
+    @NSManaged public var pokemonUrl: String?
+    @NSManaged public var speciesUrl: String?
 
 }
 

@@ -118,4 +118,9 @@ class StringHelper {
         let nsText = text as NSString
         return nsText.size(withAttributes: fontAttributes)
     }
+    
+    static func getSpeciesName(from name: String) -> String {
+        let dashlessName = name.eliminateDash
+        return String(dashlessName.split(separator: " ").first ?? "")
+    }
 }
