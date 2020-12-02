@@ -40,9 +40,10 @@ struct RotatingPokemonView: View {
                         .offset(y: offset)
                         .rotationEffect(.degrees(Double(index) * 30))
                 }.rotationEffect(.degrees(isAnimated ? 360 : 0))
-                .animation(Animation.linear(duration: 18).repeatForever(autoreverses: false))
                 .onAppear {
-                    isAnimated = true
+                    withAnimation(Animation.linear(duration: 18).repeatForever(autoreverses: false)) {
+                        isAnimated = true
+                    }
                 }.onDisappear {
                     isAnimated = false
                 }

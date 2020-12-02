@@ -9,9 +9,32 @@ import SwiftUI
 
 struct EvolutionView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
-    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
     @StateObject var evolutionUpdater: EvolutionUpdater = EvolutionUpdater()
-    
+    var species: Species
+
+    var body: some View {
+        Group {
+            if evolutionUpdater.isLoadingData {
+                LoadingView(background: isDarkMode ? Color.black : Color.white)
+            } else {
+                if evolutionUpdater.evolutionSectionsModels.isEmpty {
+                    RotatingPokemonView(message: "No evolution possible", background: isDarkMode ? Color.black : Color.white)
+                        
+                } else {
+                    EvolutionContentViewView(evolutionUpdater: evolutionUpdater, species: species)
+                }
+            }
+        }.onAppear {
+            evolutionUpdater.species = species
+        }
+    }
+}
+
+struct EvolutionContentViewView: View {
+    @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
+    @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
+    @ObservedObject var evolutionUpdater: EvolutionUpdater
+
     var species: Species
     
     var body: some View {
@@ -51,11 +74,7 @@ struct EvolutionView: View {
                 }
             }
             Color.clear.frame(height: 100)
-        }
-        .onAppear {
-            evolutionUpdater.species = species
-        }
-        .frame(alignment: .leading)
+        }.frame(alignment: .leading)
         .padding()
         .background(isDarkMode ? Color.black : Color.white)
         .animation(.linear)
