@@ -115,13 +115,17 @@ struct AnimatedImageView: View {
                         })
                     }
                 } else {
-                    WigglePokeBallView(imageLoader: imageLoader)
-                        .onReceive(imageLoader.$displayImage, perform: { displayImage in
-                            if displayImage != nil {
-                                self.isDoneLoading = true
-                                self.trigger = true
-                            }
-                        })
+                    HStack {
+                        Spacer()
+                        WigglePokeBallView(imageLoader: imageLoader)
+                        Spacer()
+                    }
+                    .onReceive(imageLoader.$displayImage, perform: { displayImage in
+                        if displayImage != nil {
+                            self.isDoneLoading = true
+                            self.trigger = true
+                        }
+                    })
                 }
                 ExposionView(trigger: $trigger, needHidden: $needHidden)
             }

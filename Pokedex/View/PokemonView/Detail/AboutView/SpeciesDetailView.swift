@@ -141,7 +141,7 @@ struct PokemonNameView: View {
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(.gray)
                 .frame(width: 100, alignment: .leading)
-            Text(pokemon.name.capitalizingFirstLetter())
+            Text(pokemon.name.capitalizingFirstLetter().eliminateDash)
                 .font(Biotif.bold(size: 12).font)
                 .foregroundColor(isDarkMode ? .white : .black)
                 .padding(.leading, 5)

@@ -24,6 +24,7 @@ struct MovesView: View {
         }
     }
 }
+
 struct MovesContentView: View {
     @AppStorage(Keys.isDarkMode.rawValue) var isDarkMode: Bool = false
     @EnvironmentObject var reachabilityUpdater: ReachabilityUpdater
@@ -39,7 +40,7 @@ struct MovesContentView: View {
             ScrollView(showsIndicators: false) {
                 LazyVStack(alignment: .leading) {
                     ForEach((0 ..< moveUpdater.groupedMoveCellModels.count), id:\.self) { index in
-                        VStack(spacing: 10) {
+                        LazyVStack(spacing: 10) {
                             HStack {
                                 Text(moveUpdater.groupedMoveCellModels[index].title.capitalizingFirstLetter())
                                     .font(Biotif.extraBold(size: 25).font)

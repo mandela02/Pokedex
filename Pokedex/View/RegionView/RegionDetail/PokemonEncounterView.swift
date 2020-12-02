@@ -71,7 +71,7 @@ struct PokemonLocationNameAndNumberView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(pokemon.name.capitalizingFirstLetter())
+                Text(pokemon.name.capitalizingFirstLetter().eliminateDash)
                     .font(Biotif.extraBold(size: 35).font)
                     .foregroundColor(.white)
                     .frame(alignment: .topLeading)
