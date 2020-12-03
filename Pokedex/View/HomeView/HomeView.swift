@@ -44,21 +44,18 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            if isDarkMode {
-                Color.black
-            } else {
-                Color.white
-            }
-            GeometryReader { geometry  in
-                let size = geometry.size
-                if showBall {
+            isDarkMode ? Color.black : Color.white
+            GeometryReader { reader in
+                let imageSize = reader.size.width * 2/3
+                HStack {
+                    Spacer()
                     RotatingPokeballView(color: .red)
-                        .ignoresSafeArea()
-                        .frame(width: size.width, height: size.height, alignment: .center)
-                        .offset(x: size.width * 1/4 + 25, y: -size.height * 2/5)
+                        .frame(width: imageSize, height: imageSize, alignment: .center)
+                        .offset(x: imageSize / 5, y: -imageSize / 5)
                 }
-                NavigationPokedexView()
-            }
+            }.ignoresSafeArea()
+            NavigationPokedexView()
+
         }
         .statusBar(hidden: true)
         .ignoresSafeArea()

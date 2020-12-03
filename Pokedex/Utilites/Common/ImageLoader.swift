@@ -82,7 +82,7 @@ class ImageLoader: ObservableObject {
         let frontUrl = String(format: Constants.baseFrontImageUrl, "\(imageId)")
         
         guard let url = URL(string: frontUrl) else { return }
-        
+
         URLSession.shared.dataTaskPublisher(for: url)
             .map { (data, response) -> UIImage? in return UIImage(data: data) }
             .replaceError(with: UIImage())
