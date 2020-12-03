@@ -21,7 +21,7 @@ struct ParallaxView: View {
     @State private var isMinimized = false
     @State private var opacity: Double = 1
     @State private var showLikedNotification: Bool = false
-    
+    @Namespace var animated
     init(pokedexCellModel: PokedexCellModel, isShowing: Binding<Bool>) {
         self._isShowing = isShowing
         self.pokedexCellModel = pokedexCellModel
@@ -33,29 +33,31 @@ struct ParallaxView: View {
                 .ignoresSafeArea()
                 .animation(.linear)
             
-            GeometryReader(content: { geometry in
-                RotatingPokeballView()
-                    .ignoresSafeArea()
-                    .frame(width: geometry.size.width * 4/5,
-                           height: geometry.size.height * 4/5,
-                           alignment: .center)
-                    .offset(x: geometry.size.width * 1/3,
-                            y: -geometry.size.height * 1/3 )
-                    .isRemove(!isMinimized)
-                    .blur(radius: showLikedNotification ? 3 : 0)
+            GeometryReader(content: { reader in
+                let imageSize = reader.size.width * 2/3
                 
                 if updater.isTopView {
-                    RotatingPokeballView()
-                        .ignoresSafeArea()
-                        .frame(width: geometry.size.width,
-                               height: geometry.size.height,
-                               alignment: .bottom)
-                        .isRemove(isMinimized)
+                    if isMinimized {
+                        HStack {
+                            Spacer()
+                            RotatingPokeballView()
+                                .frame(width: imageSize, height: imageSize, alignment: .center)
+                                .offset(x: imageSize / 4, y: -imageSize / 4)
+                        }.blur(radius: showLikedNotification ? 3 : 0)
+                    } else {
+                        HStack {
+                            Spacer()
+                            RotatingPokeballView()
+                                .frame(width: imageSize, height: imageSize, alignment: .center)
+                                .offset(y: reader.size.height * 0.25 - 50)
+                            Spacer()
+                        }
                         .blur(radius: showLikedNotification ? 3 : 0)
+                    }
                 }
                 
-                ParallaxContentView(height: geometry.size.height,
-                                    width: geometry.size.width,
+                ParallaxContentView(height: reader.size.height,
+                                    width: reader.size.width,
                                     isShowing: $isShowing,
                                     isMinimized: $isMinimized,
                                     opacity: $opacity,
@@ -162,7 +164,7 @@ struct ParallaxContentView: View {
                 }.frame(height: backgroundHeight, alignment: .bottom)
             }
 
-
+            
             ScrollView(.vertical, showsIndicators: false) {
                 VStack{
                     GeometryReader { reader -> AnyView in
@@ -197,7 +199,7 @@ struct ParallaxContentView: View {
                         .frame(height: 100, alignment: .center)
                         .cornerRadius(25)
                         .offset(y: 50)
-
+                        
                         DetailPageView(species: updater.pokemonModel.species,
                                        pokemon: updater.pokemonModel.pokemon)
                             .background(isDarkMode ? Color.black : Color.white)
@@ -207,7 +209,12 @@ struct ParallaxContentView: View {
                     
                     Spacer()
                 }
-            }
+            }.gesture(DragGesture()
+                                    .onChanged({ _ in
+                                        print("Cjamge")
+                                    }).onEnded({ _ in
+                                        print("end")
+                                    }), including: .all)
             
             if !updater.isLoadingInitialData {
                 if updater.pokemonModel.pokemon.isDefault {

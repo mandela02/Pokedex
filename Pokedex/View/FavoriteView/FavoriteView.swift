@@ -24,8 +24,19 @@ struct FavoriteView: View {
             }
             // Rotating Ball
             if favoriteUpdater.isTopView {
-                RotatingPokeballView(color: Color(.systemGray4))
-                    .scaleEffect(1.2)
+                GeometryReader { reader in
+                    let imageSize = reader.size.width * 2/3
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            RotatingPokeballView(color: .gray)
+                                .frame(width: imageSize, height: imageSize, alignment: .center)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }.ignoresSafeArea()
             }
             
             //Main ScrollView

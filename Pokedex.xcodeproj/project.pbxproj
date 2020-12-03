@@ -552,6 +552,7 @@
 		901E63472537E6AD00F75BF3 /* ReusableView */ = {
 			isa = PBXGroup;
 			children = (
+				907D5F47252B12E200E30748 /* PokedexCardView.swift */,
 				847A127F2533696200146D24 /* FlexibleGridView.swift */,
 				8407B853252CB88300341270 /* DownloadedImageView.swift */,
 				9086780D2537F8FB0064B02C /* TapToPushView.swift */,
@@ -569,7 +570,6 @@
 		90454D1B252E9DA0000F5B79 /* PokedexListView */ = {
 			isa = PBXGroup;
 			children = (
-				907D5F47252B12E200E30748 /* PokedexCardView.swift */,
 				901E633E2537E5D600F75BF3 /* PokemonList.swift */,
 				84CF1780253DD75400FF312B /* TappablePokemonCell.swift */,
 				907D5F73252B272600E30748 /* AllPokemonList.swift */,
@@ -1208,11 +1208,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = J243X8N8UC;
+				DEVELOPMENT_TEAM = DAB2NZFLN5;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1222,7 +1222,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = develop_all_20200828;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
@@ -1236,11 +1236,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Pokedex/Pokedex.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"Pokedex/Preview Content\"";
-				DEVELOPMENT_TEAM = J243X8N8UC;
+				DEVELOPMENT_TEAM = DAB2NZFLN5;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1250,7 +1250,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = qtcorp.Pokedex;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = develop_all_20200828;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;

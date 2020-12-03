@@ -59,7 +59,7 @@ struct PokedexView: View {
                     isDarkMode ? Color.gray : Color.black
                 }.opacity(0.5)
                 .onTapGesture {
-                    withAnimation(.linear) {
+                    withAnimation(Animation.easeIn(duration: 0.2)) {
                         showSubView = false
                     }
                 }
@@ -72,16 +72,15 @@ struct PokedexView: View {
                         .onReceive(Publishers.keyboardHeight) {
                             self.keyboardHeight = $0
                         }
-                }
-                .transition(.move(edge: .bottom))
+                }.transition(.move(edge: .bottom))
             }
-            PushOnSigalView(show: $showFavorite,
-                            destination:  { FavoriteView(show: $showFavorite) })
-            PushOnSigalView(show: $showSetting,
-                            destination:  { SettingView(show: $showSetting) })
         }
+        .background(PushOnSigalView(show: $showFavorite,
+                                    destination:  { FavoriteView(show: $showFavorite) }))
+        .background(PushOnSigalView(show: $showSetting,
+                                    destination:  { SettingView(show: $showSetting) }))
         .onChange(of: selectedMenu, perform: { active in
-            withAnimation(.default) {
+            withAnimation(Animation.easeIn(duration: 0.2)) {
                 if active == SubViewKind.setting.rawValue {
                     showSetting = true
                     self.selectedMenu = -1

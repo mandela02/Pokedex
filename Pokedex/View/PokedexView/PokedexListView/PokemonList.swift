@@ -90,21 +90,19 @@ struct PokemonList: View {
                         .frame(height: 100, alignment: .center)
                 }
                 
-                if isShowScrollButton {
-                    VStack {
-                        Spacer()
-                        Button {
-                            isScrollToTop = true
-                        } label: {
-                            Image(systemName: "arrow.up")
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.red)
-                                .clipShape(Circle())
-                        }.frame(width: 60, height: 60, alignment: .center)
-                        .padding(.bottom, 30)
-                    }
-                }
+                VStack {
+                    Spacer()
+                    Button {
+                        isScrollToTop = true
+                    } label: {
+                        Image(systemName: "arrow.up")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.red)
+                            .clipShape(Circle())
+                    }.frame(width: 60, height: 60, alignment: .center)
+                    .padding(.bottom, 30)
+                }.opacity(isShowScrollButton ? 1 : 0)
                 
                 if isLoading {
                     LoadingView(background: isDarkMode ? .black : .white)
